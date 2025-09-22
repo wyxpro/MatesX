@@ -1,25 +1,24 @@
-[中文版](README_zh.md) | [English](README.md)
+<div align="center">
+<img src="preview/show.jpg" width="100%" />
 
-# 🌟 MatesX — Lightweight Multi-platform Digital Human Engine
+# MatesX
 
-> Next-generation digital human interaction framework designed for massive C-end users — Memory · Expression · Motion · Multi-platform · Lightweight
+> Memory · Expression · Motion · Multi-platform · Lightweight
 
----
+[English](README.md) | [中文版](README_zh.md)
+</div>
 
 ## 🎯 Project Mission
-- Enable individual users to customize their own AI companions
-- Support ultra-high concurrency digital human services targeting massive C-end users
+- **Enable individual users to customize their own AI companions**
+- **Support ultra-high concurrency digital human services targeting massive C-end users**
 
 ### Three Core Objectives:
 
 1. ✅ Large-scale C-end Digital Human Conversation Management
-Supports high-concurrency, low-latency, stable and reliable conversation services, designed to run on ordinary servers.
 
-2. ✅ Memory, Expression & Motion Management
-Next-generation digital human driving engine, integrating memory engine + real-time emotion analysis + free expression & motion control, making digital humans “remember, feel, and move freely”.
+2. ✅ Memory, emotion, Expression & Motion Management
 
 3. ✅ Cross-platform Support for Desktop, APP, Mini Programs with Ultra-lightweight Architecture
-One core engine adapts to Windows/macOS desktop, iOS/Android APPs, WeChat/Alipay Mini Programs — extremely lightweight and rapidly integrable.
 
 ---
 
