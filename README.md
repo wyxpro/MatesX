@@ -42,13 +42,13 @@
 
 ## 📱 多端支持
 
-| 平台          | 支持状态 | 技术路线       | 预览                                   |
-|-------------|------|------------|----------------------------------------|
-| Windows     | ✅    | electron   | <img src="preview/windows.jpg" width="120" />      |
-| macOS       | ✅    | electron   |                                        |
-| Android app | ✅    | webview    | <img src="preview/android.jpg" width="120" />      |
-| 微信小程序       | ✅    | webview    | <img src="preview/mini-program.jpg" width="120" /> |
-| Web         | ✅    | WebGL 渲染支持 | <img src="preview/web.jpg" width="120" />          |
+| 平台          | 支持状态 | 技术路线       | 预览                                   |                                                                                            |
+|-------------|------|------------|----------------------------------------|--------------------------------------------------------------------------------------------|
+| Windows     | ✅    | electron   | <img src="preview/windows.jpg" width="120" />      | [exe link](https://github.com/kleinlee/MatesX/releases/download/v1.0/matesx-win32-x64.zip) |
+| macOS       | ✅    | electron   |                                        ||
+| Android app | ✅    | webview    | <img src="preview/android.jpg" width="120" />      | [apk link](https://github.com/kleinlee/MatesX/releases/download/v1.0/app-debug.apk)        |
+| 微信小程序       | ✅    | webview    | <img src="preview/mini-program.jpg" width="120" /> | [copy link to wechat](#小程序://MatesX数字生命/2ZvtOmy4Vfv1Chi)                                   |                                               |
+| Web         | ✅    | WebGL 渲染支持 | <img src="preview/web.jpg" width="120" />        | [web link](matesx.com)                                                                     |
 > 💡 所有平台共享同一套核心引擎，代码复用率 > 99%，极致轻量（核心模块 < 5MB）
 
 ---
@@ -76,6 +76,9 @@ HOST_URL = "http://localhost:8000"
 python main.py
 ```
 然后打开 http://localhost:8000/web/home.html 享用吧
+
+### 多端编译（win、mac、android、mini-program）
+参考 platform 文件夹
 
 ### 高并发及云端同步
 - 升级为云端数据库
