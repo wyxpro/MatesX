@@ -1,0 +1,293 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI角色创建</title>
+    <link rel="stylesheet" href="css/xs-styles.css">
+    <link href="css/material-icons.css" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+        }
+
+        body {
+            background: #f5f5f5;
+            padding: 0 16px;
+            margin: 0 auto;
+            box-shadow: 0 0 40px rgba(0, 0, 0, 0.08);
+            min-height: 100vh;
+            position: relative;
+            padding-top: 60px;
+            padding-bottom: 20px;
+        }
+        
+        .title-bar {
+            position: fixed;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 12px 16px;
+            width: 100%;
+            left: 0;
+            right: 0;
+            margin: 0 auto;
+            top: 0;
+            box-sizing: border-box;
+            z-index: 1000;
+        }
+
+        /* 小红书风格按钮 */
+        .nav-button {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.9);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            transition: all 0.2s ease;
+            border: none;
+            outline: none;
+            cursor: pointer;
+        }
+        
+        .material-icons {
+            color: #ff3c64;
+        }
+
+        .nav-button:hover {
+            background: white;
+            transform: scale(1.05);
+        }
+
+        .title-input {
+            flex: 1;
+            margin: 0 12px;
+            padding: 8px 16px;
+            border: 1px solid #eee;
+            border-radius: 20px;
+            font-size: 16px;
+            background: rgba(255, 255, 255, 0.9);
+            text-align: center;
+            color: #333;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05) inset;
+        }
+
+        .create-btn {
+            background: linear-gradient(135deg, #ff7c7c, #ff5252);
+            color: white;
+            padding: 8px 14px;
+            border-radius: 20px;
+            border: none;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s;
+            box-shadow: 0 4px 10px rgba(255, 82, 82, 0.3);
+        }
+        
+        .create-btn:disabled {
+            background: #cccccc;
+            cursor: not-allowed;
+            box-shadow: none;
+        }
+
+        /* 上传模式选择器 */
+        .upload-mode-selector {
+            display: flex;
+            justify-content: center;
+            margin: 10px 0;
+            gap: 10px;
+        }
+        
+        .mode-btn {
+            padding: 6px 10px;
+            border-radius: 20px;
+            border: 1px solid #ff7c7c;
+            background: white;
+            color: #ff7c7c;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .mode-btn.active {
+            background: #ff7c7c;
+            color: white;
+        }
+
+        /* 去除背景选项 */
+        .remove-bg-option {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin: 10px 0 15px;
+            gap: 8px;
+        }
+        
+        .remove-bg-checkbox {
+            width: 18px;
+            height: 18px;
+            accent-color: #ff7c7c;
+            cursor: pointer;
+        }
+        
+        .remove-bg-label {
+            font-size: 14px;
+            color: #666;
+            cursor: pointer;
+        }
+
+        .upload-area {
+            width: 66%;
+            aspect-ratio: 9/16;
+            margin: 15px auto 15px;
+            border: 2px dashed #ff7c7c;
+            border-radius: 16px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            background-image: url('common/upload_bg.png');
+            background-color: rgba(255, 124, 124, 0.05);
+            background-size: contain;
+            background-position: center 20%;
+            background-repeat: no-repeat;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .upload-area.disabled {
+            opacity: 0.6;
+            pointer-events: none; /* 禁止点击 */
+            cursor: not-allowed;
+        }
+        
+        .upload-placeholder {
+            text-align: center;
+            top: 70%;
+            position: absolute;
+            padding: 20px;
+        }
+
+        .upload-input {
+            position: absolute;
+            opacity: 0;
+            width: 100%;
+            height: 100%;
+            cursor: pointer;
+            z-index: 10;
+        }
+
+        /* 预览区域 */
+        .preview-container {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            display: none;
+            z-index: 1;
+        }
+        
+        .image-preview {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        
+        .video-preview {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+        }
+
+        /* 上传提示 */
+        .upload-tips {
+            background: white;
+            border-radius: 12px;
+            padding: 15px;
+            margin-top: 10px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+        }
+        
+        .tip-title {
+            color: #ff5252;
+            font-weight: 600;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .tip-content {
+            font-size: 14px;
+            color: #666;
+            line-height: 1.4;
+        }
+        
+        .tip-content p {
+            margin: 6px 0;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        .progress-text {
+            margin-top: 10px;
+            color: #666;
+            font-size: 14px;
+        }
+    </style>
+</head>
+<body>
+    <div class="title-bar">
+        <button class="nav-button back-btn" onclick="handleBack()">
+            <i class="material-icons">arrow_back</i>
+        </button>
+        <input type="text" class="title-input" id="avatar_name" placeholder="请输入角色名称" maxlength="20">
+        <button class="create-btn" id="createBtn">创建</button>
+    </div>
+
+    <div class="upload-mode-selector">
+        <button class="mode-btn active" data-mode="image">上传图片-视频模式</button>
+        <button class="mode-btn" data-mode="video">上传视频-视频模式</button>
+        <button class="mode-btn" data-mode="3d">上传图片-自由模式</button>
+    </div>
+
+    <div class="remove-bg-option">
+        <input type="checkbox" id="removeBgCheckbox" class="remove-bg-checkbox">
+        <label for="removeBgCheckbox" class="remove-bg-label">是否去除背景</label>
+    </div>
+
+    <div class="upload-area" id="uploadContainer">
+        <div class="upload-placeholder">
+            <div id="uploadText" style="color: #666; font-size: 16px; margin-bottom: 8px;">点击上传人物图片</div>
+        </div>
+        
+        <input type="file" class="upload-input" id="fileInput" accept="image/*">
+        
+        <div class="preview-container" id="previewContainer">
+            <img class="image-preview" id="imagePreview" style="display: none;">
+            <video class="video-preview" id="videoPreview" style="display: none;" controls></video>
+        </div>
+    </div>
+    
+    <div class="upload-tips">
+        <div class="tip-title">
+            <i class="material-icons">info</i>
+            <span>上传要求</span>
+        </div>
+        <div class="tip-content" id="requirementsText">
+        </div>
+    </div>
+    <script src="js/xs-components.js"></script>
+    <script src="js/create-role.js"></script>
+</body>
+</html>

@@ -9,7 +9,7 @@ from fastapi.responses import StreamingResponse, JSONResponse,Response
 from utils.llm_streaming import gen_stream
 from utils.session_manager import cleanup_expired_sessions,user_locks,get_or_create_session
 import utils.sqlite_manager as sqlite_manager
-
+from routers import auth_router, voice_router
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     cleanup_task = asyncio.create_task(cleanup_expired_sessions())
@@ -21,6 +21,8 @@ async def lifespan(app: FastAPI):
         pass
 
 app = FastAPI(lifespan=lifespan)
+
+app.include_router(auth_router, prefix="/auth")
 
 # 挂载视频数据静态文件目录
 app.mount("/assets", StaticFiles(directory="assets"), name="assets")

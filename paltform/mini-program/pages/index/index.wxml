@@ -1,0 +1,2 @@
+<!-- 页面 WXML -->
+<web-view src="{{webviewUrl}}"></web-view> 

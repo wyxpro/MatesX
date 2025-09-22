@@ -206,7 +206,7 @@ document.addEventListener('DOMContentLoaded', async function() {
 
             try {
                 // 向服务器发送请求
-                const response = await fetch('https://www.matesx.com/api/auth/update_role', {
+                const response = await fetch('/auth/update_role', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json'
@@ -268,14 +268,6 @@ document.addEventListener('DOMContentLoaded', async function() {
                     memoryItem.className = 'memory-item';
                     memoryItem.innerHTML = `
                         <div class="memory-text">${memory.text}</div>
-                        <div class="memory-actions">
-                            <button class="memory-action-btn edit-memory" data-index="${index}">
-                                <i class="material-icons">edit</i>
-                            </button>
-                            <button class="memory-action-btn delete-memory" data-index="${index}">
-                                <i class="material-icons">delete</i>
-                            </button>
-                        </div>
                     `;
                     memoryList.appendChild(memoryItem);
                 });
@@ -285,57 +277,5 @@ document.addEventListener('DOMContentLoaded', async function() {
         }
 
         renderMemories();
-
-        // 记忆操作
-        let currentEditIndex = -1;
-
-        // 编辑记忆
-        memoryList.addEventListener('click', function(e) {
-            if (e.target.closest('.edit-memory')) {
-                const index = e.target.closest('.edit-memory').dataset.index;
-                document.getElementById('modal-title').textContent = '编辑记忆';
-                document.getElementById('memory-input').value = memoryData.memories[index];
-                document.getElementById('edit-memory-modal').style.display = 'flex';
-                currentEditIndex = index;
-            }
-
-            if (e.target.closest('.delete-memory')) {
-                const index = e.target.closest('.delete-memory').dataset.index;
-                if (confirm('确定要删除这条记忆吗？')) {
-                    memoryData.memories.splice(index, 1);
-                    renderMemories();
-                }
-            }
-        });
-
-        // 模态框操作
-        document.getElementById('modal-close').addEventListener('click', function() {
-            document.getElementById('edit-memory-modal').style.display = 'none';
-        });
-
-        document.getElementById('modal-cancel').addEventListener('click', function() {
-            document.getElementById('edit-memory-modal').style.display = 'none';
-        });
-
-        document.getElementById('modal-save').addEventListener('click', function() {
-            const memoryText = document.getElementById('memory-input').value.trim();
-            if (memoryText) {
-                if (currentEditIndex >= 0) {
-                    // 编辑现有记忆
-                    memoryData.memories[currentEditIndex] = memoryText;
-                } else {
-                    // 添加新记忆
-                    if (memoryData.memories.length >= 10) {
-                        alert('最多只能添加10条记忆');
-                        return;
-                    }
-                    memoryData.memories.push(memoryText);
-                }
-                renderMemories();
-                document.getElementById('edit-memory-modal').style.display = 'none';
-            } else {
-                alert('请输入记忆内容');
-            }
-        });
     }
 });

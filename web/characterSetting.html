@@ -435,30 +435,6 @@
             padding-right: 10px;
         }
 
-        .memory-actions {
-            display: flex;
-            gap: 8px;
-        }
-
-        .memory-action-btn {
-            background: none;
-            border: none;
-            color: #999;
-            cursor: pointer;
-            font-size: 16px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            padding: 4px;
-            border-radius: 4px;
-            transition: all 0.2s ease;
-        }
-
-        .memory-action-btn:hover {
-            background: #f0f0f0;
-            color: #ff5252;
-        }
-
         .memory-empty {
             text-align: center;
             color: #999;
@@ -512,91 +488,29 @@
             color: #999;
         }
 
-        .edit-memory-modal {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.5);
-            z-index: 100;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .modal-content {
-            background: white;
-            border-radius: 8px;
-            padding: 20px;
-            width: 90%;
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
-        }
-
-        .modal-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 16px;
-        }
-
-        .modal-title {
-            font-size: 18px;
-            font-weight: 600;
-            color: #333;
-        }
-
-        .modal-close {
-            background: none;
-            border: none;
-            font-size: 24px;
-            color: #999;
-            cursor: pointer;
-        }
-
-        .modal-input {
-            width: 100%;
-            padding: 12px;
-            border: 1px solid #eee;
-            border-radius: 8px;
-            font-size: 14px;
-            margin-bottom: 16px;
-            resize: vertical;
-            min-height: 100px;
-        }
-
-        .modal-actions {
-            display: flex;
-            justify-content: flex-end;
-            gap: 10px;
-        }
-
-        .modal-btn {
-            padding: 8px 16px;
-            border-radius: 8px;
-            font-size: 14px;
-            cursor: pointer;
-            transition: all 0.2s ease;
-        }
-
-        .modal-cancel {
+        /* 新增按钮样式 */
+        .add-voice-btn {
             background: #f8f8f8;
             border: 1px solid #eee;
+            border-radius: 6px;
+            padding: 4px 8px;
+            font-size: 12px;
             color: #666;
+            display: flex;
+            align-items: center;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            margin-left: 8px;
         }
 
-        .modal-cancel:hover {
+        .add-voice-btn:hover {
             background: #f0f0f0;
+            color: #ff5252;
         }
 
-        .modal-save {
-            background: linear-gradient(135deg, #ff7c7c, #ff5252);
-            border: none;
-            color: white;
-        }
-
-        .modal-save:hover {
-            opacity: 0.9;
+        .add-voice-btn .material-icons {
+            font-size: 14px;
+            margin-right: 4px;
         }
     </style>
 </head>
@@ -649,6 +563,10 @@
                 <label class="input-label">
                     <i class="material-icons">record_voice_over</i>
                     声音设置
+                    <button class="add-voice-btn" id="add-voice-btn">
+                        <i class="material-icons">add</i>
+                        新增
+                    </button>
                 </label>
                 <div class="voice-select-wrapper">
                     <div class="voice-select-trigger" id="voice-select-trigger">
@@ -693,20 +611,6 @@
         </div>
     </div>
 
-    <!-- 编辑记忆模态框 -->
-    <div class="edit-memory-modal" id="edit-memory-modal">
-        <div class="modal-content">
-            <div class="modal-header">
-                <div class="modal-title" id="modal-title">添加记忆</div>
-                <button class="modal-close" id="modal-close">&times;</button>
-            </div>
-            <textarea class="modal-input" id="memory-input" placeholder="请输入记忆内容..."></textarea>
-            <div class="modal-actions">
-                <button class="modal-btn modal-cancel" id="modal-cancel">取消</button>
-                <button class="modal-btn modal-save" id="modal-save">保存</button>
-            </div>
-        </div>
-    </div>
     <script src="js/database.js"></script>
     <script src="js/characterSetting.js"></script>
 </body>
