@@ -57,7 +57,6 @@
 ## 🛠️ Quick Start
 
 ```bash 
-```bash
 git clone https://github.com/kleinlee/MatesX.git
 cd MatesX
 pip install -r requirements.txt
@@ -79,6 +78,12 @@ Start service:
 python main.py
 ```
 Then open http://localhost:8000/web/home.html to enjoy!
+
+## Custom Avatars
+
+For individual enthusiasts, we regularly provide free credits on the Matesx web application. This project does not offer complex underlying algorithm implementations but focuses on lightweight yet comprehensive applications.
+
+For developers, please refer to the[API](preview/api.md) for paid API calling methods. Welcome to use [matesx.cn](https://www.matesx.cn) to manage your avatars.
 
 ### Multi-platform Compilation (Windows, macOS, Android, Mini Program)
 Refer to the platform folder

@@ -78,6 +78,12 @@ python main.py
 ```
 然后打开 http://localhost:8000/web/home.html 享用吧
 
+## 定制形象
+
+对于个人爱好者，我们会在matesx网页程序定期提供免费额度，此项目不提供复杂的底层算法实现而专注于轻量但完备的应用。
+
+对于开发者，请参阅[API](preview/api.md)的API付费调用方式，可欢迎使用[matesx.cn](https://www.matesx.cn)来管理你的形象。
+
 ### 多端编译（win、mac、android、mini-program）
 参考 platform 文件夹
 
