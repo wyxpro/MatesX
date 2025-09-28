@@ -1,6 +1,6 @@
 # 数字人API接口文档
 
-欢迎使用[matesx.cn](https://www.matesx.cn)来管理你的形象。
+欢迎使用[matesx.cn](https://www.matesx.cn)来管理你的形象。matesx.cn为开发者提供服务，可以通过联系方式获取三个免费形象额度。
 
 ## 1. 获取账户信息
 说明: 通过密钥获取用户任务信息和余额
@@ -67,36 +67,25 @@ except:
 - file: 视频/图片文件（必填，支持mp4/png/jpg格式，最大30MB）
 - matting: 是否抠图（布尔值，true/false）
 - keepsize: 是否保持分辨率（布尔值，true/false）
-- callback_url: 回调URL（选填，处理完成后通知地址,要求支持POST方式和application/json数据格式）
+- task_id: 任务ID（选填，若无系统会自动生成唯一ID）
 
 响应成功示例:
 ```bash
 {
-    "message": "File uploaded successfully",
-    "task": {...}
+    "code": 0,
+    "message": "操作成功",
+    "data": {
+       "avatar_id": avatar_id,
+        "new_status": "pending"
+    }
 }
 ```
 
-如果设置了callback_url，任务完成后会触发回调：
-
-回调数据格式:
-```bash
-{
-    "task_id": "任务ID",
-    "status": "任务状态",
-    "avatar_url": "数字人缩略图URL",
-    "video_url": "生成的视频URL",
-    "video_asset_url": "生成的数字人资源URL",
-    "errorMessage": "错误信息",
-    "created_time": "创建时间",
-    "updated_time": "更新时间"
-}
-```
 python代码示例：
 ```bash
 import requests
 
-def upload_video(password, file_path, matting=False, keepsize=False, callback_url=None):
+def upload_video(password, file_path, matting=False, keepsize=False):
     url = "https://www.matesx.cn/api/upload"
 
     files = {'file': open(file_path, 'rb')}
@@ -121,7 +110,6 @@ result = upload_video(
     password="your_password",
     file_path="video.mp4",
     matting=True,
-    callback_url="https://your-callback-url.com"
 )
 print(result)
 ```
