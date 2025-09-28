@@ -1,0 +1,405 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI陪伴应用：成本与技术解析</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #f5f7fa, #e4edf9);
+            color: #333;
+            line-height: 1.6;
+            padding: 15px;
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+
+        header {
+            text-align: center;
+            padding: 25px 15px;
+            margin-bottom: 20px;
+            background: white;
+            border-radius: 16px;
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.08);
+        }
+
+        h1 {
+            font-size: 2.2rem;
+            margin-bottom: 10px;
+            background: linear-gradient(90deg, #4a6cf7, #22c55e);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .subtitle {
+            font-size: 1rem;
+            opacity: 0.8;
+            max-width: 600px;
+            margin: 0 auto;
+            color: #555;
+        }
+
+        .card {
+            background: white;
+            border-radius: 16px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.08);
+            border: 1px solid rgba(0, 0, 0, 0.05);
+        }
+
+        .card-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+        }
+
+        .card-icon {
+            width: 40px;
+            height: 40px;
+            background: linear-gradient(135deg, #4a6cf7, #22c55e);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 12px;
+            font-size: 1.2rem;
+            color: white;
+        }
+
+        .card-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #2d3748;
+        }
+
+        h2 {
+            font-size: 1.3rem;
+            margin: 15px 0 12px;
+            color: #4a6cf7;
+            font-weight: 700;
+        }
+
+        .content-list {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .list-item {
+            display: flex;
+            align-items: flex-start;
+            padding: 10px;
+            background: #f8fafc;
+            border-radius: 10px;
+            border-left: 3px solid #4a6cf7;
+        }
+
+        .list-icon {
+            width: 32px;
+            height: 32px;
+            background: #eef4ff;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 12px;
+            color: #4a6cf7;
+            font-size: 1rem;
+        }
+
+        .list-text {
+            flex: 1;
+            font-size: 0.95rem;
+        }
+
+        .list-title {
+            font-weight: 600;
+            margin-bottom: 3px;
+            color: #2d3748;
+        }
+
+        .cost-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 15px 0;
+            font-size: 0.9rem;
+        }
+
+        .cost-table th {
+            background: linear-gradient(135deg, #4a6cf7, #22c55e);
+            padding: 10px;
+            text-align: left;
+            font-weight: 600;
+            color: white;
+        }
+
+        .cost-table td {
+            padding: 8px 10px;
+            border-bottom: 1px solid #e2e8f0;
+        }
+
+        .cost-table tr:nth-child(even) {
+            background: #f8fafc;
+        }
+
+        .highlight {
+            background: rgba(74, 108, 247, 0.15);
+            padding: 2px 5px;
+            border-radius: 3px;
+            font-weight: 700;
+            color: #4a6cf7;
+        }
+
+        .total-cost {
+            font-size: 1.2rem;
+            text-align: center;
+            margin: 20px 0;
+            padding: 12px;
+            background: rgba(34, 197, 94, 0.1);
+            border-radius: 10px;
+            font-weight: 700;
+            color: #16a34a;
+        }
+
+        @media (max-width: 768px) {
+            h1 {
+                font-size: 1.8rem;
+            }
+
+            .card {
+                padding: 15px;
+            }
+
+            .card-title {
+                font-size: 1.3rem;
+            }
+
+            .list-icon {
+                width: 28px;
+                height: 28px;
+                font-size: 0.9rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>AI陪伴应用：成本与技术解析</h1>
+            <p class="subtitle">探索现代AI陪伴应用的实现方式、成本结构与技术架构</p>
+        </header>
+
+        <div class="card">
+            <div class="card-header">
+                <div class="card-icon">
+                    <i class="fas fa-robot"></i>
+                </div>
+                <h2 class="card-title">应用场景</h2>
+            </div>
+
+            <div class="content-list">
+                <div class="list-item">
+                    <div class="list-icon">
+                        <i class="fas fa-desktop"></i>
+                    </div>
+                    <div class="list-text">
+                        <div class="list-title">桌面玩偶 & 游戏陪玩</div>
+                    </div>
+                </div>
+
+                <div class="list-item">
+                    <div class="list-icon">
+                        <i class="fas fa-paw"></i>
+                    </div>
+                    <div class="list-text">
+                        <div class="list-title">AI宠物 & 硬件陪伴</div>
+                    </div>
+                </div>
+
+                <div class="list-item">
+                    <div class="list-icon">
+                        <i class="fas fa-heart"></i>
+                    </div>
+                    <div class="list-text">
+                        <div class="list-title">AI女友、虚拟亲人</div>
+                    </div>
+                </div>
+
+                <div class="list-item">
+                    <div class="list-icon">
+                        <i class="fas fa-user-astronaut"></i>
+                    </div>
+                    <div class="list-text">
+                        <div class="list-title">个人分身</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="card-header">
+                <div class="card-icon">
+                    <i class="fas fa-microchip"></i>
+                </div>
+                <h2 class="card-title">核心场景技术要求</h2>
+            </div>
+
+            <div class="content-list">
+                <div class="list-item">
+                    <div class="list-icon">
+                        <i class="fas fa-mobile-alt"></i>
+                    </div>
+                    <div class="list-text">
+                        <div class="list-title">全设备兼容性</div>
+                        <p>流畅运行在几乎所有移动端设备上</p>
+                    </div>
+                </div>
+
+                <div class="list-item">
+                    <div class="list-icon">
+                        <i class="fas fa-smile"></i>
+                    </div>
+                    <div class="list-text">
+                        <div class="list-title">自然情感表达</div>
+                        <p>超越对口型，实现自然情感表情回应</p>
+                    </div>
+                </div>
+
+                <div class="list-item">
+                    <div class="list-icon">
+                        <i class="fas fa-user-friends"></i>
+                    </div>
+                    <div class="list-text">
+                        <div class="list-title">千人千面形象</div>
+                        <p>基于用户偏好生成个性化虚拟形象</p>
+                    </div>
+                </div>
+
+                <div class="list-item">
+                    <div class="list-icon">
+                        <i class="fas fa-bolt"></i>
+                    </div>
+                    <div class="list-text">
+                        <div class="list-title">丝滑对话响应</div>
+                        <p>端到端对话响应延迟控制在1秒左右</p>
+                    </div>
+                </div>
+
+                <div class="list-item">
+                    <div class="list-icon">
+                        <i class="fas fa-brain"></i>
+                    </div>
+                    <div class="list-text">
+                        <div class="list-title">长短期记忆结合</div>
+                        <p>结合短期对话记忆和长期用户画像</p>
+                    </div>
+                </div>
+
+                <div class="list-item">
+                    <div class="list-icon">
+                        <i class="fas fa-cloud"></i>
+                    </div>
+                    <div class="list-text">
+                        <div class="list-title">端云结合，社交分享</div>
+                        <p>本地高效处理保障隐私，云端协同支持跨设备同步与一键社交分享</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="card-header">
+                <div class="card-icon">
+                    <i class="fas fa-calculator"></i>
+                </div>
+                <h2 class="card-title">成本分析</h2>
+            </div>
+
+            <p>基于当前市场API价格，计算一小时对话的总成本：</p>
+
+            <table class="cost-table">
+                <thead>
+                    <tr>
+                        <th>服务</th>
+                        <th>用量</th>
+                        <th>单价</th>
+                        <th>成本</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>LLM输入处理</td>
+                        <td>100,000 tokens</td>
+                        <td>1元/百万tokens</td>
+                        <td>¥0.10</td>
+                    </tr>
+                    <tr>
+                        <td>LLM输出处理</td>
+                        <td>4,800 tokens</td>
+                        <td>2元/百万tokens</td>
+                        <td>¥0.0096</td>
+                    </tr>
+                    <tr>
+                        <td>语音合成 (TTS)</td>
+                        <td>4,800 字</td>
+                        <td>0.4元/万字</td>
+                        <td>¥0.192</td>
+                    </tr>
+                    <tr>
+                        <td>语音识别 (ASR)</td>
+                        <td>0.5 小时</td>
+                        <td>0.288元/小时</td>
+                        <td>¥0.144</td>
+                    </tr>
+                    <tr>
+                        <td>VAD (语音活动检测)</td>
+                        <td>-</td>
+                        <td>免费</td>
+                        <td>¥0.00</td>
+                    </tr>
+                    <tr>
+                        <td>记忆库</td>
+                        <td>-</td>
+                        <td>免费</td>
+                        <td>¥0.00</td>
+                    </tr>
+                    <tr>
+                        <td>服务器/数据库/云存储</td>
+                        <td>-</td>
+                        <td>-</td>
+                        <td>¥0.00</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <div class="total-cost">
+                <i class="fas fa-coins"></i> 一小时对话总成本：<span class="highlight">¥0.4456</span>
+            </div>
+
+            <p>注：以上计算基于以下假设：</p>
+            <ul style="padding-left: 20px; margin: 10px 0; color: #555; font-size: 0.9rem;">
+                <li>120轮对话（每轮输入800 tokens，输出40 tokens）</li>
+                <li>LLM输入总量：100,000 tokens</li>
+                <li>LLM输出总量：4,800 tokens</li>
+                <li>语音合成：4,800字（中文）</li>
+                <li>语音识别：0.5小时音频</li>
+            </ul>
+        </div>
+    </div>
+</body>
+</html>

@@ -21,6 +21,7 @@ const loadingText = document.getElementById('loadingText');
 const backBtn = document.querySelector('.back-btn');
 
 const removeBgCheckbox = document.getElementById('removeBgCheckbox');
+const keepSizeCheckbox = document.getElementById('keepSizeCheckbox');
 
 // 返回按钮处理
 function handleBack() {
@@ -241,8 +242,8 @@ async function handleCreate() {
         formData.append('unionid', unionid);
         formData.append('avatar_id', avatar_id);
         formData.append('avatar_name', avatar_name);
-        formData.append('matting', 'true');  // 强制抠图
-        formData.append('keepsize', 'false'); // 不保留原始尺寸而是适应竖屏720P
+        formData.append('matting', removeBgCheckbox.checked ? 'true' : 'false');  // 是否强制抠图
+        formData.append('keepsize', keepSizeCheckbox.checked ? 'true' : 'false'); // 是否保留原始尺寸而是适应竖屏720P
         formData.append('file', currentFile); // currentFile应该是File对象
 
         const response = await fetch('/auth/handle_new_role2', {
