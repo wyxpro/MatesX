@@ -194,15 +194,93 @@ async function handleCreate() {
         return;
     }
 
+    XSAlert('请保证图片或视频符合要求，本次创建成功将消耗1次机会，创建失败将消耗0.2次机会');
+
     unionid = localStorage.getItem('unionid');
     isUploading = true;
     setCreateButtonState(true);
     window.addEventListener('beforeunload', handleBeforeUnload);
 
+    // 访问服务器确认还有多少创建机会
     try {
-        // 成功处理
-        confirm(`上传成功，等待生成中`);
-        await new Promise(resolve => setTimeout(resolve, 3000));
+        const response = await fetch('/auth/apply_new_role', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                unionid: unionid,
+                avatar_name: avatar_name
+            })
+        });
+
+        const result = await response.json();
+
+        if (result.code !== 0) {
+            console.error(result.message);
+            XSAlert(result.message);
+            cleanupUploadState();
+            return;
+        }
+
+        avatar_id = result.data.avatar_id;
+        avatar_balance = result.data.avatar_balance;
+
+    } catch (error) {
+        console.error('请求失败:', error);
+        XSAlert('请求失败');
+        cleanupUploadState();
+        return;
+    }
+
+    console.log('开始上传文件');
+
+    try {
+        // 创建FormData对象，用于multipart/form-data格式
+        const formData = new FormData();
+        formData.append('unionid', unionid);
+        formData.append('avatar_id', avatar_id);
+        formData.append('avatar_name', avatar_name);
+        formData.append('matting', 'true');  // 强制抠图
+        formData.append('keepsize', 'false'); // 不保留原始尺寸而是适应竖屏720P
+        formData.append('file', currentFile); // currentFile应该是File对象
+
+        const response = await fetch('/auth/handle_new_role2', {
+            method: 'POST',
+            body: formData
+            // 注意：不要设置Content-Type头，浏览器会自动设置正确的boundary
+        });
+
+        if (!response.ok) {
+            throw new Error(`HTTP错误: ${response.status}`);
+        }
+
+        const result = await response.json();
+
+        if (result.code !== 0) {
+            throw new Error(result.message || '上传处理失败');
+        }
+
+        XSAlert(`上传成功，等待生成中，您目前还有${avatar_balance.toFixed(1)}次机会`);
+
+        // 更新本地角色列表
+        let rolesList = JSON.parse(localStorage.getItem('roles_list')) || [];
+        const newRole = {
+            avatar_id: avatar_id,
+            unionid: unionid,
+            status: "pending",
+            avatar_name: avatar_name,
+            avatar_url: ``,
+            voice_id: "",
+            system_prompt: "",
+            video_url: "",
+            video_asset_url: ""
+        };
+        rolesList.push(newRole);
+        localStorage.setItem('roles_list', JSON.stringify(rolesList));
+
+        console.log('新状态:', result.data.new_status);
+        history.back();
 
     } catch (error) {
         console.error('请求异常:', error);

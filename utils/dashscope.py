@@ -4,6 +4,14 @@ DASHSCOPE_LLM_URL = "https://dashscope.aliyuncs.com/compatible-mode/v1"
 
 HOST_URL = "http://localhost:8000"
 
+MatesX_key = ""
+
+if not DASHSCOPE_API_KEY:
+    print("错误: DASHSCOPE_API_KEY 未配置，请设置阿里百炼平台秘钥，否则无法开启对话")
+
+if not MatesX_key:
+    print("错误: MatesX_key 未配置，请设置matesx.cn授权平台秘钥，否则无法新建形象")
+
 from fastapi import HTTPException
 import httpx
 

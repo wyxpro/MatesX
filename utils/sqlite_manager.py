@@ -27,6 +27,7 @@ def init_db():
         cursor.execute('''CREATE TABLE IF NOT EXISTS roles (
             avatar_id TEXT PRIMARY KEY,
             unionid TEXT,
+            status TEXT,
             avatar_name TEXT,
             avatar_url TEXT,
             cosyvoice_id TEXT,
@@ -36,6 +37,7 @@ def init_db():
             video_url TEXT,
             video_asset_url TEXT,
             image_asset_url TEXT,
+            errorMessage TEXT,
             bg_id TEXT,
             created_time TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
             updated_time TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
@@ -61,7 +63,8 @@ def init_db():
             unionid TEXT PRIMARY KEY,                          /* 用户的唯一标识unionid */
             nickname TEXT,                                     /* 用户昵称 */
             created_time TIMESTAMP DEFAULT CURRENT_TIMESTAMP,  /* 创建时间，默认为当前时间 */
-            updated_time TIMESTAMP DEFAULT CURRENT_TIMESTAMP   /* 更新时间，默认为当前时间 */
+            updated_time TIMESTAMP DEFAULT CURRENT_TIMESTAMP,   /* 更新时间，默认为当前时间 */
+            avatar_balance REAL DEFAULT 0.0           /* 自定义形象余额，默认为5 */
         )''')
 
         conn.commit()
@@ -144,14 +147,14 @@ def check_new_user(unionid):
 def insert_or_update_table(table_name, **kwargs):
     if table_name == "users":
         ALLOWED_FIELDS = {
-            "unionid", "nickname"
+            "unionid", "nickname", "avatar_balance"
         }
         NECESSARY_KEYS = {"unionid"}
     elif table_name == "roles":
         ALLOWED_FIELDS = {
-            "avatar_id", "unionid", "avatar_name", "avatar_url", "cosyvoice_id",
+            "avatar_id", "unionid", "status", "avatar_name", "avatar_url", "cosyvoice_id",
             "system_prompt", "memory_prompt_url", "memory_version", "video_url", "video_asset_url", "image_asset_url",
-            "chat_count"
+            "errorMessage", "bg_id", "created_time", "updated_time", "version", "chat_count"
         }
         NECESSARY_KEYS = {"avatar_id"}
     elif table_name == "voices":
@@ -261,7 +264,8 @@ def init_insert_data():
             "video_url": "/assets/000/01.webm",
             "video_asset_url": "/assets/000/combined_data.json.gz",
             "memory_prompt_url": "/assets/000/memory.bin",
-            "memory_version": 1
+            "memory_version": 0,
+            "status": "success"
         },
         {
             "unionid": "MatesX01",
@@ -273,7 +277,8 @@ def init_insert_data():
             "video_url": "/assets/001/01.webm",
             "video_asset_url": "/assets/001/combined_data.json.gz",
             "memory_prompt_url": "/assets/001/memory.bin",
-            "memory_version": 1
+            "memory_version": 0,
+            "status": "success"
         },
         {
             "unionid": "MatesX01",
@@ -285,7 +290,8 @@ def init_insert_data():
             "video_url": "/assets/002/01.webm",
             "video_asset_url": "/assets/002/combined_data.json.gz",
             "memory_prompt_url": "/assets/002/memory.bin",
-            "memory_version": 0
+            "memory_version": 0,
+            "status": "success"
         },
         {
             "unionid": "MatesX01",
@@ -297,7 +303,8 @@ def init_insert_data():
             "video_url": "/assets/003/01.webm",
             "video_asset_url": "/assets/003/combined_data.json.gz",
             "memory_prompt_url": "/assets/003/memory.bin",
-            "memory_version": 0
+            "memory_version": 0,
+            "status": "success"
         },
         {
             "unionid": "MatesX01",
@@ -309,7 +316,8 @@ def init_insert_data():
             "video_url": "/assets/004/01.webm",
             "video_asset_url": "/assets/004/combined_data.json.gz",
             "memory_prompt_url": "/assets/004/memory.bin",
-            "memory_version": 0
+            "memory_version": 0,
+            "status": "success"
         },
         {
             "unionid": "MatesX01",
@@ -321,7 +329,8 @@ def init_insert_data():
             "video_url": "/assets/005/01.webm",
             "video_asset_url": "/assets/005/combined_data.json.gz",
             "memory_prompt_url": "/assets/005/memory.bin",
-            "memory_version": 0
+            "memory_version": 0,
+            "status": "success"
         },
         {
             "unionid": "MatesX01",
@@ -333,7 +342,8 @@ def init_insert_data():
             "video_url": "/assets/006/01.webm",
             "video_asset_url": "/assets/006/combined_data.json.gz",
             "memory_prompt_url": "/assets/006/memory.bin",
-            "memory_version": 0
+            "memory_version": 0,
+            "status": "success"
         },
         {
             "unionid": "MatesX01",
@@ -345,7 +355,8 @@ def init_insert_data():
             "video_url": "/assets/007/01.webm",
             "video_asset_url": "/assets/007/combined_data.json.gz",
             "memory_prompt_url": "/assets/007/memory.bin",
-            "memory_version": 0
+            "memory_version": 0,
+            "status": "success"
         }
     ]
 
@@ -460,7 +471,7 @@ def init_insert_data():
 
     # 首先创建用户
     try:
-        user = {"unionid":"MatesX01", "nickname":"explorer"}
+        user = {"unionid":"MatesX01", "nickname":"explorer", "avatar_balance": 1000}
         insert_or_update_table("users", **user)
         print("用户 MatesX01 创建成功")
     except Exception as e:

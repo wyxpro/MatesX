@@ -71,6 +71,8 @@ DASHSCOPE_TOKEN_URL = "https://dashscope.aliyuncs.com/api/v1/tokens"
 DASHSCOPE_LLM_URL = "https://dashscope.aliyuncs.com/compatible-mode/v1"
 # 配置你的域名服务器（或仅在本地就用默认localhost）
 HOST_URL = "http://localhost:8000"
+# 配置 MatesX形象平台秘钥
+MatesX_key = ""           # 从matesx.cn获取
 ```
 开启服务：
 ```bash
@@ -79,13 +81,16 @@ python main.py
 然后打开 http://localhost:8000/web/home.html 享用吧
 
 ## 定制形象
+此项目不提供复杂的底层算法实现而专注于轻量但完备的应用。
 
-对于个人爱好者，我们会在matesx网页程序定期提供免费额度，此项目不提供复杂的底层算法实现而专注于轻量但完备的应用。
+对于个人爱好者，我们会在[matesx网页程序](https://www.matesx.com)定期提供免费额度。
 
-对于开发者，请参阅[API](preview/api.md)的API付费调用方式，可欢迎使用[matesx.cn](https://www.matesx.cn)来管理你的形象。
+对于开发者，[联系我](preview/wechat.jpg)获取3个免费额度秘钥。请参阅 [API](preview/API.md) 的API付费调用方式，可欢迎使用[matesx.cn](https://www.matesx.cn)来管理你的形象。
 
-### 多端编译（win、mac、android、mini-program）
-参考 platform 文件夹
+### 编译
+支持windows、mac、android、mini-program
+
+参考 [platform文件夹](platform/README.md) 
 
 ### 高并发及云端同步
 - 升级为云端数据库
@@ -97,5 +102,5 @@ Apache License 2.0
 ## 联系
 |  微信交流群| QQ群聊                                                                        |
 |------------------|----------------------------------------------------------------------------------------|
-| ![微信交流群](https://github.com/user-attachments/assets/b1f24ebb-153b-44b1-b522-14f765154110) | ![QQ群聊](https://github.com/user-attachments/assets/29bfef3f-438a-4b9f-ba09-e1926d1669cb) |
+| <img src="preview/wechat.jpg" width="480" alt="MatesX 官方微信"/> | <img src="preview/qq.jpg" width="480" alt="MatesX 官方QQ"/>|
 

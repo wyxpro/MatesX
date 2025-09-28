@@ -71,6 +71,8 @@ DASHSCOPE_TOKEN_URL = "https://dashscope.aliyuncs.com/api/v1/tokens"
 DASHSCOPE_LLM_URL = "https://dashscope.aliyuncs.com/compatible-mode/v1"
 # Configure your domain server (or use localhost for local only)
 HOST_URL = "http://localhost:8000"
+# Configure MatesX Avatar key
+MatesX_key = ""           # Obtain key from matesx.cn
 ```
 
 Start service:
@@ -79,14 +81,18 @@ python main.py
 ```
 Then open http://localhost:8000/web/home.html to enjoy!
 
-## Custom Avatars
+### Custom Avatars
+This project does not offer underlying algorithm implementations but focuses on lightweight yet comprehensive applications.
 
-For individual enthusiasts, we regularly provide free credits on the Matesx web application. This project does not offer complex underlying algorithm implementations but focuses on lightweight yet comprehensive applications.
+For individual enthusiasts, get free credits on [Matesx official web application](https://www.matesx.com). 
 
-For developers, please refer to the[API](preview/api.md) for paid API calling methods. Welcome to use [matesx.cn](https://www.matesx.cn) to manage your avatars.
+For developers, receive 3 free credits by [contacting us](preview/wechat.jpg). please refer to the [API](preview/API.md) for API calling. 
+Use [matesx.cn](https://www.matesx.cn) to manage your avatars.
 
-### Multi-platform Compilation (Windows, macOS, Android, Mini Program)
-Refer to the platform folder
+### Compilation
+support Windows, macOS, Android, Mini-Program
+
+Refer to the [platform](platform/README.md) folder
 
 ### High Concurrency & Cloud Sync
 - Upgrade to cloud database
@@ -96,7 +102,7 @@ Refer to the platform folder
 Apache License 2.0
 
 ## Contact
-| join WeChat group                                                                        | Join QQ group                                                                            |
-|------------------------------------------------------------------------------------------|------------------------------------------------------------------------------------------|
-| ![微信交流群](https://github.com/user-attachments/assets/b1f24ebb-153b-44b1-b522-14f765154110) | ![QQ群聊](https://github.com/user-attachments/assets/29bfef3f-438a-4b9f-ba09-e1926d1669cb) |
+| join WeChat group                                             | Join QQ group                                            |
+|---------------------------------------------------------------|-------------------------------------------------------------|
+| <img src="preview/wechat.jpg" width="480" alt="MatesX 官方微信"/> | <img src="preview/qq.jpg" width="480" alt="MatesX 官方QQ"/>|
 
