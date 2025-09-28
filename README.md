@@ -45,11 +45,11 @@
 
 | Platform | Status | Tech Stack | Preview | |
 |-----------------|--------|----------------|-------------------------------------------|-----------------------------------------------------------------------------------------|
-| Windows | ✅ | electron | <img src="preview/windows.jpg" width="120" /> | exe link |
+| Windows | ✅ | electron | <img src="preview/windows.jpg" width="120" /> | [exe link](https://github.com/kleinlee/MatesX/releases/download/v1.0/matesx-win32-x64.zip) |
 | macOS | ✅ | electron | ||
-| Android app | ✅ | webview | <img src="preview/android.jpg" width="120" /> | apk link |
-| WeChat Mini Program | ✅ | webview | <img src="preview/mini-program.jpg" width="120" /> | #小程序://MatesX数字生命/2ZvtOmy4Vfv1Chi | |
-| Web | ✅ | WebGL rendering support | <img src="preview/web.jpg" width="120" /> | web link |
+| Android app | ✅ | webview | <img src="preview/android.jpg" width="120" /> | [apk link](https://github.com/kleinlee/MatesX/releases/download/v1.0/app-debug.apk) |
+| WeChat Mini Program | ✅ | webview | <img src="preview/mini-program.jpg" width="120" /> | 小程序:MatesX数字生命 |
+| Web | ✅ | WebGL rendering support | <img src="preview/web.jpg" width="120" /> | [web link](https://www.matesx.com)  |
 > 💡 All platforms share the same core engine, code reuse rate > 99%, extremely lightweight (core module < 5MB)
 
 ---

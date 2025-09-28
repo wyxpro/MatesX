@@ -43,13 +43,13 @@
 
 ## 📱 多端支持
 
-| 平台          | 支持状态 | 技术路线       | 预览                                   |                                                                                         |
-|-------------|------|------------|----------------------------------------|-----------------------------------------------------------------------------------------|
+| 平台          | 支持状态 | 技术路线       | 预览                                   |                                                                                            |
+|-------------|------|------------|----------------------------------------|--------------------------------------------------------------------------------------------|
 | Windows     | ✅    | electron   | <img src="preview/windows.jpg" width="120" />      | [exe link](https://github.com/kleinlee/MatesX/releases/download/v1.0/matesx-win32-x64.zip) |
 | macOS       | ✅    | electron   |                                        ||
-| Android app | ✅    | webview    | <img src="preview/android.jpg" width="120" />      | [apk link](https://github.com/kleinlee/MatesX/releases/download/v1.0/app-debug.apk)     |
-| 微信小程序       | ✅    | webview    | <img src="preview/mini-program.jpg" width="120" /> | #小程序://MatesX数字生命/2ZvtOmy4Vfv1Chi                                 |                                               |
-| Web         | ✅    | WebGL 渲染支持 | <img src="preview/web.jpg" width="120" />        | [web link](matesx.com)                                                                  |
+| Android app | ✅    | webview    | <img src="preview/android.jpg" width="120" />      | [apk link](https://github.com/kleinlee/MatesX/releases/download/v1.0/app-debug.apk)        |
+| 微信小程序       | ✅    | webview    | <img src="preview/mini-program.jpg" width="120" /> | 小程序:MatesX数字生命                                                                             |   
+| Web         | ✅    | WebGL 渲染支持 | <img src="preview/web.jpg" width="120" />        | [web link](https://www.matesx.com)                                                         |
 > 💡 所有平台共享同一套核心引擎，代码复用率 > 99%，极致轻量（核心模块 < 5MB）
 
 ---
