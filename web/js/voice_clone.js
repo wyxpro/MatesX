@@ -1,3 +1,5 @@
+let url_prefix = "";
+
 const unionid = localStorage.getItem('unionid');
 if (!unionid) throw new Error('用户未登录，请重新登录');
 
@@ -296,9 +298,10 @@ class VoiceModal {
         let voice_oss_url;
         let voice_url;
 
-        const uploadToOSS = async (file, url_) => {
+        const uploadToOSS = async (file, voice_oss_url, voice_id) => {
             try {
                 let ext, contentType;
+
 
                 if (file.type === 'audio/mpeg' || file.name.endsWith('.mp3')) {
                     ext = 'mp3';
@@ -312,9 +315,10 @@ class VoiceModal {
                 } else {
                     throw new Error('不支持的音频格式');
                 }
+                voice_url = `${voice_oss_url}/${voice_id}.${ext}`;
 
                 await uploadFile({
-                    url: url_,
+                    url: voice_url,
                     file: file,
                     contentType: contentType
                 });
@@ -328,7 +332,7 @@ class VoiceModal {
 
         // 访问服务器确认还有多少创建机会
         try {
-            const response2 = await fetch('/voice/apply_new_voice', {
+            const response2 = await fetch(url_prefix + '/voice/apply_new_voice', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
@@ -351,10 +355,9 @@ class VoiceModal {
             }
 
             console.log('开始上传语音');
-            voice_url = `${voice_oss_url}/${voice_id}.${ext}`;
-            await uploadToOSS(this.currentAudioFile, voice_url);
+            await uploadToOSS(this.currentAudioFile, voice_oss_url, voice_id);
 
-            const response = await fetch('/voice/handle_new_voice', {
+            const response = await fetch(url_prefix + '/voice/handle_new_voice', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'

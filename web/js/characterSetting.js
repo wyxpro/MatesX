@@ -104,7 +104,7 @@ async function deleteVoice(deleted_voice) {
     });
     const result = await response.json();
     console.log(result);
-    if (result.status === "success") {
+    if (result.code === 0) {
         XSAlert('删除成功');
         const index = voices_list.findIndex(v => v.voice_id === deleted_voice.voice_id);
         if (index > -1) {

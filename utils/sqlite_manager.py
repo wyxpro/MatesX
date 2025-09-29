@@ -128,6 +128,7 @@ def delete_data(table: str, condition: str, params: tuple) -> int:
         sql = f"DELETE FROM {table} WHERE {condition}"
         cursor.execute(sql, params)
         conn.commit()
+        print("cursor.rowcount", cursor.rowcount)
         return cursor.rowcount
     except sqlite3.Error as e:
         print(f"删除数据错误: {e}")
