@@ -1,0 +1,217 @@
+.modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0,0,0,0.4);
+    display: none;
+    justify-content: center;
+    align-items: center;
+    backdrop-filter: blur(4px);
+    z-index: 100;
+}
+
+.modal-content {
+    background: white;
+    width: 90%;
+    max-width: 400px;
+    border-radius: 16px;
+    padding: 24px 20px;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.1);
+    position: relative;
+    animation: modalIn 0.3s ease;
+}
+
+@keyframes modalIn {
+    from { transform: translateY(20px); opacity: 0; }
+    to { transform: translateY(0); opacity: 1; }
+}
+
+.modal h3 {
+    font-size: 18px;
+    color: #333;
+    margin-bottom: 20px;
+    font-weight: 600;
+    text-align: center;
+}
+
+.method-switch {
+    display: flex;
+    gap: 12px;
+    margin-bottom: 24px;
+}
+
+.method-item {
+    flex: 1;
+    text-align: center;
+    padding: 12px;
+    border: 1px solid #eee;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.2s;
+    font-size: 14px;
+    color: #666;
+}
+
+.method-item.active {
+    border-color: #FF3B30;
+    color: #FF3B30;
+    background: rgba(255,59,48,0.05);
+}
+
+#record-area {
+    text-align: center;
+    margin: 20px 0;
+}
+
+.record-btn {
+    width: 72px;
+    height: 72px;
+    border-radius: 50%;
+    background: #FF3B30;
+    margin: 0 auto 16px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.2s;
+    position: relative;
+}
+
+.record-btn::before {
+    content: "";
+    width: 28px;
+    height: 28px;
+    background: white;
+    border-radius: 4px;
+    transition: all 0.3s;
+}
+
+.record-btn.recording::before {
+    width: 24px;
+    height: 24px;
+    border-radius: 6px;
+    background: rgba(255,255,255,0.9);
+}
+
+.record-btn.recording {
+    animation: pulse 1.5s infinite;
+}
+
+@keyframes pulse {
+    0% { box-shadow: 0 0 0 0 rgba(255,59,48,0.4); }
+    70% { box-shadow: 0 0 0 12px rgba(255,59,48,0); }
+    100% { box-shadow: 0 0 0 0 rgba(255,59,48,0); }
+}
+
+.time-display {
+    color: #666;
+    font-size: 14px;
+    margin: 8px 0;
+}
+
+.upload-area {
+    border: 2px dashed #eee;
+    border-radius: 12px;
+    padding: 28px 16px;
+    margin: 16px 0;
+    text-align: center;
+    transition: all 0.3s;
+    background: #fafafa;
+    cursor: pointer;
+}
+
+.upload-area.active {
+    border-color: #FF3B30;
+    background: rgba(255,59,48,0.05);
+}
+
+.upload-icon {
+    width: 48px;
+    height: 48px;
+    background: #FF3B30;
+    border-radius: 50%;
+    margin: 0 auto 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.upload-icon::before {
+    content: "+";
+    color: white;
+    font-size: 28px;
+    line-height: 1;
+}
+
+.audio-preview {
+    margin: 16px 0;
+}
+
+audio {
+    width: 100%;
+    border-radius: 8px;
+    background: #f5f5f5;
+}
+
+.modal-actions {
+    margin-top: 24px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.confirm-btn {
+    background: #FF3B30;
+    color: white;
+    border: none;
+    padding: 14px;
+    border-radius: 8px;
+    font-size: 16px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: opacity 0.3s;
+}
+
+.confirm-btn:disabled {
+    background: #ddd;
+    cursor: not-allowed;
+}
+
+.cancel-btn {
+    background: transparent;
+    color: #666;
+    border: none;
+    padding: 12px;
+    font-size: 14px;
+    cursor: pointer;
+}
+
+#toast {
+    position: fixed;
+    bottom: 50%;
+    left: 50%;
+    transform: translateX(-50%);
+    background-color: #FF3B30;
+    color: white;
+    padding: 12px 24px;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: 500;
+    text-align: center;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    z-index: 1000;
+    animation: toastIn 0.3s ease, toastOut 0.3s ease 2s;
+    display: none;
+}
+
+@keyframes toastIn {
+    from { opacity: 0; transform: translateX(-50%) translateY(20px); }
+    to { opacity: 1; transform: translateX(-50%) translateY(0); }
+}
+
+@keyframes toastOut {
+    from { opacity: 1; transform: translateX(-50%) translateY(0); }
+    to { opacity: 0; transform: translateX(-50%) translateY(20px); }
+}

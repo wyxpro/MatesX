@@ -386,13 +386,19 @@ document.addEventListener('DOMContentLoaded', async function () {
     }
 
     renderMemories();
+
+    const voiceModal = new VoiceModal();
+
+    document.getElementById('add-voice-btn').addEventListener('click', () => {
+        voiceModal.show();
+    });
 });
 
 // 监听 localStorage 的变化
 window.addEventListener('storage', (event) => {
     if (event.key === 'voices_list') {
         console.log('voices_list 发生变化，重新渲染我的语音');
-        voices_list = JSON.parse(localStorage.getItem('voices_list')) || []; // ✅ 修复：原来是 roles_list
+        voices_list = JSON.parse(localStorage.getItem('voices_list')) || [];
         renderVoiceList('my-voices', voices_list);
     }
 });

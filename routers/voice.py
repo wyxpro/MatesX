@@ -32,7 +32,7 @@ def background_voice_clone(unionid: str, voice_id: str, voice_url: str):
     clone_voice_url: Optional[str] = None
     error_message: Optional[str] = None
     status = "failed"
-
+    print("background_voice_clone", unionid, voice_id, voice_url)
     try:
         # Step 1: 创建声音复刻
         cosyvoice_id = service.create_voice(
@@ -132,7 +132,8 @@ async def apply_new_voice(data: dict = Body(...)):
                 "voice_id": voice_id,
                 "voice_name": voice_name,
                 "voice_balance": voice_balance,
-                "check_status": "pending"
+                "check_status": "pending",
+                "voice_oss_url": OSS_URL
             }
         }
 
@@ -144,8 +145,8 @@ async def apply_new_voice(data: dict = Body(...)):
 
 @voice_router.post("/handle_new_voice")
 async def handle_new_voice(
-    data: dict = Body(...),
-    background_tasks: BackgroundTasks = BackgroundTasks()
+    background_tasks: BackgroundTasks,
+    data: dict = Body(...)
 ):
     print("handle_new_voice", data)
     try:
@@ -180,7 +181,7 @@ async def handle_new_voice(
         }
 
     except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
+        raise HTTPException(status_code=500, detail="Internal server error")
 
 
 @voice_router.post("/check_voice_status")

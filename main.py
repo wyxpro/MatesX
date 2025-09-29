@@ -23,7 +23,7 @@ async def lifespan(app: FastAPI):
 app = FastAPI(lifespan=lifespan)
 
 app.include_router(auth_router, prefix="/auth")
-
+app.include_router(voice_router, prefix="/voice")
 # 挂载视频数据静态文件目录
 app.mount("/assets", StaticFiles(directory="assets"), name="assets")
 app.mount("/web", StaticFiles(directory="web"), name="web")

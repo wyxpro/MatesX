@@ -3,7 +3,8 @@ DASHSCOPE_TOKEN_URL = "https://dashscope.aliyuncs.com/api/v1/tokens"
 DASHSCOPE_LLM_URL = "https://dashscope.aliyuncs.com/compatible-mode/v1"
 
 HOST_URL = "http://localhost:8000"
-OSS_URL = ""
+
+OSS_URL = "https://matesx.oss-cn-beijing.aliyuncs.com/audio/user"
 MatesX_key = ""
 
 if not DASHSCOPE_API_KEY:

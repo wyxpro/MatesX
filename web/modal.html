@@ -1,0 +1,32 @@
+<div class="modal" id="modal">
+    <div class="modal-content">
+        <h3>创建专属声音</h3>
+
+        <div class="method-switch">
+            <div class="method-item active" data-method="record">🎤 录音创建</div>
+            <div class="method-item" data-method="upload">📁 上传音频</div>
+        </div>
+
+        <div id="record-area">
+            <div class="record-btn" id="record-button"></div>
+            <div class="time-display" id="time-display">点击开始录音</div>
+            <div class="recording-tips">请保持环境安静，清晰朗读内容</div>
+        </div>
+
+        <div class="upload-area" id="upload-area" style="display:none">
+            <div class="upload-icon"></div>
+            <div>点击上传音频文件，时长8-20秒</div>
+            <div class="upload-tips">支持MP3/WAV/M4A格式</div>
+            <input type="file" id="file-input" style="display:none;" accept=".mp3,.wav,.m4a,audio/mpeg,audio/wav,audio/mp4">
+        </div>
+        <div class="audio-preview">
+            <audio id="preview-audio" controls></audio>
+        </div>
+
+        <div class="modal-actions">
+            <button class="confirm-btn" id="submit-btn">开始创建</button>
+            <button class="cancel-btn" id="close-modal-btn">取消</button>
+        </div>
+    </div>
+<div id="toast" style="display: none;"></div>
+</div>
