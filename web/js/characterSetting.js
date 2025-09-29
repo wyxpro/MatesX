@@ -21,12 +21,16 @@ const officialVoices = [
     { voice_name: "星澜", language: "中英", clone_voice_url: "https://help-static-aliyun-doc.aliyuncs.com/file-manage-files/zh-CN/20240624/haffms/Stella.mp3", voice_id: "loongstella", cosyvoice_id: "loongstella", status: "success" },
     { voice_name: "贝翎", language: "中", clone_voice_url: "https://help-static-aliyun-doc.aliyuncs.com/file-manage-files/zh-CN/20240624/tguine/Bella.mp3", voice_id: "loongbella", cosyvoice_id: "loongbella", status: "success" }
 ];
-
+let url_prefix = "";
 let rolesList = [];
 let voices_list = [];
 let selectedRoleID = null;
 let selectedRole = null;
 let intervalId = null;
+
+function checkMembershipValid() {
+    return true;
+}
 
 function getStatusText(status) {
     switch (status) {
@@ -54,7 +58,7 @@ function check_voice_status() {
 
     const checkVoiceStatus = async () => {
         try {
-            const response = await fetch('/voice/check_voice_status', {
+            const response = await fetch(url_prefix + '/voice/check_voice_status', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
@@ -88,7 +92,7 @@ function check_voice_status() {
 }
 
 async function deleteVoice(deleted_voice) {
-    const response = await fetch('/voice/delete_voice', {
+    const response = await fetch(url_prefix + '/voice/delete_voice', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json'
@@ -196,37 +200,8 @@ function renderVoiceList(containerId, voices) {
     });
 }
 
-document.addEventListener('DOMContentLoaded', async function () {
-    rolesList = JSON.parse(localStorage.getItem('roles_list')) || [];
-
-    window.addEventListener('storage', (event) => {
-        if (event.key === 'roles_list') {
-            rolesList = JSON.parse(localStorage.getItem('roles_list')) || [];
-            console.log('角色列表已更新:', rolesList);
-        }
-    });
-
-    selectedRoleID = localStorage.getItem('selectedRoleID');
-    if (!selectedRoleID) throw new Error('未找到角色ID');
-
-    const unionid = localStorage.getItem('unionid');
-    if (!unionid) throw new Error('用户未登录，请重新登录');
-
-    selectedRole = rolesList.find(role => role.avatar_id === selectedRoleID);
-    if (!selectedRole) throw new Error('角色信息不存在，请重新选择');
-    console.log("selectedRole: ", selectedRole);
-
-    const { avatar_name, avatar_url, system_prompt, avatar_id, cosyvoice_id, chat_count, memory_prompt_url, memory_version, created_time, updated_time } = selectedRole;
-
-    document.getElementById('name-input').value = avatar_name || '';
-    const textarea = document.getElementById('character-desc');
-    textarea.value = system_prompt || '';
-
-    const avatarDisplay = document.getElementById('avatar-display');
-    if (avatar_url) {
-        avatarDisplay.innerHTML = `<img src="${avatar_url}" alt="${avatar_name}">`;
-    }
-
+function setupVoice(cosyvoice_id)
+{
     voices_list = JSON.parse(localStorage.getItem('voices_list')) || [];
     const currentVoice = voices_list.find(voice => voice.cosyvoice_id === cosyvoice_id) || officialVoices.find(v => v.cosyvoice_id === cosyvoice_id);
     const selectedVoiceName = document.getElementById('selected-voice-name');
@@ -317,6 +292,43 @@ document.addEventListener('DOMContentLoaded', async function () {
         }
     });
 
+    const voiceModal = new VoiceModal();
+
+    document.getElementById('add-voice-btn').addEventListener('click', () => {
+        if (!checkMembershipValid()) {
+            XSAlert('您未开通权限');
+            return;
+        }
+        voiceModal.show();
+    });
+}
+
+document.addEventListener('DOMContentLoaded', async function () {
+    rolesList = JSON.parse(localStorage.getItem('roles_list')) || [];
+
+    selectedRoleID = localStorage.getItem('selectedRoleID');
+    if (!selectedRoleID) throw new Error('未找到角色ID');
+
+    const unionid = localStorage.getItem('unionid');
+    if (!unionid) throw new Error('用户未登录，请重新登录');
+
+    selectedRole = rolesList.find(role => role.avatar_id === selectedRoleID);
+    if (!selectedRole) throw new Error('角色信息不存在，请重新选择');
+    console.log("selectedRole: ", selectedRole);
+
+    const { avatar_name, avatar_url, system_prompt, avatar_id, cosyvoice_id, chat_count, memory_prompt_url, memory_version, created_time, updated_time } = selectedRole;
+
+    document.getElementById('name-input').value = avatar_name || '';
+    const textarea = document.getElementById('character-desc');
+    textarea.value = system_prompt || '';
+
+    const avatarDisplay = document.getElementById('avatar-display');
+    if (avatar_url) {
+        avatarDisplay.innerHTML = `<img src="${avatar_url}" alt="${avatar_name}">`;
+    }
+
+    setupVoice(cosyvoice_id);
+
     const counter = document.getElementById('word-counter');
     textarea.addEventListener('input', function () {
         const currentLength = this.value.length;
@@ -330,7 +342,7 @@ document.addEventListener('DOMContentLoaded', async function () {
         const newSystemPrompt = document.getElementById('character-desc').value;
 
         if (!newName) {
-            alert('角色名称不能为空');
+            XSAlert('角色名称不能为空');
             return;
         }
 
@@ -343,7 +355,7 @@ document.addEventListener('DOMContentLoaded', async function () {
         localStorage.setItem('roles_list', JSON.stringify(updatedRolesList));
 
         try {
-            const response = await fetch('/auth/update_role', {
+            const response = await fetch(url_prefix + '/auth/update_role', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
@@ -356,10 +368,10 @@ document.addEventListener('DOMContentLoaded', async function () {
             });
 
             const result = await response.json();
-            alert(result.code === 0 ? '角色信息已更新' : '角色信息更新失败，请稍后重试');
+            XSAlert(result.code === 0 ? '角色信息已更新' : '角色信息更新失败，请稍后重试');
         } catch (error) {
             console.error('请求失败:', error);
-            alert('网络错误，请检查网络连接');
+            XSAlert('网络错误，请检查网络连接');
         }
     });
 
@@ -401,12 +413,6 @@ document.addEventListener('DOMContentLoaded', async function () {
     }
 
     renderMemories();
-
-    const voiceModal = new VoiceModal();
-
-    document.getElementById('add-voice-btn').addEventListener('click', () => {
-        voiceModal.show();
-    });
 });
 
 // 监听 localStorage 的变化
@@ -415,6 +421,10 @@ window.addEventListener('storage', (event) => {
         console.log('voices_list 发生变化，重新渲染我的语音');
         voices_list = JSON.parse(localStorage.getItem('voices_list')) || [];
         renderVoiceList('my-voices', voices_list);
+    }
+    else if (event.key === 'roles_list') {
+        rolesList = JSON.parse(localStorage.getItem('roles_list')) || [];
+        console.log('角色列表已更新:', rolesList);
     }
 });
 

@@ -46,7 +46,7 @@ class VoiceModal {
             this.bindEvents();
         } catch (error) {
             console.error('Error loading modal template:', error);
-            this.showToast('加载模态框失败，请重试');
+            XSAlert('加载模态框失败，请重试');
         }
     }
 
@@ -132,7 +132,7 @@ class VoiceModal {
                 console.log("Recording started");
 
             }).catch((err) => {
-                this.showToast(`发生错误：${err.message}`);
+                XSAlert(`发生错误：${err.message}`);
             });
         } else {
             this.stopRecording();
@@ -151,7 +151,7 @@ class VoiceModal {
             const duration = Date.now() - this.recordingStartTime;
             // 检测录音时长
             if (duration < 8000) {
-                this.showToast('录音时间不足8秒，请重新录制');
+                XSAlert('录音时间不足8秒，请重新录制');
                 document.getElementById('preview-audio').src = '';
                 document.getElementById('record-button').classList.remove('recording');
                 clearInterval(this.countdownInterval);
@@ -200,14 +200,14 @@ class VoiceModal {
         if (!file) return;
 
         if (!file.type.match(/audio\/(mpeg|wav|mp4|x-m4a)/)) {
-            this.showToast('仅支持MP3/WAV/M4A格式');
+            XSAlert('仅支持MP3/WAV/M4A格式');
             return;
         }
 
         // 检查文件大小是否超过10MB
         const maxSize = 10 * 1024 * 1024; // 10MB
         if (file.size > maxSize) {
-            this.showToast('文件大小不能超过10MB');
+            XSAlert('文件大小不能超过10MB');
             return;
         }
         const objectUrl = URL.createObjectURL(file); // 创建临时URL
@@ -218,11 +218,11 @@ class VoiceModal {
         audio.onloadedmetadata = () => {
             URL.revokeObjectURL(objectUrl); // 及时释放临时URL
             if (audio.duration < 8) {
-                this.showToast('音频时长不能低于8秒');
+                XSAlert('音频时长不能低于8秒');
                 return;
             }
             if (audio.duration > 20) {
-                this.showToast('音频时长不能超过20秒');
+                XSAlert('音频时长不能超过20秒');
                 return;
             }
 
@@ -232,7 +232,7 @@ class VoiceModal {
         };
         audio.onerror = () => {
             URL.revokeObjectURL(objectUrl); // 出错时释放
-            this.showToast('无法读取音频文件');
+            XSAlert('无法读取音频文件');
         };
     }
 
@@ -260,7 +260,7 @@ class VoiceModal {
         // 统一验证音频文件
         if (!this.currentAudioFile) {
             const errorMsg = isUploadMode ? '请先选择音频文件' : '请先录制音频';
-            this.showToast(errorMsg);
+            XSAlert(errorMsg);
             return;
         }
 
@@ -276,11 +276,11 @@ class VoiceModal {
             });
 
             if (duration < 8 || duration > 20) {
-                this.showToast('音频时长需在8-20秒之间');
+                XSAlert('音频时长需在8-20秒之间');
                 return;
             }
         } catch (error) {
-            this.showToast('处理音频失败: ' + error.message);
+            XSAlert('处理音频失败: ' + error.message);
             return;
         } finally {
             URL.revokeObjectURL(objectUrl);
@@ -346,7 +346,7 @@ class VoiceModal {
             voice_oss_url = result2.data.voice_oss_url;
 
             if (voice_balance < 1) {
-                alert("语音克隆额度已不足");
+                XSAlert("语音克隆额度已不足");
                 return;
             }
 
@@ -374,11 +374,11 @@ class VoiceModal {
 
             const result = await response.json();
             if (result.code !== 0) {
-                alert('任务提交失败');
+                XSAlert('任务提交失败');
                 return;
             }
 
-            alert(`上传成功，等待克隆中，您目前还有${voice_balance.toFixed(1)}次机会`);
+            XSAlert(`上传成功，等待克隆中，您目前还有${voice_balance.toFixed(1)}次机会`);
 
             this.hide();
             console.log('renderVoiceList');
@@ -395,10 +395,10 @@ class VoiceModal {
             voices_list.push(new_voice);
             localStorage.setItem('voices_list', JSON.stringify(voices_list)); // 更新localStorage
             check_voice_status();
-            this.showToast('声音创建成功！');
+            XSAlert('声音创建成功！');
         } catch (error) {
             console.error('Error creating voice:', error);
-            this.showToast('创建失败，请重试');
+            XSAlert('创建失败，请重试');
         } finally {
             submitBtn.disabled = false;
             submitBtn.textContent = '开始创建';
@@ -409,19 +409,5 @@ class VoiceModal {
         this.stopRecording();
         this.clearAudio();
         document.getElementById('time-display').textContent = '点击开始录音';
-    }
-
-    showToast(message, duration = 1500) {
-        const toast = document.getElementById('toast');
-        toast.textContent = message;
-        toast.style.display = 'block';
-
-        // 添加动画效果
-        toast.style.animation = 'toastIn 0.3s ease';
-
-        // 在指定时间后隐藏 toast
-        setTimeout(() => {
-            toast.style.display = 'none';
-        }, duration);
     }
 }
