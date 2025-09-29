@@ -1,11 +1,11 @@
-DASHSCOPE_API_KEY = ""
+DASHSCOPE_API_KEY = "sk-55ce4f78d5b340a18b4e9666080cee36"
 DASHSCOPE_TOKEN_URL = "https://dashscope.aliyuncs.com/api/v1/tokens"
 DASHSCOPE_LLM_URL = "https://dashscope.aliyuncs.com/compatible-mode/v1"
 
 HOST_URL = "http://localhost:8000"
 
 OSS_URL = "https://matesx.oss-cn-beijing.aliyuncs.com/audio/user"
-MatesX_key = ""
+MatesX_key = "test_union210816kleinlee"
 
 if not DASHSCOPE_API_KEY:
     print("错误: DASHSCOPE_API_KEY 未配置，请设置阿里百炼平台秘钥，否则无法开启对话")

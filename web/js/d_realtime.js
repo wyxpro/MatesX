@@ -429,7 +429,7 @@ async function handleResponseStream(responseBody, signal) {
 async function tts_realtime_ws(voice_id, model_name) {
     try {
         const token = await getTempToken(model_name, voice_id);
-        cosyvoice = new Cosyvoice(`wss://dashscope.aliyuncs.com/api-ws/v1/inference/?api_key=${token}`, voice_id, "cosyvoice-v1");
+        cosyvoice = new Cosyvoice(`wss://dashscope.aliyuncs.com/api-ws/v1/inference/?api_key=${token}`, voice_id, model_name);
 
         await cosyvoice.connect((pcmData) => {
             player.pushPCM(pcmData);
@@ -479,7 +479,12 @@ async function sendTextMessage(inputValue) {
     };
 
     let voice_id = selectedRole.cosyvoice_id;
-    let tts_model = "ali";
+    let tts_model = "cosyvoice-v1";
+    if (voice_id.slice(0, 4) === "long" || voice_id.slice(0, 4) === "loon") {
+        tts_model = "cosyvoice-v1";
+    } else {
+        tts_model = "cosyvoice-v2";
+    }
     
     sendButton.innerHTML = '<i class="material-icons">stop</i>';
     if (inputValue) {
