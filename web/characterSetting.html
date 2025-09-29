@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>修改角色</title>
     <link rel="icon" href="common/favicon.ico" type="image/x-icon">
+    <link rel="stylesheet" href="css/xs-styles.css">
     <link rel="stylesheet" href="css/modal.css">
     <link href="css/material-icons.css" rel="stylesheet">
     <style>
@@ -316,37 +317,37 @@
         }
 
         .voice-group-title {
-    padding: 6px 16px;
-    font-size: 14px;
-    font-weight: 600;
-    color: #666;
-    background: #f8f8f8;
-    border-bottom: 1px solid #eee;
-}
+            padding: 6px 16px;
+            font-size: 14px;
+            font-weight: 600;
+            color: #666;
+            background: #f8f8f8;
+            border-bottom: 1px solid #eee;
+        }
 
-/* 删除按钮 */
-.delete-btn {
-    background: none;
-    border: none;
-    color: #999;
-    cursor: pointer;
-    font-size: 14px;
-    padding: 0;
-    margin-left: 8px;
-    opacity: 0.7;
-    transition: opacity 0.2s;
-}
+        /* 删除按钮 */
+        .delete-btn {
+            background: none;
+            border: none;
+            color: #999;
+            cursor: pointer;
+            font-size: 14px;
+            padding: 0;
+            margin-left: 8px;
+            opacity: 0.7;
+            transition: opacity 0.2s;
+        }
 
-.delete-btn:hover {
-    opacity: 1;
-    color: #d32f2f;
-}
+        .delete-btn:hover {
+            opacity: 1;
+            color: #d32f2f;
+        }
 
-/* 禁用状态 */
-.voice-option.disabled {
-    opacity: 0.6;
-    pointer-events: none;
-}
+        /* 禁用状态 */
+        .voice-option.disabled {
+            opacity: 0.6;
+            pointer-events: none;
+        }
 
         .preview-btn {
             display: flex;
@@ -653,6 +654,7 @@
         </div>
     </div>
     <div id="modal-container"></div>
+    <script src="js/xs-components.js"></script>
     <script src="js/database.js"></script>
     <script src="js/recorder.js"></script>
     <script src="js/voice_clone.js"></script>

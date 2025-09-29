@@ -26,7 +26,7 @@ let rolesList = [];
 let voices_list = [];
 let selectedRoleID = null;
 let selectedRole = null;
-let intervalId = null; // ✅ 声明全局 intervalId
+let intervalId = null;
 
 function getStatusText(status) {
     switch (status) {
@@ -120,17 +120,37 @@ function renderVoiceList(containerId, voices) {
 
     voices.forEach(voice => {
         const isSelected = voice.cosyvoice_id === selectedRole.cosyvoice_id;
-        const isDisabled = voice.status !== "success";
+        // 注意：不再用 isDisabled 控制整个元素的 disabled 状态
+        // 而是仅在需要时控制“选中”行为
 
         const option = document.createElement('div');
-        option.className = `voice-option ${isSelected ? 'selected' : ''} ${isDisabled ? 'disabled' : ''}`;
-        option.dataset.voiceId = voice.cosyvoice_id;
+        option.className = `voice-option ${isSelected ? 'selected' : ''}`;
+        // 不再加 'disabled' 类到整个 option
 
         // 删除按钮（仅我的声音）
         let deleteBtn = '';
         if (containerId === "my-voices") {
             deleteBtn = `<button class="delete-btn" data-voice-id="${voice.cosyvoice_id}">
                 <i class="material-icons">delete</i>
+            </button>`;
+        }
+
+        // 预览/状态按钮
+        let actionBtn = '';
+        if (voice.status === 'pending') {
+            actionBtn = `<button class="preview-btn" disabled>
+                <i class="material-icons">hourglass_empty</i>
+                克隆中
+            </button>`;
+        } else if (voice.status === 'failed') {
+            actionBtn = `<button class="preview-btn" disabled>
+                <i class="material-icons">error</i>
+                失败
+            </button>`;
+        } else if (voice.status === 'success' && voice.clone_voice_url) {
+            actionBtn = `<button class="preview-btn" data-voice-id="${voice.cosyvoice_id}">
+                <i class="material-icons">play_arrow</i>
+                试听
             </button>`;
         }
 
@@ -141,40 +161,35 @@ function renderVoiceList(containerId, voices) {
             </div>
             <div class="voice-option-action">
                 ${deleteBtn}
-                ${voice.status === 'pending' ? `
-                    <button class="preview-btn" data-voice-id="${voice.cosyvoice_id}">
-                        <i class="material-icons">hourglass_empty</i>
-                        克隆中
-                    </button>
-                ` : voice.status === 'failed' ? `
-                    <button class="preview-btn" data-voice-id="${voice.cosyvoice_id}">
-                        <i class="material-icons">error</i>
-                        失败
-                    </button>
-                ` : (voice.clone_voice_url && voice.status === 'success') ? `
-                    <button class="preview-btn" data-voice-id="${voice.cosyvoice_id}">
-                        <i class="material-icons">play_arrow</i>
-                        试听
-                    </button>
-                ` : ''}
+                ${actionBtn}
             </div>
         `;
 
-        // 添加删除按钮点击事件（仅限我的声音）
+        // 点击选中逻辑（仅当状态为 success 时才允许选中）
+        if (containerId !== "my-voices" || voice.status === "success") {
+            option.className = `voice-option ${isSelected ? 'selected' : ''} ''`;
+            option.addEventListener('click', () => {
+                option.dataset.voiceId = voice.cosyvoice_id;
+            });
+        }
+
+        // 删除按钮事件（仅我的声音）
         if (containerId === 'my-voices') {
             const deleteBtnEl = option.querySelector('.delete-btn');
-            deleteBtnEl.addEventListener('click', async (e) => {
-                e.stopPropagation();
-                const confirmed = await XSConfirm('确定要删除此音色吗？删除后不能找回');
-                if (confirmed) {
-                    try {
-                        await deleteVoice(voice);
-                    } catch (error) {
-                        console.error('删除失败:', error);
-                        XSAlert('删除失败: ' + error.message);
+            if (deleteBtnEl) {
+                deleteBtnEl.addEventListener('click', async (e) => {
+                    e.stopPropagation(); // 阻止冒泡到 option 的 click
+                    const confirmed = await XSConfirm('确定要删除此音色吗？删除后不能找回');
+                    if (confirmed) {
+                        try {
+                            await deleteVoice(voice);
+                        } catch (error) {
+                            console.error('删除失败:', error);
+                            XSAlert('删除失败: ' + error.message);
+                        }
                     }
-                }
-            });
+                });
+            }
         }
 
         container.appendChild(option);
