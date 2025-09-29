@@ -202,7 +202,7 @@
             display: flex;
             align-items: center;
             justify-content: space-between;
-            padding: 14px 16px;
+            padding: 6px 16px;
             border: 1px solid #eee;
             border-radius: 8px;
             background: #fafafa;
@@ -272,7 +272,7 @@
             display: flex;
             align-items: center;
             justify-content: space-between;
-            padding: 12px 16px;
+            padding: 4px 16px;
             border-bottom: 1px solid #f0f0f0;
             cursor: pointer;
             transition: all 0.2s ease;
@@ -313,6 +313,39 @@
             align-items: center;
             gap: 8px;
         }
+
+        .voice-group-title {
+    padding: 6px 16px;
+    font-size: 14px;
+    font-weight: 600;
+    color: #666;
+    background: #f8f8f8;
+    border-bottom: 1px solid #eee;
+}
+
+/* 删除按钮 */
+.delete-btn {
+    background: none;
+    border: none;
+    color: #999;
+    cursor: pointer;
+    font-size: 14px;
+    padding: 0;
+    margin-left: 8px;
+    opacity: 0.7;
+    transition: opacity 0.2s;
+}
+
+.delete-btn:hover {
+    opacity: 1;
+    color: #d32f2f;
+}
+
+/* 禁用状态 */
+.voice-option.disabled {
+    opacity: 0.6;
+    pointer-events: none;
+}
 
         .preview-btn {
             display: flex;
@@ -578,6 +611,14 @@
                     </div>
                     <div class="voice-options" id="voice-options">
                         <!-- 语音选项将通过JS动态生成 -->
+                        <div class="voice-group">
+                            <div class="voice-group-title">我的声音</div>
+                            <div id="my-voices"></div>
+                        </div>
+                        <div class="voice-group">
+                            <div class="voice-group-title">官方推荐</div>
+                            <div id="official-voices"></div>
+                        </div>
                     </div>
                 </div>
             </div>

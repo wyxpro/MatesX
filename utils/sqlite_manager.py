@@ -49,6 +49,7 @@ def init_db():
         cursor.execute('''CREATE TABLE IF NOT EXISTS voices (
             voice_id TEXT PRIMARY KEY,
             unionid TEXT,
+            status TEXT,
             cosyvoice_id TEXT,
             voice_name TEXT,
             voice_url TEXT,
@@ -64,7 +65,8 @@ def init_db():
             nickname TEXT,                                     /* 用户昵称 */
             created_time TIMESTAMP DEFAULT CURRENT_TIMESTAMP,  /* 创建时间，默认为当前时间 */
             updated_time TIMESTAMP DEFAULT CURRENT_TIMESTAMP,   /* 更新时间，默认为当前时间 */
-            avatar_balance REAL DEFAULT 0.0           /* 自定义形象余额，默认为5 */
+            avatar_balance REAL DEFAULT 0.0,           /* 自定义形象余额 */
+            voice_balance REAL DEFAULT 0.0           /* 自定义语音余额 */
         )''')
 
         conn.commit()
@@ -147,7 +149,7 @@ def check_new_user(unionid):
 def insert_or_update_table(table_name, **kwargs):
     if table_name == "users":
         ALLOWED_FIELDS = {
-            "unionid", "nickname", "avatar_balance"
+            "unionid", "nickname", "avatar_balance",  "voice_balance"
         }
         NECESSARY_KEYS = {"unionid"}
     elif table_name == "roles":
@@ -159,7 +161,7 @@ def insert_or_update_table(table_name, **kwargs):
         NECESSARY_KEYS = {"avatar_id"}
     elif table_name == "voices":
         ALLOWED_FIELDS = {
-            "voice_id", "unionid", "cosyvoice_id", "voice_name", "voice_url", "clone_voice_url"
+            "voice_id", "unionid", "status", "cosyvoice_id", "voice_name", "voice_url", "clone_voice_url"
         }
         NECESSARY_KEYS = {"voice_id"}
     elif table_name == "background":
@@ -174,7 +176,7 @@ def insert_or_update_table(table_name, **kwargs):
     filtered = {
         k: v for k, v in kwargs.items() if k in ALLOWED_FIELDS and v is not None
     }
-
+    print(NECESSARY_KEYS, filtered.keys())
     if not NECESSARY_KEYS.issubset(filtered.keys()):
         raise ValueError("NECESSARY_KEYS are required")
 
@@ -221,6 +223,10 @@ def get_user_by_unionid(unionid: str) -> Optional[Dict[str, Any]]:
 def get_voices_by_unionid(unionid: str) -> list[Dict[str, Any]]:
     results = query_data("voices", condition="unionid = ?", params=(unionid,))
     return results
+
+def remove_voice_from_voices(unionid: str, voice_id: str):
+    result = delete_data("voices", condition="voice_id = ? AND unionid = ?", params=(voice_id, unionid,))
+    return result > 0
 
 def get_bgs_by_unionid(unionid: str) -> list[Dict[str, Any]]:
     results = query_data("background", condition="unionid = ?", params=(unionid,))
@@ -360,70 +366,6 @@ def init_insert_data():
         }
     ]
 
-    # 音色数据
-    voices_list = [
-        {"voice_name": "韵婉",
-         "clone_voice_url": "https://help-static-aliyun-doc.aliyuncs.com/file-manage-files/zh-CN/20240830/dzkngm/%E9%BE%99%E5%A9%89.mp3",
-         "voice_id": "longwan", "cosyvoice_id": "longwan"},
-        {"voice_name": "曦橙",
-         "clone_voice_url": "https://help-static-aliyun-doc.aliyuncs.com/file-manage-files/zh-CN/20240830/ggjwfl/%E9%BE%99%E6%A9%99.wav",
-         "voice_id": "longcheng", "cosyvoice_id": "longcheng"},
-        {"voice_name": "宸华",
-         "clone_voice_url": "https://help-static-aliyun-doc.aliyuncs.com/file-manage-files/zh-CN/20240830/jpjtvy/%E9%BE%99%E5%8D%8E.wav",
-         "voice_id": "longhua", "cosyvoice_id": "longhua"},
-        {"voice_name": "清和",
-         "clone_voice_url": "https://help-static-aliyun-doc.aliyuncs.com/file-manage-files/zh-CN/20240624/rlfvcd/%E9%BE%99%E5%B0%8F%E6%B7%B3.mp3",
-         "voice_id": "longxiaochun", "cosyvoice_id": "longxiaochun"},
-        {"voice_name": "夏岚",
-         "clone_voice_url": "https://help-static-aliyun-doc.aliyuncs.com/file-manage-files/zh-CN/20240624/wzywtu/%E9%BE%99%E5%B0%8F%E5%A4%8F.mp3",
-         "voice_id": "longxiaoxia", "cosyvoice_id": "longxiaoxia"},
-        {"voice_name": "诚睿",
-         "clone_voice_url": "https://help-static-aliyun-doc.aliyuncs.com/file-manage-files/zh-CN/20240624/xrqksx/%E9%BE%99%E5%B0%8F%E8%AF%9A.mp3",
-         "voice_id": "longxiaocheng", "cosyvoice_id": "longxiaocheng"},
-        {"voice_name": "素心",
-         "clone_voice_url": "https://help-static-aliyun-doc.aliyuncs.com/file-manage-files/zh-CN/20240624/vusvze/%E9%BE%99%E5%B0%8F%E7%99%BD.mp3",
-         "voice_id": "longxiaobai", "cosyvoice_id": "longxiaobai"},
-        {"voice_name": "铁山",
-         "clone_voice_url": "https://help-static-aliyun-doc.aliyuncs.com/file-manage-files/zh-CN/20240624/pfsfir/%E9%BE%99%E8%80%81%E9%93%81.mp3",
-         "voice_id": "longlaotie", "cosyvoice_id": "longlaotie"},
-        {"voice_name": "墨轩",
-         "clone_voice_url": "https://help-static-aliyun-doc.aliyuncs.com/file-manage-files/zh-CN/20240624/azcerd/%E9%BE%99%E4%B9%A6.mp3",
-         "voice_id": "longshu", "cosyvoice_id": "longshu"},
-        {"voice_name": "峻峰",
-         "clone_voice_url": "https://help-static-aliyun-doc.aliyuncs.com/file-manage-files/zh-CN/20240624/lcykpl/%E9%BE%99%E7%A1%95.mp3",
-         "voice_id": "longshuo", "cosyvoice_id": "longshuo"},
-        {"voice_name": "婉清",
-         "clone_voice_url": "https://help-static-aliyun-doc.aliyuncs.com/file-manage-files/zh-CN/20240624/ozkbmb/%E9%BE%99%E5%A9%A7.mp3",
-         "voice_id": "longjing", "cosyvoice_id": "longjing"},
-        {"voice_name": "灵犀",
-         "clone_voice_url": "https://help-static-aliyun-doc.aliyuncs.com/file-manage-files/zh-CN/20240624/zjnqis/%E9%BE%99%E5%A6%99.mp3",
-         "voice_id": "longmiao", "cosyvoice_id": "longmiao"},
-        {"voice_name": "欣怡",
-         "clone_voice_url": "https://help-static-aliyun-doc.aliyuncs.com/file-manage-files/zh-CN/20240624/nrkjqf/%E9%BE%99%E6%82%A6.mp3",
-         "voice_id": "longyue", "cosyvoice_id": "longyue"},
-        {"voice_name": "雅宁",
-         "clone_voice_url": "https://help-static-aliyun-doc.aliyuncs.com/file-manage-files/zh-CN/20240624/xuboos/%E9%BE%99%E5%AA%9B.mp3",
-         "voice_id": "longyuan", "cosyvoice_id": "longyuan"},
-        {"voice_name": "凌霄",
-         "clone_voice_url": "https://help-static-aliyun-doc.aliyuncs.com/file-manage-files/zh-CN/20240624/bhkjjx/%E9%BE%99%E9%A3%9E.mp3",
-         "voice_id": "longfei", "cosyvoice_id": "longfei"},
-        {"voice_name": "杰睿",
-         "clone_voice_url": "https://help-static-aliyun-doc.aliyuncs.com/file-manage-files/zh-CN/20240624/dctiyg/%E9%BE%99%E6%9D%B0%E5%8A%9B%E8%B1%AA.mp3",
-         "voice_id": "longjielidou", "cosyvoice_id": "longjielidou"},
-        {"voice_name": "绯云",
-         "clone_voice_url": "https://help-static-aliyun-doc.aliyuncs.com/file-manage-files/zh-CN/20240624/qyqmvo/%E9%BE%99%E5%BD%A4.mp3",
-         "voice_id": "longtong", "cosyvoice_id": "longtong"},
-        {"voice_name": "瑞霖",
-         "clone_voice_url": "https://help-static-aliyun-doc.aliyuncs.com/file-manare-files/zh-CN/20240624/jybshd/%E9%BE%99%E7%A5%A5.mp3",
-         "voice_id": "longxiang", "cosyvoice_id": "longxiang"},
-        {"voice_name": "星澜",
-         "clone_voice_url": "https://help-static-aliyun-doc.aliyuncs.com/file-manage-files/zh-CN/20240624/haffms/Stella.mp3",
-         "voice_id": "loongstella", "cosyvoice_id": "loongstella"},
-        {"voice_name": "贝翎",
-         "clone_voice_url": "https://help-static-aliyun-doc.aliyuncs.com/file-manage-files/zh-CN/20240624/tguine/Bella.mp3",
-         "voice_id": "loongbella", "cosyvoice_id": "loongbella"}
-    ]
-
     bg_list = [
     {
         "bg_id": "00",
@@ -471,7 +413,7 @@ def init_insert_data():
 
     # 首先创建用户
     try:
-        user = {"unionid":"MatesX01", "nickname":"explorer", "avatar_balance": 1000}
+        user = {"unionid":"MatesX01", "nickname":"explorer", "avatar_balance": 1000, "voice_balance": 1000}
         insert_or_update_table("users", **user)
         print("用户 MatesX01 创建成功")
     except Exception as e:
@@ -487,19 +429,6 @@ def init_insert_data():
         except Exception as e:
             print(f"插入角色 {role['avatar_name']} 失败: {e}")
 
-    # 插入音色数据
-    voice_count = 0
-    for voice in voices_list:
-        try:
-            # 为音色数据添加 unionid
-            voice_with_unionid = voice.copy()
-            voice_with_unionid["unionid"] = "MatesX01"
-            insert_or_update_table("voices", **voice_with_unionid)
-            voice_count += 1
-            print(f"音色 {voice['voice_name']} 插入成功")
-        except Exception as e:
-            print(f"插入音色 {voice['voice_name']} 失败: {e}")
-
     # 插入背景数据
     bg_count = 0
     for background in bg_list:
@@ -510,7 +439,7 @@ def init_insert_data():
         except Exception as e:
             print(f"插入角色 {background['bg_id']} 失败: {e}")
 
-    print(f"数据初始化完成！成功插入 {role_count} 个角色和 {voice_count} 个音色和 {bg_count} 个背景")
+    print(f"数据初始化完成！成功插入 {role_count} 个角色和 {bg_count} 个背景")
 
 
 # 主程序
