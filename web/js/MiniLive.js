@@ -31,7 +31,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
         const settingsBtn = document.querySelector('.settings-btn');
         settingsBtn.onclick = function() {
-            window.location.href = 'characterSetting.html';
+            window.location.href = 'character-setting.html';
         };
     }
     
@@ -83,21 +83,27 @@ document.addEventListener('DOMContentLoaded', function() {
             let selectedRole = rolesList.find(role => role.avatar_id === selectedRoleID);
 
             // 加载角色记忆
+            console.log("加载角色记忆");
             await window.memoryDataDB.init();
             let memoryData = await window.memoryDataDB.getMemoryDataByAvatarID(selectedRoleID);
+            console.log("memoryData: ", memoryData);
             memoryData = memoryData.length > 0 ? memoryData[0] : null;
 
-            if (selectedRole.memory_version > 0 &&
-            (!memoryData || memoryData.memoryVersion !== selectedRole.memory_version))
-            {
-                const response = await fetch(selectedRole.memory_prompt_url);
-                if (!response.ok) {
-                    throw new Error(`HTTP error! status: ${response.status}`);
-                }
+            try {
+                if (selectedRole.memory_version > 0 &&
+                    (!memoryData || memoryData.memoryVersion !== selectedRole.memory_version)) {
 
-                const buffer = await response.arrayBuffer();
-                memoryData = window.memoryDataDB.parseBinaryData(buffer);
-                await window.memoryDataDB.saveMemoryData(memoryData);
+                    const response = await fetch(selectedRole.memory_prompt_url);
+                    if (!response.ok) {
+                        throw new Error(`HTTP error! status: ${response.status}`);
+                    }
+
+                    const buffer = await response.arrayBuffer();
+                    memoryData = window.memoryDataDB.parseBinaryData(buffer);
+                    await window.memoryDataDB.saveMemoryData(memoryData);
+                }
+            } catch (error) {
+                console.error('Failed to load or process memory data:', error);
             }
             if (memoryData)
             {

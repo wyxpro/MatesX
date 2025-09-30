@@ -21,7 +21,7 @@ const officialVoices = [
     { voice_name: "星澜", language: "中英", clone_voice_url: "https://help-static-aliyun-doc.aliyuncs.com/file-manage-files/zh-CN/20240624/haffms/Stella.mp3", voice_id: "loongstella", cosyvoice_id: "loongstella", status: "success" },
     { voice_name: "贝翎", language: "中", clone_voice_url: "https://help-static-aliyun-doc.aliyuncs.com/file-manage-files/zh-CN/20240624/tguine/Bella.mp3", voice_id: "loongbella", cosyvoice_id: "loongbella", status: "success" }
 ];
-let url_prefix = "";
+
 let rolesList = [];
 let voices_list = [];
 let selectedRoleID = null;

@@ -101,7 +101,7 @@ function createRoleCard(role) {
     if (role.status !== 'pending') {
         card.addEventListener('click', () => {
             localStorage.setItem('selectedRoleID', role.avatar_id);
-            window.location.href = 'characterPublic.html?avatar_mode=private';
+            window.location.href = 'character.html?avatar_mode=private';
         });
     }
 

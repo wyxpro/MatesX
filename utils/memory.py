@@ -19,6 +19,7 @@ class MemoryManager:
         self.num_entries = 0
         self.dim = 768
 
+        self.memory_data_url = ""
         self.memories = []  # 存储格式: [{"vector": [], "norm": float, "text": str, "frequency": int, "created_at": timestamp, "updated_at": timestamp}]
         self.client = OpenAI(
             api_key=DASHSCOPE_API_KEY,
@@ -187,10 +188,10 @@ class MemoryManager:
             memory_data = self._create_binary_data()
             # print(memory_data)
             # 上传到OSS
-            upload_url = memory_data_url.format(avatar_id=self.avatar_id)
-            print(upload_url)
+            self.memory_data_url = memory_data_url.format(avatar_id=self.avatar_id)
+            print(self.memory_data_url)
             # 使用PUT方法上传文件到OSS
-            response = requests.put(upload_url, data=memory_data)
+            response = requests.put(self.memory_data_url, data=memory_data)
 
             if response.status_code == 200:
                 print(f"成功上传 {len(self.memories)} 条记忆到OSS (版本: {self.memory_version})")
@@ -462,8 +463,10 @@ class MemoryManager:
         success = self.save_memories()
         if success:
             print(f"记忆处理完成! 新版本号: {self.memory_version}")
+            return self.memory_data_url
         else:
             print("记忆处理完成，但保存失败!")
+            return ""
 
 
 # 使用示例

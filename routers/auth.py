@@ -125,6 +125,7 @@ async def handle_new_role2(
             avatar_id=avatar_id,
             unionid=unionid,
             status="pending",
+            cosyvoice_id="longhua",
             avatar_name=avatar_name,
             avatar_url=avatar_url,
             version=1

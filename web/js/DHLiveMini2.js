@@ -7,7 +7,7 @@ if (isApple) {
         const majorVersion = parseInt(iosVersionMatch[1]);
         const minorVersion = parseInt(iosVersionMatch[2]);
         const patchVersion = iosVersionMatch[3] ? parseInt(iosVersionMatch[3]) : 0;
-        
+
         // 检查是否低于17.4版本
         if (majorVersion < 17 || (majorVersion === 17 && minorVersion < 4)) {
             const shouldUpdate = confirm("IOS系统版本需要高于17.4");
@@ -28,10 +28,14 @@ document.body.appendChild(characterVideo);
 
 // 获取视频和画布元素
 const canvas_video = document.getElementById('canvas_video');
-const ctx_video = canvas_video.getContext('2d', { willReadFrequently: true });
+const ctx_video = canvas_video.getContext('2d', {
+    willReadFrequently: true
+});
 
 const resizedCanvas = document.createElement('canvas');
-const resizedCtx = resizedCanvas.getContext('2d', { willReadFrequently: true });
+const resizedCtx = resizedCanvas.getContext('2d', {
+    willReadFrequently: true
+});
 resizedCanvas.width = 180;
 resizedCanvas.height = 180;
 
@@ -566,7 +570,7 @@ var createQtAppInstance = ( () => {
                             return candidate
                         }
                     }
-                    console.warn("returning approximate frame");
+                    console.warn("No exact match found, returning approximate frame");
                     return currentFrame
                 }
                 let realFrame = -1;
@@ -586,7 +590,7 @@ var createQtAppInstance = ( () => {
                 return realFrame
             }
             ,
-            2766392: ($0, $1, $2, $3) => {
+            2766379: ($0, $1, $2, $3) => {
                 let rect_x = $0;
                 let rect_y = $1;
                 let rect_w = $2;
@@ -604,7 +608,7 @@ var createQtAppInstance = ( () => {
                 Module._inputImage(imageDataPtr, 180, 180)
             }
             ,
-            2766896: ($0, $1, $2, $3) => {
+            2766883: ($0, $1, $2, $3) => {
                 let rect_x = $0;
                 let rect_y = $1;
                 let rect_w = $2;

@@ -153,7 +153,8 @@ async def chat_stream(request: Request):
         async with user_locks[unionid]:  # 获取用户级锁
             # 获取或创建会话
             session = get_or_create_session(unionid, avatar_id, memory_prompt)
-            print("****",session)
+            print("****",session.combined_prompt)
+            print("****", session.messages)
             # 构建符合OpenAI格式的消息数组
             messages = [
                 {"role": "system", "content": session.combined_prompt},

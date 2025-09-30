@@ -81,7 +81,7 @@ def _process_memory_in_thread(avatar_id, memory_version, messages, chat_count):
     try:
         memoryManager = MemoryManager(avatar_id, memory_version)
         memoryManager.load_memories()
-        memoryManager.process_chat_history(messages)
+        memory_data_url = memoryManager.process_chat_history(messages)
 
         # 可选：更新数据库中的 chat_count 和 memory_version
         new_memory_version = memory_version + 1
@@ -89,6 +89,7 @@ def _process_memory_in_thread(avatar_id, memory_version, messages, chat_count):
             table_name="roles",
             avatar_id=avatar_id,
             memory_version=new_memory_version,
+            memory_prompt_url = memory_data_url,
             chat_count=chat_count + 1,
             updated_at = datetime.now().isoformat()
         )
