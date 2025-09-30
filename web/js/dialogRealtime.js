@@ -75,7 +75,7 @@ const voiceInputText = voiceInputArea.querySelector('span');
 
 document.addEventListener('DOMContentLoaded', function() {
   if (!window.isSecureContext) {
-    alert('本项目使用了 WebCodecs API，该 API 仅在安全上下文（HTTPS 或 localhost）中可用。因此，在部署或测试时，请确保您的网页在 HTTPS 环境下运行，或者使用 localhost 进行本地测试。');
+    XSAlert('本项目使用了 WebCodecs API，该 API 仅在安全上下文（HTTPS 或 localhost）中可用。因此，在部署或测试时，请确保您的网页在 HTTPS 环境下运行，或者使用 localhost 进行本地测试。');
   }
 });
 
@@ -125,7 +125,7 @@ async function getTempToken(model_name, voice_id) {
     const unionid = localStorage.getItem('unionid');
     if (!unionid)
     {
-        alert('用户未登录');
+        XSAlert('用户未登录');
         return;
     }
     // 检查缓存中是否有有效的token（40秒内）
@@ -157,7 +157,7 @@ async function getTempToken(model_name, voice_id) {
         return data.token;
     } catch (error) {
         console.error('获取临时token失败:', error);
-        alert('无法获取语音服务凭证，请稍后重试');
+        XSAlert('无法获取语音服务凭证，请稍后重试');
         throw error;
     }
 }
@@ -439,7 +439,7 @@ async function tts_realtime_ws(voice_id, model_name) {
         console.log('cosyvoice connected');
     } catch (error) {
         console.error('语音服务连接失败:', error);
-        alert('语音服务连接失败，请检查网络后重试');
+        XSAlert('语音服务连接失败，请检查网络后重试');
     }
 }
 
@@ -449,13 +449,13 @@ async function sendTextMessage(inputValue) {
     const unionid = localStorage.getItem('unionid');
     if (!unionid)
     {
-        alert('用户未登录');
+        XSAlert('用户未登录');
         return;
     }
     const selectedRoleID = localStorage.getItem('selectedRoleID');
     if (!sendTextMessage)
     {
-        alert('未找到角色');
+        XSAlert('未找到角色');
         return;
     }
     // const selectedRole = rolesList.find(role => role.avatar_id === selectedRoleID);
