@@ -314,10 +314,17 @@ voiceInputArea.addEventListener('click', async (event) => {
     await start_new_round();
 });
 
+let isSendProcessing = false;
+
 // 提取的共同处理函数
 async function handleUserMessage() {
-    const icon = sendButton.querySelector('i.material-icons');
+    if (isSendProcessing) return false;
+    isProcessing = true;
+    sendButton.disabled = true;
+    textInput.disabled = true;
 
+    const icon = sendButton.querySelector('i.material-icons');
+    try {
     // 检查停止状态
     if (icon && icon.textContent.trim() === 'stop') {
         user_abort();
@@ -328,10 +335,16 @@ async function handleUserMessage() {
     if (inputValue) {
         await start_new_round();
         addMessage(inputValue, true, true);
-        sendTextMessage(inputValue);
+        await sendTextMessage(inputValue);
         return true; // 表示已发送消息
     }
     return false; // 表示未发送消息
+    } finally {
+        isSendProcessing = false;
+        sendButton.disabled = false;
+        textInput.disabled = false;
+        textInput.focus(); // 重新聚焦到输入框
+    }
 }
 
 // 修改后的事件监听器
