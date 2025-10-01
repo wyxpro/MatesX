@@ -9,8 +9,8 @@ from concurrent.futures import ThreadPoolExecutor
 memory_executor = ThreadPoolExecutor(max_workers=2, thread_name_prefix="MemoryWorker")
 user_session_cache = defaultdict(lambda: LRUCache(maxsize=5))
 user_locks = defaultdict(asyncio.Lock)
-SESSION_TIMEOUT = 100  # 5分钟
-CLEANUP_INTERVAL = 60  # 2分钟
+SESSION_TIMEOUT = 600  # 超时删除后台会话记录的时间，600s
+CLEANUP_INTERVAL = 300  # 后台定时总结记忆服务，300s一次
 
 
 class Session:
