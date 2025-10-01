@@ -1,5 +1,5 @@
 # session_manager.py
-from datetime import datetime, timedelta
+from datetime import datetime, timezone
 import asyncio
 from collections import defaultdict
 from cachetools import LRUCache
@@ -17,8 +17,8 @@ class Session:
     __slots__ = ("messages", "last_active", "system_prompt", "memory_prompt", "memory_version", "combined_prompt", "chat_count")
 
     def __init__(self, system_prompt="", memory_prompt=[], memory_version=0, chat_count=0):
-        system_prompt = "" if system_prompt is None else system_prompt
-        memory_prompt = [] if memory_prompt is None else memory_prompt
+        system_prompt = system_prompt or ""
+        memory_prompt = memory_prompt or []
 
         self.memory_version = memory_version
         self.messages = []
@@ -39,16 +39,58 @@ class Session:
 
     def update_system_prompt(self, system_prompt="", memory_prompt=[]):
         """更新系统提示词"""
-        self.system_prompt = "" if system_prompt is None else system_prompt
-        self.memory_prompt = "" if memory_prompt is None else memory_prompt
+        self.system_prompt = system_prompt or ""
+        self.memory_prompt = memory_prompt or []
 
         # 重新构建combined_prompt
-        self.combined_prompt = ""
+        self.combined_prompt = "你将扮演角色和我对话。"
         if self.system_prompt:
             self.combined_prompt += "你的人物设定是：" + self.system_prompt + " "
+
         if self.memory_prompt:
-            memory_text = "\n".join(self.memory_prompt)
-            self.combined_prompt += "。以下是我们过去的聊天记录摘要：" + memory_text + " "
+            memory_descriptions = []
+            for mem in self.memory_prompt:
+                if not isinstance(mem, dict):
+                    continue
+
+                text = mem.get("text", "").strip()
+                if not text:
+                    continue
+
+                # 获取时间戳（可能是 int 或 float，单位：秒）
+                created_ts = mem.get("createdAt")
+                updated_ts = mem.get("updatedAt")
+                frequency = mem.get("frequency", 1)
+
+                # 安全转换时间戳为 "YYYY-MM-DD" 字符串
+                def format_timestamp(ts):
+                    if ts is None:
+                        return None
+                    try:
+                        # 支持 int/float，自动处理
+                        dt = datetime.fromtimestamp(float(ts), tz=timezone.utc)
+                        return dt.strftime("%Y-%m-%d")
+                    except (ValueError, TypeError, OSError):
+                        return None
+
+                created_str = format_timestamp(created_ts) or "未知日期"
+                updated_str = format_timestamp(updated_ts)
+
+                # 构建自然语言描述
+                if frequency == 1:
+                    desc = f"你在 {created_str} 提到：「{text}」"
+                else:
+                    if updated_str and updated_str != created_str:
+                        desc = f"你在 {created_str} 首次提到：「{text}」，此后共聊过 {frequency} 次，最近一次是在 {updated_str}。"
+                    else:
+                        # 如果 updatedAt 不存在或等于 createdAt，说明只聊过一次或未更新
+                        desc = f"你多次提到：「{text}」（共 {frequency} 次，首次于 {created_str}）。"
+
+                memory_descriptions.append(desc)
+
+            if memory_descriptions:
+                memory_block = "\n".join(memory_descriptions)
+                self.combined_prompt += "以下是我们过去聊天的摘要：\n" + memory_block + "\n"
 
         # 添加额外的指令
         self.combined_prompt += "请遵守以下回复要求：不要使用括号及括号内的动作描述，只能以对话文本形式进行回复。"

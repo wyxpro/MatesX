@@ -245,23 +245,32 @@ class MemoryManager:
         return similarities[:k]
 
     def extract_memory_fragments(self, chat_history):
-        """从聊天历史中提取记忆片段"""
+        """从聊天历史中提取可用于角色扮演的记忆片段"""
         prompt = f"""
-        你是一个记忆提取专家。请从以下对话历史中提取重要的记忆片段。
-        每个记忆片段应该是一个简洁的事实或信息点。
-        请用JSON格式返回，包含一个"fragments"数组，每个元素是一个记忆片段文本。
+        请从以下对话历史中提取重要的记忆信息，这些信息将用于AI角色的持续对话。
 
-        对话历史:
+        【提取要求】
+        1. 从AI角色的第一人称视角描述事件和事实
+        2. 只提取对后续对话有实际价值的信息（如用户偏好、重要事件、承诺等）
+        3. 避免提取技术性、格式性的元信息
+        4. 每个记忆片段应该是完整、自然的陈述句
+        5. 重点关注：用户透露的个人信息、达成的共识、重要事件、情感倾向
+
+        【对话历史】
         {chat_history}
 
-        只返回JSON格式，不要有其他内容。
+        请用JSON格式返回，包含一个"fragments"数组。
         """
 
         try:
             completion = self.client.chat.completions.create(
                 model="qwen-plus",
                 messages=[
-                    {"role": "system", "content": "你是一个专业的记忆提取助手，能够从对话中准确提取重要信息。"},
+                    {"role": "system", "content": "你擅长从对话中提取对角色扮演有价值的记忆信息。"
+                                                  "你的提取原则："
+                                                  "- 转化为第一人称叙述：将“AI说”改为“我记得用户...”"
+                                                  "- 过滤无效信息：忽略问候语、技术错误、测试内容"
+                                                  "- 保持自然连贯：像在回忆对话那样组织语言"},
                     {"role": "user", "content": prompt}
                 ],
                 response_format={"type": "json_object"}

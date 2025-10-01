@@ -2,7 +2,7 @@ let url_prefix = "";
 const unionid = localStorage.getItem('unionid') || "";
 let rolesList = JSON.parse(localStorage.getItem('roles_list')) || [];
 let public_roles_list = JSON.parse(localStorage.getItem('public_roles_list')) || [];
-           
+
 let voiceDisturbEnabled = localStorage.getItem('voiceDisturbEnabled') === 'true';
 if (localStorage.getItem('voiceDisturbEnabled') === null) {
     voiceDisturbEnabled = true; // 默认开启
@@ -181,7 +181,7 @@ asrWorker.onmessage = function(event) {
         }
         else if (data.message === "已连接到ASR服务器") {
             isAsrReady = true;
-            
+
             // 发送所有缓存数据
             while (pendingAudioData.length > 0) {
                 const data = pendingAudioData.shift();
@@ -191,13 +191,13 @@ asrWorker.onmessage = function(event) {
                 );
             }
         }
-    } 
+    }
     else if (data.type === 'partial_result') {
         asr_input_text = data.text;
-    } 
+    }
     else if (data.type === 'final_result') {
         asr_input_text = data.text;
-    } 
+    }
     else if (data.type === 'error') {
         console.error('ASR Worker Error:', data.message);
     }
@@ -317,13 +317,13 @@ voiceInputArea.addEventListener('click', async (event) => {
 // 提取的共同处理函数
 async function handleUserMessage() {
     const icon = sendButton.querySelector('i.material-icons');
-    
+
     // 检查停止状态
     if (icon && icon.textContent.trim() === 'stop') {
         user_abort();
         return false; // 表示未发送消息
     }
-    
+
     const inputValue = textInput.value.trim();
     if (inputValue) {
         await start_new_round();
@@ -487,7 +487,7 @@ async function sendTextMessage(inputValue) {
     } else {
         tts_model = "cosyvoice-v2";
     }
-    
+
     sendButton.innerHTML = '<i class="material-icons">stop</i>';
     if (inputValue) {
         try {
@@ -638,40 +638,56 @@ class PCMAudioPlayer {
 
     async _playNextAudio() {
         if (this.audioQueue.length > 0 && !this.isPlaying) {
-            // 设置最大缓冲区大小（例如：8秒的音频）
-            const maxBufferSize = 16000 * 8 * 2; // 16KHz × 8秒 × 2字节(16位)
+            // 音频格式：16kHz, 16-bit (2 bytes), 单声道 → 32000 bytes/sec
+            const SAMPLE_RATE = 16000;
+            const BITS_PER_SAMPLE = 16;
+            const CHANNELS = 1;
+            const BYTES_PER_SECOND = (SAMPLE_RATE * BITS_PER_SAMPLE * CHANNELS) / 8; // = 32000
 
-            let combinedBuffer = new Uint8Array(0);
+            const MAX_DURATION_SECONDS = 8;
+            const MAX_BYTES = Math.floor(BYTES_PER_SECOND * MAX_DURATION_SECONDS); // 256000
+
+            // 累计字节数，不超过 MAX_BYTES
+            let accumulatedBytes = 0;
             let buffersToPlay = [];
+            let remainingBuffers = [];
 
-            // 分批处理音频队列
-            while (this.audioQueue.length > 0) {
-                const buffer = this.audioQueue[0];
-
-                // 如果添加这个缓冲区会超过最大大小，先播放当前的
-                if (combinedBuffer.length + buffer.byteLength > maxBufferSize && combinedBuffer.length > 0) {
-                    this._playAudio(combinedBuffer.buffer);
-                    combinedBuffer = new Uint8Array(0);
-                    // await this.delay(100); // 短暂延迟避免阻塞
+            for (const buffer of this.audioQueue) {
+                if (accumulatedBytes + buffer.byteLength <= MAX_BYTES) {
+                    buffersToPlay.push(buffer);
+                    accumulatedBytes += buffer.byteLength;
+                } else {
+                    // 一旦超过，剩下的全部保留（包括当前这个 buffer）
+                    remainingBuffers.push(buffer);
                 }
-
-                // 将缓冲区添加到当前批次
-                const newBuffer = new Uint8Array(combinedBuffer.length + buffer.byteLength);
-                newBuffer.set(combinedBuffer, 0);
-                newBuffer.set(new Uint8Array(buffer), combinedBuffer.length);
-                combinedBuffer = newBuffer;
-
-                buffersToPlay.push(this.audioQueue.shift());
             }
 
-            // 播放剩余的音频
-            if (combinedBuffer.length > 0) {
-                this._playAudio(combinedBuffer.buffer);
+            // 如果没有可播放的 buffer（理论上不会发生，因为 audioQueue 非空）
+            if (buffersToPlay.length === 0) {
+                // 安全兜底：至少播放第一个 buffer（即使超长）
+                buffersToPlay = [this.audioQueue[0]];
+                remainingBuffers = this.audioQueue.slice(1);
             }
-        } else {
-            if (sse_endpoint && cosyvoice.isTaskFinished) {
-                sendButton.innerHTML = '<i class="material-icons">send</i>';
-                console.log("_playAudio Done!!!!");
+
+            // 拼接 buffersToPlay
+            const totalLength = buffersToPlay.reduce((acc, buf) => acc + buf.byteLength, 0);
+            const combinedBuffer = new Uint8Array(totalLength);
+            let offset = 0;
+            for (const buffer of buffersToPlay) {
+                combinedBuffer.set(new Uint8Array(buffer), offset);
+                offset += buffer.byteLength;
+            }
+
+            // 更新 audioQueue：只保留未播放的部分
+            this.audioQueue = remainingBuffers;
+            // 发送拼接的 audio 数据给 playAudio
+            this._playAudio(combinedBuffer.buffer);
+        }
+        else {
+            // this.finished标志本轮已提前结束（被手动打断或新一轮语音接管），不要再改变已有状态了
+            if (sse_endpoint && cosyvoice.isTaskFinished && !this.finished) {
+                sendButton.innerHTML = '<i class="material-icons">send</i>'; // 发送图标
+                console.log("_playAudio Done!!!!")
                 await start_new_round();
             }
         }
@@ -687,4 +703,3 @@ class PCMAudioPlayer {
         console.log('Playback stopped and queue cleared.');
     }
 }
-

@@ -115,8 +115,16 @@ class EmbeddingManager {
         // 按相似度降序排序
         similarities.sort((a, b) => b.similarity - a.similarity);
 
-        // 提取前k个结果的文本内容
-        return similarities.slice(0, k).map(item => item.memory.text);
+        // 提取前k个结果的文本、频率和时间内容
+        return similarities.slice(0, k).map(item => {
+            const mem = item.memory;
+            return {
+                text: mem.text,
+                frequency: mem.frequency,
+                createdAt: mem.createdAt,
+                updatedAt: mem.updatedAt
+            };
+        });
     }
 }
 

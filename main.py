@@ -140,7 +140,7 @@ async def chat_stream(request: Request):
     print("chat_stream")
     try:
         body = await request.json()
-        print(124, body)
+        print("chat_stream: ", body)
         unionid = body.get("unionid")
         # 判断unionid是否存在
         user = sqlite_manager.get_user_by_unionid(unionid)
@@ -148,7 +148,7 @@ async def chat_stream(request: Request):
             raise HTTPException(404, detail="用户不存在")
         avatar_id = body.get("avatar_id")
         user_prompt = body.get("prompt")
-        memory_prompt = body.get("memory_prompt")
+        memory_prompt = body.get("memory_prompt")        # 这是一个 list of dict
 
         async with user_locks[unionid]:  # 获取用户级锁
             # 获取或创建会话
