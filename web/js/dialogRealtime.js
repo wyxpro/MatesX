@@ -38,7 +38,7 @@ window.addEventListener('storage', (event) => {
     }
 });
 
-let server_url = url_prefix + "/chat_stream"
+let server_url = url_prefix + "/chat/chat_stream"
 let auth_url = url_prefix + "/generate_temp_token"
 let isVoiceMode = true;                 // 默认使用语音模式
 let asrWorker = null;
@@ -98,8 +98,7 @@ function setTextMode() {
     sendButton.style.display = 'block';
     voiceInputArea.style.display = 'none';
     user_abort();
-    if (!asr_audio_recorder || !asr_audio_recorder.audioContext)
-    {
+    if (asr_audio_recorder) {
         asr_audio_recorder.stop();
     }
 }
@@ -172,7 +171,6 @@ asrWorker.onmessage = function(event) {
     if (data.type === 'status') {
         if (data.message === "识别任务已完成")
         {
-
             if (asr_input_text) {
                 user_abort();
                 addMessage(asr_input_text, true, true);
@@ -276,13 +274,7 @@ async function running_audio_recorder() {
 }
 
 async function start_new_round() {
-    if (! player)
-    {
-        player = new PCMAudioPlayer(16000);
 
-    }
-    player.connect();
-    player.stop();
     // 停止可能存在的旧轮次
     asrWorker.postMessage({ type: 'stop' });
 
@@ -291,7 +283,7 @@ async function start_new_round() {
 
     asr_input_text = "";
     last_voice_time = null;
-
+    parent.Module._clearAudio();
 
     // TTS部分保持不变
     if (cosyvoice && cosyvoice.socket) {
@@ -445,9 +437,16 @@ async function tts_realtime_ws(voice_id, model_name) {
         const token = await getTempToken(model_name, voice_id);
         cosyvoice = new Cosyvoice(`wss://dashscope.aliyuncs.com/api-ws/v1/inference/?api_key=${token}`, voice_id, model_name);
 
-        await cosyvoice.connect((pcmData) => {
-            player.pushPCM(pcmData);
-        });
+        await cosyvoice.connect(
+            (pcmData) => {
+                player.pushPCM(pcmData);
+            },
+            () => {
+                console.log('✅ 语音合成任务已结束！');
+                // 可以在这里：停止 loading 动画、提示播放完成、释放资源等
+                player.sendTtsFinishedMsg();
+            }
+        );
 
         console.log('cosyvoice connected');
     } catch (error) {
@@ -504,14 +503,17 @@ async function sendTextMessage(inputValue) {
     sendButton.innerHTML = '<i class="material-icons">stop</i>';
     if (inputValue) {
         try {
-            player.connect()
-            player.stop()
-
             if (sse_controller)
             {
                 console.log("sse_controller.abort();");
                 sse_controller.abort();
             }
+
+            if (!player)
+            {
+                player = new PCMAudioPlayer(16000);
+            }
+            await player.connect();
 
             await tts_realtime_ws(voice_id, tts_model);
             sse_controller = new AbortController();
@@ -564,155 +566,8 @@ async function user_abort() {
     }
     if (player)
     {
-        player.stop();
-        player.finished = true;
+        await player.stop();
         parent.Module._clearAudio();
     }
     sendButton.innerHTML = '<i class="material-icons">send</i>'; // 发送图标
-}
-
-class PCMAudioPlayer {
-    constructor(sampleRate) {
-        this.sampleRate = sampleRate;
-        this.audioContext = null;
-        this.audioQueue = [];
-        this.isPlaying = false;
-        this.currentSource = null;
-        const bufferThreshold = 2;
-        this.finished = true;
-    }
-
-    connect() {
-        if (!this.audioContext) {
-            this.audioContext = new (window.AudioContext || window.webkitAudioContext)();
-        }
-        console.log("connect audioContext", this.audioContext.state);
-        this.finished = false;
-    }
-
-    pushPCM(arrayBuffer) {
-        this.audioQueue.push(arrayBuffer);
-        this._playNextAudio();
-    }
-
-    /**
-     * 将arrayBuffer转为audioBuffer
-     */
-    _bufferPCMData(pcmData) {
-        const sampleRate = this.sampleRate; // 设置为 PCM 数据的采样率
-        const length = pcmData.byteLength / 2; // 假设 PCM 数据为 16 位，需除以 2
-        const audioBuffer = this.audioContext.createBuffer(1, length, sampleRate);
-        const channelData = audioBuffer.getChannelData(0);
-        const int16Array = new Int16Array(pcmData); // 将 PCM 数据转换为 Int16Array
-
-        for (let i = 0; i < length; i++) {
-            // 将 16 位 PCM 转换为浮点数 (-1.0 到 1.0)
-            channelData[i] = int16Array[i] / 32768; // 16 位数据转换范围
-        }
-        let audioLength = length/sampleRate*1000;
-        // console.log(`prepare audio: ${length} samples, ${audioLength} ms`)
-
-        return audioBuffer;
-    }
-
-    async _playAudio(arrayBuffer) {
-        if (this.finished)
-        {
-            return;
-        }
-
-        if (this.audioContext.state === 'suspended') {
-            await this.audioContext.resume();
-        }
-
-        const view = new Uint8Array(arrayBuffer);
-        const arrayBufferPtr = parent.Module._malloc(arrayBuffer.byteLength);
-        parent.Module.HEAPU8.set(view, arrayBufferPtr);
-        // console.log("buffer.byteLength", arrayBuffer.byteLength);
-        parent.Module._setAudioBuffer(arrayBufferPtr, arrayBuffer.byteLength);
-        parent.Module._free(arrayBufferPtr);
-
-
-        const audioBuffer = this._bufferPCMData(arrayBuffer);
-
-        this.currentSource = this.audioContext.createBufferSource();
-        this.currentSource.buffer = audioBuffer;
-        this.currentSource.connect(this.audioContext.destination);
-
-        this.currentSource.onended = () => {
-            // console.log('Audio playback ended.');
-            this.isPlaying = false;
-            this.currentSource = null;
-            this._playNextAudio(); // Play the next audio in the queue
-        };
-        this.currentSource.start();
-        this.isPlaying = true;
-    }
-
-    async _playNextAudio() {
-        if (this.audioQueue.length > 0 && !this.isPlaying) {
-            // 音频格式：16kHz, 16-bit (2 bytes), 单声道 → 32000 bytes/sec
-            const SAMPLE_RATE = 16000;
-            const BITS_PER_SAMPLE = 16;
-            const CHANNELS = 1;
-            const BYTES_PER_SECOND = (SAMPLE_RATE * BITS_PER_SAMPLE * CHANNELS) / 8; // = 32000
-
-            const MAX_DURATION_SECONDS = 8;
-            const MAX_BYTES = Math.floor(BYTES_PER_SECOND * MAX_DURATION_SECONDS); // 256000
-
-            // 累计字节数，不超过 MAX_BYTES
-            let accumulatedBytes = 0;
-            let buffersToPlay = [];
-            let remainingBuffers = [];
-
-            for (const buffer of this.audioQueue) {
-                if (accumulatedBytes + buffer.byteLength <= MAX_BYTES) {
-                    buffersToPlay.push(buffer);
-                    accumulatedBytes += buffer.byteLength;
-                } else {
-                    // 一旦超过，剩下的全部保留（包括当前这个 buffer）
-                    remainingBuffers.push(buffer);
-                }
-            }
-
-            // 如果没有可播放的 buffer（理论上不会发生，因为 audioQueue 非空）
-            if (buffersToPlay.length === 0) {
-                // 安全兜底：至少播放第一个 buffer（即使超长）
-                buffersToPlay = [this.audioQueue[0]];
-                remainingBuffers = this.audioQueue.slice(1);
-            }
-
-            // 拼接 buffersToPlay
-            const totalLength = buffersToPlay.reduce((acc, buf) => acc + buf.byteLength, 0);
-            const combinedBuffer = new Uint8Array(totalLength);
-            let offset = 0;
-            for (const buffer of buffersToPlay) {
-                combinedBuffer.set(new Uint8Array(buffer), offset);
-                offset += buffer.byteLength;
-            }
-
-            // 更新 audioQueue：只保留未播放的部分
-            this.audioQueue = remainingBuffers;
-            // 发送拼接的 audio 数据给 playAudio
-            this._playAudio(combinedBuffer.buffer);
-        }
-        else {
-            // this.finished标志本轮已提前结束（被手动打断或新一轮语音接管），不要再改变已有状态了
-            if (sse_endpoint && cosyvoice.isTaskFinished && !this.finished) {
-                sendButton.innerHTML = '<i class="material-icons">send</i>'; // 发送图标
-                console.log("_playAudio Done!!!!")
-                await start_new_round();
-            }
-        }
-    }
-    stop() {
-        if (this.currentSource) {
-            this.currentSource.stop(); // 停止当前音频播放
-            this.currentSource = null; // 清除音频源引用
-            this.isPlaying = false; // 更新播放状态
-        }
-
-        this.audioQueue = []; // 清空音频队列
-        console.log('Playback stopped and queue cleared.');
-    }
 }

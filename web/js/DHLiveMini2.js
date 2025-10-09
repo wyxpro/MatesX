@@ -426,7 +426,7 @@ var createQtAppInstance = ( () => {
             return filename.startsWith("file://")
         }
         var wasmBinaryFile;
-        if (window.location.hostname === 'matesx.com') {
+        if (window.location.hostname.endsWith('matesx.com')) {
             wasmBinaryFile = "https://matesx.oss-cn-beijing.aliyuncs.com/public/DHLiveMini2.wasm.gz";
         } else {
             wasmBinaryFile = "/web/wasm/DHLiveMini2.wasm";
@@ -534,7 +534,7 @@ var createQtAppInstance = ( () => {
         var tempDouble;
         var tempI64;
         var ASM_CONSTS = {
-            2764644: () => {
+            2764692: () => {
                 function getAccurateFrameIndex(tempCtx, canvasWidth) {
                     const x = canvasWidth - 2;
                     const y = 0;
@@ -554,7 +554,7 @@ var createQtAppInstance = ( () => {
                         const rAvg = Math.round(rSum / (data.length / 4));
                         const gAvg = Math.round(gSum / (data.length / 4));
                         const bAvg = Math.round(bSum / (data.length / 4));
-                        // console.log("FFFFFFFFFF", rAvg, gAvg, bAvg, characterVideo.currentTime);
+                        // console.log("RGB value", rAvg, gAvg, bAvg, characterVideo.currentTime);
                         return Math.round((rAvg + gAvg + bAvg) / 3 / 40)
                     }
                     let alphaSum = 0;
@@ -570,7 +570,7 @@ var createQtAppInstance = ( () => {
                             return candidate
                         }
                     }
-                    console.warn("No exact match found, returning approximate frame");
+                    console.warn("returning approximate frame");
                     return currentFrame
                 }
                 let realFrame = -1;
@@ -585,12 +585,12 @@ var createQtAppInstance = ( () => {
                     ctx_video.drawImage(characterVideo, 0, 0, canvas_video.width, canvas_video.height);
                     const currentFrame0 = getAccurateFrameIndex(ctx_video, canvas_video.width);
                     realFrame = findRealFrame(currentFrame, currentFrame0)
-                    // console.log("GGGGGGGGGG", realFrame, currentFrame, currentFrame0, characterVideo.currentTime);
+                    // console.log("realFrame: ", realFrame, currentFrame, currentFrame0, characterVideo.currentTime);
                 }
                 return realFrame
             }
             ,
-            2766379: ($0, $1, $2, $3) => {
+            2766405: ($0, $1, $2, $3) => {
                 let rect_x = $0;
                 let rect_y = $1;
                 let rect_w = $2;
@@ -608,7 +608,7 @@ var createQtAppInstance = ( () => {
                 Module._inputImage(imageDataPtr, 180, 180)
             }
             ,
-            2766883: ($0, $1, $2, $3) => {
+            2766909: ($0, $1, $2, $3) => {
                 let rect_x = $0;
                 let rect_y = $1;
                 let rect_w = $2;
@@ -623,7 +623,7 @@ var createQtAppInstance = ( () => {
                 const imageData = new ImageData(new Uint8ClampedArray(pixelData),width,height);
                 resizedCtx.putImageData(imageData, 0, 0);
                 ctx_video.globalCompositeOperation = "source-over";
-                ctx_video.drawImage(resizedCanvas, 0, 0, width, height, rect_x, rect_y, rect_w, rect_h);
+                ctx_video.drawImage(resizedCanvas, 0, 0, width, height, rect_x, rect_y, rect_w, rect_h)
             }
         };
         function ExitStatus(status) {

@@ -63,8 +63,12 @@ def init_db():
         CREATE TABLE IF NOT EXISTS users (
             unionid TEXT PRIMARY KEY,                          /* 用户的唯一标识unionid */
             nickname TEXT,                                     /* 用户昵称 */
+            headimgurl TEXT,          /* 用户头像 URL */
             created_time TIMESTAMP DEFAULT CURRENT_TIMESTAMP,  /* 创建时间，默认为当前时间 */
             updated_time TIMESTAMP DEFAULT CURRENT_TIMESTAMP,   /* 更新时间，默认为当前时间 */
+            membership_level INTEGER DEFAULT 0,  /* 会员等级（例如：0=普通用户，1=会员），确保值非负 */
+            membership_expiry_time TIMESTAMP DEFAULT '2025-03-23 00:00:00',   
+            token_balance INT DEFAULT 500,           /* 会员 tokens 余额，默认为500 */
             avatar_balance REAL DEFAULT 0.0,           /* 自定义形象余额 */
             voice_balance REAL DEFAULT 0.0           /* 自定义语音余额 */
         )''')
@@ -150,7 +154,8 @@ def check_new_user(unionid):
 def insert_or_update_table(table_name, **kwargs):
     if table_name == "users":
         ALLOWED_FIELDS = {
-            "unionid", "nickname", "avatar_balance",  "voice_balance"
+            "unionid", "nickname", "headimgurl", "membership_level", "membership_expiry_time",
+            "token_balance", "avatar_balance",  "voice_balance"
         }
         NECESSARY_KEYS = {"unionid"}
     elif table_name == "roles":
@@ -414,7 +419,15 @@ def init_insert_data():
 
     # 首先创建用户
     try:
-        user = {"unionid":"MatesX01", "nickname":"explorer", "avatar_balance": 1000, "voice_balance": 1000}
+        user = {
+            "unionid": "MatesX01",
+            "nickname": "explorer",
+            "token_balance": 100000000,
+            "avatar_balance": 1000,
+            "voice_balance": 1000,
+            "membership_level": 1,  # 设置为1表示会员用户
+            "membership_expiry_time": "2099-12-31 23:59:59"  # 设置会员过期时间
+        }
         insert_or_update_table("users", **user)
         print("用户 MatesX01 创建成功")
     except Exception as e:

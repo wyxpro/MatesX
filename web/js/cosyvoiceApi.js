@@ -14,7 +14,7 @@ class Cosyvoice {
     }
 
     // 连接到 WebSocket 服务并发送 run-task 消息
-    connect(callback) {
+    connect(onAudioData, onTaskFinished) {
         return new Promise((resolve, reject) => {
             this.resolveTaskStarted = resolve;
             this.socket = new WebSocket(this.wssUrl);
@@ -73,13 +73,16 @@ class Cosyvoice {
                     } else if (message.header.event === "task-finished") {
                         console.log('recv task-finished');
                         this.isTaskFinished = true;
+                        if (typeof onTaskFinished === 'function') {
+                            onTaskFinished(); // 调用结束回调
+                        }
                         if (this.resolveTaskFinished) {
                             this.resolveTaskFinished();
                         }
                     }
                 } else if (data instanceof ArrayBuffer) {
                     console.log("recv PCM audio size (bytes): ", data.byteLength);
-                    callback(data);
+                    onAudioData(data);
                 }
             };
 
