@@ -274,6 +274,13 @@ async function running_audio_recorder() {
 }
 
 async function start_new_round() {
+    const token_balance = parseInt(localStorage.getItem('token_balance')) || 0;
+    if (token_balance < 10)
+    {
+        XSAlert('对话能量不足');
+        return;
+    }
+
 
     // 停止可能存在的旧轮次
     asrWorker.postMessage({ type: 'stop' });
@@ -435,7 +442,19 @@ async function handleResponseStream(responseBody, signal) {
 async function tts_realtime_ws(voice_id, model_name) {
     try {
         const token = await getTempToken(model_name, voice_id);
-        cosyvoice = new Cosyvoice(`wss://dashscope.aliyuncs.com/api-ws/v1/inference/?api_key=${token}`, voice_id, model_name);
+        if (model_name == "tencent") {
+            cosyvoice = new TencentTTS(token, voice_id, model_name);
+        }
+        else
+        {
+            let cosyvoice_model = "cosyvoice-v1";
+            if (voice_id.slice(0, 4) === "long" || voice_id.slice(0, 4) === "loon") {
+                cosyvoice_model = "cosyvoice-v1";
+            } else {
+                cosyvoice_model = "cosyvoice-v2";
+            }
+            cosyvoice = new Cosyvoice(`wss://dashscope.aliyuncs.com/api-ws/v1/inference/?api_key=${token}`, voice_id, cosyvoice_model);
+        }
 
         await cosyvoice.connect(
             (pcmData) => {
@@ -492,12 +511,24 @@ async function sendTextMessage(inputValue) {
     };
 
     let voice_id = selectedRole.cosyvoice_id;
-    console.log(selectedRole)
-    let tts_model = "cosyvoice-v1";
-    if (voice_id.slice(0, 4) === "long" || voice_id.slice(0, 4) === "loon") {
-        tts_model = "cosyvoice-v1";
+    console.log(selectedRole);
+    const tencentTTS = parseInt(localStorage.getItem('tencentTTS')) || 0;
+    if (tencentTTS === 0 && (voice_id.slice(0, 4) === "5010" || voice_id.slice(0, 4) === "6010"))
+    {
+        XSAlert("角色使用了腾讯云语音，但您的服务器未配置腾讯云服务，暂时改为阿里云临时音色");
+        voice_id = "longwan";
+    }
+    else if (tencentTTS > 0 && (voice_id.slice(0, 4) === "long" || voice_id.slice(0, 4) === "loon"))
+    {
+        XSAlert("角色使用了阿里云语音，但您的服务器设置了优先使用腾讯云服务，暂时改为腾讯云临时音色");
+        voice_id = "501004";
+    }
+
+    let tts_model = "tencent";
+    if (voice_id.slice(0, 4) === "5010" || voice_id.slice(0, 4) === "6010") {
+        tts_model = "tencent";
     } else {
-        tts_model = "cosyvoice-v2";
+        tts_model = "ali";
     }
 
     sendButton.innerHTML = '<i class="material-icons">stop</i>';

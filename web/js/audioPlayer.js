@@ -61,7 +61,7 @@ class PCMAudioPlayer {
       console.warn('Player not connected. Call connect() first.');
       return;
     }
-    console.log("pushPCM audio size (bytes): ", arrayBuffer.byteLength);
+    console.log("pushPCM audio size (bytes): ", arrayBuffer.byteLength, this.dataChunkIndex);
 
     const view = new Uint8Array(arrayBuffer);
         const arrayBufferPtr = parent.Module._malloc(arrayBuffer.byteLength);

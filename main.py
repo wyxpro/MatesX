@@ -10,6 +10,8 @@ from utils.llm_streaming import gen_stream
 from utils.session_manager import cleanup_expired_sessions,user_locks,get_or_create_session
 import utils.sqlite_manager as sqlite_manager
 from routers import chat_router, auth_router, voice_router
+from utils.dashscope import USE_TENCENT_TTS
+
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     cleanup_task = asyncio.create_task(cleanup_expired_sessions())
@@ -92,7 +94,9 @@ async def login(data: dict = Body(...)):
             "userInfo": {
                 "unionid": unionid,
                 "roles_list": [],
-                "voices_list": []
+                "voices_list": [],
+                "tencentTTS": 0,
+                "token_balance": 0
             }
         }
     voices_list = sqlite_manager.get_voices_by_unionid(unionid)
@@ -105,7 +109,9 @@ async def login(data: dict = Body(...)):
             "unionid": unionid,
             "roles_list": roles_list,
             "voices_list": voices_list,
-            "bg_list": bg_list
+            "bg_list": bg_list,
+            "token_balance": user["token_balance"],
+            "tencentTTS": 1 if USE_TENCENT_TTS else 0
         }
     }
 
@@ -125,8 +131,15 @@ async def generate_temp_token(data: dict = Body(...)):
         if user is None:
             raise HTTPException(404, detail="用户不存在")
 
+        token_balance = user.get("token_balance", 0)
+        if token_balance <= 0:
+            raise HTTPException(400, detail="Token不足")
+
+        model_name = data.get("model_name", "ali")
+        voice_id = data.get("voice_id", "501004")
+
         # 调用封装的异步函数获取令牌
-        return await get_temp_token_from_dashscope()
+        return await get_temp_token_from_dashscope(model_name, voice_id)
 
     except Exception as e:
         if isinstance(e, HTTPException):

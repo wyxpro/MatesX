@@ -147,6 +147,8 @@ document.addEventListener('DOMContentLoaded', async () => {
         localStorage.setItem('voices_list', JSON.stringify(result.userInfo.voices_list));
         localStorage.setItem('roles_list', JSON.stringify(result.userInfo.roles_list));
         localStorage.setItem('bg_list', JSON.stringify(result.userInfo.bg_list));
+        localStorage.setItem('tencentTTS', result.userInfo.tencentTTS);
+        localStorage.setItem('token_balance', result.userInfo.token_balance);
         rolesList = JSON.parse(localStorage.getItem('roles_list')) || [];
     } catch (error) {
         console.error('登录错误:', error.message);

@@ -21,6 +21,39 @@ const officialVoices = [
     { voice_name: "星澜", language: "中英", clone_voice_url: "https://help-static-aliyun-doc.aliyuncs.com/file-manage-files/zh-CN/20240624/haffms/Stella.mp3", voice_id: "loongstella", cosyvoice_id: "loongstella", status: "success" },
     { voice_name: "贝翎", language: "中", clone_voice_url: "https://help-static-aliyun-doc.aliyuncs.com/file-manage-files/zh-CN/20240624/tguine/Bella.mp3", voice_id: "loongbella", cosyvoice_id: "loongbella", status: "success" }
 ];
+const tencentTTS = parseInt(localStorage.getItem('tencentTTS')) || 0;
+if (tencentTTS > 0)
+{
+const officialVoices = [
+    { voice_name: "峻峰", language: "阅读男声", clone_voice_url: "https://matesx.oss-cn-beijing.aliyuncs.com/audio/public/501000.wav", voice_id: "501000", cosyvoice_id: "501000", status: "success" },
+    { voice_name: "韵兰", language: "资讯女声", clone_voice_url: "https://matesx.oss-cn-beijing.aliyuncs.com/audio/public/501001.wav", voice_id: "501001", cosyvoice_id: "501001", status: "success" },
+    { voice_name: "雅菊", language: "阅读女声", clone_voice_url: "https://matesx.oss-cn-beijing.aliyuncs.com/audio/public/501002.wav", voice_id: "501002", cosyvoice_id: "501002", status: "success" },
+    { voice_name: "宸宇", language: "阅读男声", clone_voice_url: "https://matesx.oss-cn-beijing.aliyuncs.com/audio/public/501003.wav", voice_id: "501003", cosyvoice_id: "501003", status: "success" },
+    { voice_name: "欣月", language: "聊天女声", clone_voice_url: "https://matesx.oss-cn-beijing.aliyuncs.com/audio/public/501004.wav", voice_id: "501004", cosyvoice_id: "501004", status: "success" },
+    { voice_name: "杰飞", language: "聊天男声", clone_voice_url: "https://matesx.oss-cn-beijing.aliyuncs.com/audio/public/501005.wav", voice_id: "501005", cosyvoice_id: "501005", status: "success" },
+    { voice_name: "凌岳", language: "聊天男声", clone_voice_url: "https://matesx.oss-cn-beijing.aliyuncs.com/audio/public/501006.wav", voice_id: "501006", cosyvoice_id: "501006", status: "success" },
+    { voice_name: "瑞草", language: "聊天男声", clone_voice_url: "https://matesx.oss-cn-beijing.aliyuncs.com/audio/public/501007.wav", voice_id: "501007", cosyvoice_id: "501007", status: "success" },
+    { voice_name: "星詹", language: "外语男声", clone_voice_url: "https://matesx.oss-cn-beijing.aliyuncs.com/audio/public/501008.wav", voice_id: "501008", cosyvoice_id: "501008", status: "success" },
+    { voice_name: "贝妮", language: "外语女声", clone_voice_url: "https://matesx.oss-cn-beijing.aliyuncs.com/audio/public/501009.wav", voice_id: "501009", cosyvoice_id: "501009", status: "success" },
+    { voice_name: "童乐", language: "男童声", clone_voice_url: "https://matesx.oss-cn-beijing.aliyuncs.com/audio/public/601015.wav", voice_id: "601015", cosyvoice_id: "601015", status: "success" },
+    { voice_name: "婉溪", language: "聊天女声", clone_voice_url: "https://matesx.oss-cn-beijing.aliyuncs.com/audio/public/601000.wav", voice_id: "601000", cosyvoice_id: "601000", status: "success" },
+    { voice_name: "灵洛", language: "阅读女声", clone_voice_url: "https://matesx.oss-cn-beijing.aliyuncs.com/audio/public/601001.wav", voice_id: "601001", cosyvoice_id: "601001", status: "success" },
+    { voice_name: "诚辰", language: "聊天男声", clone_voice_url: "https://matesx.oss-cn-beijing.aliyuncs.com/audio/public/601002.wav", voice_id: "601002", cosyvoice_id: "601002", status: "success" },
+    { voice_name: "清荷", language: "阅读女声", clone_voice_url: "https://matesx.oss-cn-beijing.aliyuncs.com/audio/public/601003.wav", voice_id: "601003", cosyvoice_id: "601003", status: "success" },
+    { voice_name: "墨林", language: "资讯男声", clone_voice_url: "https://matesx.oss-cn-beijing.aliyuncs.com/audio/public/601004.wav", voice_id: "601004", cosyvoice_id: "601004", status: "success" },
+    { voice_name: "夏静", language: "聊天女声", clone_voice_url: "https://matesx.oss-cn-beijing.aliyuncs.com/audio/public/601005.wav", voice_id: "601005", cosyvoice_id: "601005", status: "success" },
+    { voice_name: "素耀", language: "阅读男声", clone_voice_url: "https://matesx.oss-cn-beijing.aliyuncs.com/audio/public/601006.wav", voice_id: "601006", cosyvoice_id: "601006", status: "success" },
+    { voice_name: "曦叶", language: "聊天女声", clone_voice_url: "https://matesx.oss-cn-beijing.aliyuncs.com/audio/public/601007.wav", voice_id: "601007", cosyvoice_id: "601007", status: "success" },
+    { voice_name: "铁豪", language: "聊天男声", clone_voice_url: "https://matesx.oss-cn-beijing.aliyuncs.com/audio/public/601008.wav", voice_id: "601008", cosyvoice_id: "601008", status: "success" },
+    { voice_name: "雅芊", language: "聊天女声", clone_voice_url: "https://matesx.oss-cn-beijing.aliyuncs.com/audio/public/601009.wav", voice_id: "601009", cosyvoice_id: "601009", status: "success" },
+    { voice_name: "悦娇", language: "聊天女声", clone_voice_url: "https://matesx.oss-cn-beijing.aliyuncs.com/audio/public/601010.wav", voice_id: "601010", cosyvoice_id: "601010", status: "success" },
+    { voice_name: "云川", language: "聊天男声", clone_voice_url: "https://matesx.oss-cn-beijing.aliyuncs.com/audio/public/601011.wav", voice_id: "601011", cosyvoice_id: "601011", status: "success" },
+    { voice_name: "韵璟", language: "特色女声", clone_voice_url: "https://matesx.oss-cn-beijing.aliyuncs.com/audio/public/601012.wav", voice_id: "601012", cosyvoice_id: "601012", status: "success" },
+    { voice_name: "慧伊", language: "阅读女声", clone_voice_url: "https://matesx.oss-cn-beijing.aliyuncs.com/audio/public/601013.wav", voice_id: "601013", cosyvoice_id: "601013", status: "success" },
+    { voice_name: "明简", language: "聊天男声", clone_voice_url: "https://matesx.oss-cn-beijing.aliyuncs.com/audio/public/601014.wav", voice_id: "601014", cosyvoice_id: "601014", status: "success" }
+];
+}
+
 
 let rolesList = [];
 let voices_list = [];
