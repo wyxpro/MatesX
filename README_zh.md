@@ -73,6 +73,12 @@ DASHSCOPE_LLM_URL = "https://dashscope.aliyuncs.com/compatible-mode/v1"
 HOST_URL = "http://localhost:8000"
 # 配置 MatesX形象平台秘钥
 MatesX_key = ""           # 从matesx.cn获取
+# 可选: 配置腾讯云 大模型音色
+USE_TENCENT_TTS = True   # 默认为False（优先使用阿里云音色）
+class TencentTtsConfig:
+    SECRET_ID = ""
+    SECRET_KEY = ""
+    APP_ID = 
 ```
 开启服务：
 ```bash

@@ -73,6 +73,12 @@ DASHSCOPE_LLM_URL = "https://dashscope.aliyuncs.com/compatible-mode/v1"
 HOST_URL = "http://localhost:8000"
 # Configure MatesX Avatar key
 MatesX_key = ""           # Obtain key from matesx.cn
+# Optional: config if using Tencent cloud TTS
+USE_TENCENT_TTS = True  # default: False (prefer Alibaba Cloud voice by default)
+class TencentTtsConfig:
+    SECRET_ID = ""
+    SECRET_KEY = ""
+    APP_ID = 
 ```
 
 Start service:
