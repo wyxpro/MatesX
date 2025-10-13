@@ -6,7 +6,6 @@ class Cosyvoice {
         this.isConnected = false;
         this.isTaskStarted = false;
         this.isTaskFinished = false;
-        this.messageQueue = [];
         this.resolveTaskStarted = null;
         this.resolveTaskFinished = null;
         this.voice_id = voice_id;
@@ -66,9 +65,7 @@ class Cosyvoice {
                         this.isTaskStarted = true;
                         this.isTaskFinished = false;
                         console.log('recv task-started');
-                        if (this.resolveTaskStarted) {
-                            this.resolveTaskStarted();
-                        }
+                        this.resolveTaskStarted?.();
                         resolve(); // 在接收到 task-started 后 resolve Promise
                     } else if (message.header.event === "task-finished") {
                         console.log('recv task-finished');
@@ -76,11 +73,10 @@ class Cosyvoice {
                         if (typeof onTaskFinished === 'function') {
                             onTaskFinished(); // 调用结束回调
                         }
-                        if (this.resolveTaskFinished) {
-                            this.resolveTaskFinished();
-                        }
+                        this.resolveTaskFinished?.();
                     }
                 } else if (data instanceof ArrayBuffer) {
+                    // console.log('接收到音频数据 时间:', new Date().toISOString());
                     console.log("recv PCM audio size (bytes): ", data.byteLength);
                     onAudioData(data);
                 }

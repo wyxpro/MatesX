@@ -13,7 +13,7 @@ class TencentTTS {
     }
 
     // 连接到 WebSocket 服务并发送 run-task 消息
-    async connect(callback) {
+    async connect(onAudioData, onTaskFinished) {
         return new Promise((resolve, reject) => {
             this.resolveTaskStarted = resolve;
             this.socket = new WebSocket(this.wssUrl);
@@ -28,6 +28,7 @@ class TencentTTS {
                 const data = event.data;
                 if (typeof data === 'string') {
                     const message = JSON.parse(data);
+                    console.log("Received message:", message);
 
                     if (message.code !== 0) {
                         console.error('错误:', message.message);
@@ -39,12 +40,15 @@ class TencentTTS {
                         this.isTaskStarted = true;
                         this.isTaskFinished = false;
                         this.sessionId = message.session_id;
+                        console.log('recv task-started');
                         this.resolveTaskStarted?.();
                     }
-
                     if (message.final === 1) {
-                        // console.log('合成完成 时间:', new Date().toISOString());
+                        console.log('recv task-finished');
                         this.isTaskFinished = true;
+                        if (typeof onTaskFinished === 'function') {
+                            onTaskFinished(); // 调用结束回调
+                        }
                         this.resolveTaskFinished?.();
                     }
 
@@ -53,8 +57,8 @@ class TencentTTS {
                     }
                 } else if (data instanceof ArrayBuffer) {
                     // console.log('接收到音频数据 时间:', new Date().toISOString());
-                    // console.log("recv PCM audio size (bytes): ", data.byteLength);
-                    callback(data);
+                    console.log("recv PCM audio size (bytes): ", data.byteLength);
+                    onAudioData(data);
                 }
             };
 
@@ -102,6 +106,7 @@ class TencentTTS {
         };
 
         this.socket.send(JSON.stringify(finishTaskMessage));
+        console.log('send message: ', finishTaskMessage)
 
         return new Promise((resolve, reject) => {
             this.resolveTaskFinished = resolve;
