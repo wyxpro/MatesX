@@ -4,3 +4,6 @@ users.db
 assets/*/memory.bin
 utils/dashscope2.py
 doc
+
+web/character2.html
+web/dialog-realtime2.html

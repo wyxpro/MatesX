@@ -1,9 +1,9 @@
 <!doctype html>
 <html lang="zh-CN">
-  <head>
+<head>
     <meta charset="utf-8">
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-    <meta name="viewport" content="width=device-width, height=device-height, user-scalable=0"/>
+    <meta name="viewport" content="width=device-width, height=device-height, user-scalable=0" />
     <link rel="icon" href="common/favicon.ico" type="image/x-icon">
     <title>MatesX</title>
     <link href="css/material-icons.css" rel="stylesheet">
@@ -20,7 +20,7 @@
             justify-content: center;
             align-items: center;
         }
-        
+
         .guide-tooltip {
             background-color: white;
             border-radius: 16px;
@@ -30,7 +30,7 @@
             position: relative;
             text-align: center;
         }
-        
+
         .guide-highlight {
             position: absolute;
             border-radius: 50%;
@@ -39,20 +39,20 @@
             pointer-events: none;
             transition: all 0.5s ease;
         }
-        
+
         .guide-text {
             font-size: 16px;
             margin-bottom: 25px;
             color: #333;
             line-height: 1.5;
         }
-        
+
         .guide-buttons {
             display: flex;
             justify-content: center;
             gap: 8px;
         }
-        
+
         .guide-btn {
             background: linear-gradient(to bottom, #ff3c64, #d62e52);
             color: white;
@@ -65,12 +65,12 @@
             outline: none;
             min-width: 100px;
         }
-        
+
         .guide-btn:hover {
             transform: translateY(-2px);
             box-shadow: 0 4px 12px rgba(255, 60, 100, 0.3);
         }
-        
+
         .guide-btn.skip {
             background: #f0f0f0;
             color: #666;
@@ -83,8 +83,7 @@
 
         body {
             font-family: 'PingFang SC', 'Helvetica Neue', Arial, sans-serif;
-            /* background-color: #fafafa; */
-            background-color: transparent; /* 改为透明 */
+            background-color: transparent;
             color: #333;
             overflow: hidden;
             height: 100vh;
@@ -113,7 +112,8 @@
             display: none;
         }
 
-        .left-section, .right-section {
+        .left-section,
+        .right-section {
             display: flex;
             align-items: center;
             gap: 15px;
@@ -144,19 +144,16 @@
             font-size: 20px;
         }
 
-        /* 语音按钮状态 */
         .voice-off .material-icons {
             color: #999 !important;
         }
 
-        /* 下拉选择器容器 */
         .selector-container {
             display: flex;
             gap: 15px;
             align-items: center;
         }
 
-        /* 自定义下拉选择器 */
         .custom-select {
             position: relative;
             min-width: 70px;
@@ -256,9 +253,8 @@
             opacity: 1;
         }
 
-        /* 主内容区域 */
         .main-container {
-            background-color: transparent; /* 改为透明 */
+            background-color: transparent;
             flex: 1;
             display: flex;
             flex-direction: column;
@@ -269,7 +265,6 @@
             height: 100%;
         }
 
-        /* 背景容器 */
         #background-container {
             position: absolute;
             top: 0;
@@ -280,7 +275,8 @@
             z-index: 1;
         }
 
-        #background-video, #background-image {
+        #background-video,
+        #background-image {
             position: absolute;
             top: 50%;
             left: 50%;
@@ -296,7 +292,6 @@
             display: none;
         }
 
-        /* 前景容器 */
         #foreground-container {
             position: absolute;
             top: 0;
@@ -318,7 +313,6 @@
             object-fit: contain;
         }
 
-        /* 加载状态 */
         #loadingSpinner {
             position: absolute;
             top: 50%;
@@ -345,8 +339,12 @@
         }
 
         @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
+            0% {
+                transform: rotate(0deg);
+            }
+            100% {
+                transform: rotate(360deg);
+            }
         }
 
         #loadingSpinner strong {
@@ -354,7 +352,6 @@
             color: #333;
         }
 
-        /* 开始提示 */
         #startMessage {
             position: absolute;
             top: 50%;
@@ -396,6 +393,7 @@
             width: 1px;
             height: 1px;
         }
+
         #screen2 {
             width: 100%;
             height: 100%;
@@ -404,10 +402,9 @@
             left: 0;
             border: none;
             z-index: 5;
-            display: none; /* 初始隐藏 */
+            display: none;
         }
 
-        /* 响应式设计 */
         @media (max-width: 768px) {
             .title-bar {
                 padding: 0 10px;
@@ -468,29 +465,24 @@
         </div>
     </div>
 
-    <!-- 主内容区域 -->
     <div class="main-container">
-        <!-- 背景容器 -->
         <div id="background-container">
             <video id="background-video" autoplay loop muted></video>
             <img id="background-image" src="" alt="背景图片">
         </div>
 
-        <!-- 前景容器 -->
         <div id="foreground-container">
             <canvas id="canvas_video"></canvas>
         </div>
-        <!-- 加载状态 -->
+
         <div id="loadingSpinner">
             <div class="spinner"></div>
             <strong>MatesX: 正在加载中...</strong>
         </div>
-        <!-- 开始提示 -->
-        <!-- <div id="startMessage">请点击屏幕开始</div> -->
-         <div id="startMessage" style="display: none;">请点击屏幕开始</div>
+
+        <div id="startMessage" style="display: none;">请点击屏幕开始</div>
     </div>
 
-    <!-- Toast提示 -->
     <div id="toast">
         <i class="material-icons" id="toast-icon">info</i>
         <span id="toast-text">语音打断功能已开启</span>
@@ -602,69 +594,87 @@
                 showStep(0);
             }
         });
-            const voiceToggle = document.getElementById('voice-toggle');
-            const textToggle = document.getElementById('text-toggle');
-            const toast = document.getElementById('toast');
-            const toastText = document.getElementById('toast-text');
-            const toastIcon = document.getElementById('toast-icon');
-            // 从localStorage加载状态
-            let voiceDisturbEnabled = localStorage.getItem('voiceDisturbEnabled') === 'true';
-            if (localStorage.getItem('voiceDisturbEnabled') === null) {
-                voiceDisturbEnabled = true; // 默认开启
-            }
-            let chatHistoryShowed = localStorage.getItem('chatHistoryShowed') === 'true';
-            if (localStorage.getItem('chatHistoryShowed') === null) {
-                chatHistoryShowed = true; // 默认开启
-            }
-            textToggle.addEventListener('click', function() {
-                chatHistoryShowed = !chatHistoryShowed;
-                localStorage.setItem('chatHistoryShowed', chatHistoryShowed);
-            });
-            
-            // 初始设置
+
+        const voiceToggle = document.getElementById('voice-toggle');
+        const textToggle = document.getElementById('text-toggle');
+        const toast = document.getElementById('toast');
+        const toastText = document.getElementById('toast-text');
+        const toastIcon = document.getElementById('toast-icon');
+
+        // 从localStorage加载状态
+        let voiceDisturbEnabled = localStorage.getItem('voiceDisturbEnabled') === 'true';
+        if (localStorage.getItem('voiceDisturbEnabled') === null) {
+            voiceDisturbEnabled = false; // 默认关闭
+        }
+
+        let chatHistoryShowed = localStorage.getItem('chatHistoryShowed') === 'true';
+        if (localStorage.getItem('chatHistoryShowed') === null) {
+            chatHistoryShowed = true; // 默认开启
+        }
+
+        // 初始图标状态
+        updateTextButton();
+
+        textToggle.addEventListener('click', function() {
+            chatHistoryShowed = !chatHistoryShowed;
+            localStorage.setItem('chatHistoryShowed', chatHistoryShowed);
+            updateTextButton();
+        });
+
+        // 初始设置
+        updateVoiceButton();
+
+        // 点击切换状态
+        voiceToggle.addEventListener('click', function() {
+            voiceDisturbEnabled = !voiceDisturbEnabled;
+
+            // 添加动画效果
+            voiceToggle.classList.add('pulse');
+            setTimeout(() => {
+                voiceToggle.classList.remove('pulse');
+            }, 500);
+
             updateVoiceButton();
-            
-            // 点击切换状态
-            voiceToggle.addEventListener('click', function() {
-                voiceDisturbEnabled = !voiceDisturbEnabled;
-                
-                // 添加动画效果
-                voiceToggle.classList.add('pulse');
-                setTimeout(() => {
-                    voiceToggle.classList.remove('pulse');
-                }, 500);
-                
-                updateVoiceButton();
-                showToast(voiceDisturbEnabled ? '语音打断功能已开启' : '语音打断功能已关闭');
-                
-                // 保存状态
-                localStorage.setItem('voiceDisturbEnabled', voiceDisturbEnabled);
-            });
-            
-            // 更新按钮状态
-            function updateVoiceButton() {
-                const icon = voiceToggle.querySelector('.material-icons');
-                if (voiceDisturbEnabled) {
-                    voiceToggle.classList.remove('voice-off');
-                    icon.textContent = 'mic';
-                    icon.style.color = '#ff3c64';
-                } else {
-                    voiceToggle.classList.add('voice-off');
-                    icon.textContent = 'mic_off';
-                    icon.style.color = '#999';
-                }
+            showToast(voiceDisturbEnabled ? '语音打断功能已开启' : '语音打断功能已关闭');
+
+            // 保存状态
+            localStorage.setItem('voiceDisturbEnabled', voiceDisturbEnabled);
+        });
+
+        // 更新语音按钮状态
+        function updateVoiceButton() {
+            const icon = voiceToggle.querySelector('.material-icons');
+            if (voiceDisturbEnabled) {
+                voiceToggle.classList.remove('voice-off');
+                icon.textContent = 'mic';
+                icon.style.color = '#ff3c64';
+            } else {
+                voiceToggle.classList.add('voice-off');
+                icon.textContent = 'mic_off';
+                icon.style.color = '#999';
             }
-            
-            // 显示Toast提示
-            function showToast(message) {
-                toastText.textContent = message;
-                toastIcon.textContent = voiceDisturbEnabled ? 'mic' : 'mic_off';
-                toast.classList.add('show');
-                
-                setTimeout(() => {
-                    toast.classList.remove('show');
-                }, 3000);
+        }
+
+        // 更新聊天按钮图标
+        function updateTextButton() {
+            const icon = textToggle.querySelector('.material-icons');
+            if (chatHistoryShowed) {
+                icon.textContent = 'chat';
+            } else {
+                icon.textContent = 'chat_bubble_outline';
             }
+        }
+
+        // 显示Toast提示
+        function showToast(message) {
+            toastText.textContent = message;
+            toastIcon.textContent = voiceDisturbEnabled ? 'mic' : 'mic_off';
+            toast.classList.add('show');
+
+            setTimeout(() => {
+                toast.classList.remove('show');
+            }, 3000);
+        }
     </script>
 </body>
 </html>

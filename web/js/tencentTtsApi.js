@@ -32,6 +32,12 @@ class TencentTTS {
 
                     if (message.code !== 0) {
                         console.error('错误:', message.message);
+                        this.isTaskFinished = true;
+                        if (typeof onTaskFinished === 'function') {
+                            onTaskFinished(); // 调用结束回调
+                        }
+                        this.resolveTaskFinished?.();
+
                         this.socket.close();
                         reject(message.message);
                     }

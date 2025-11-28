@@ -3,7 +3,7 @@ from fastapi import UploadFile, File
 from fastapi.responses import JSONResponse
 import utils.sqlite_manager as sqlite_manager
 import sqlite3
-
+from utils.session_manager import user_session_cache  # 导入全局会话管理器
 import httpx
 import asyncio
 from fastapi import HTTPException, BackgroundTasks
@@ -34,6 +34,12 @@ async def update_role(data: dict = Body(...)):
             cosyvoice_id=cosyvoice_id,
             system_prompt=system_prompt
         )
+
+        # 删除对应的会话缓存
+        if unionid in user_session_cache:
+            sessions = user_session_cache[unionid]
+            if avatar_id in sessions:
+                del sessions[avatar_id]
 
         return {
             "code": 0
@@ -105,6 +111,7 @@ async def handle_new_role2(
         avatar_name: str = Form(...),
         matting: bool = Form(False),
         keepsize: bool = Form(False),
+        reverse: bool = Form(False),
         file: UploadFile = File(...)
 ):
     print("handle_new_role2", {
@@ -113,6 +120,7 @@ async def handle_new_role2(
         "avatar_name": avatar_name,
         "matting": matting,
         "keepsize": keepsize,
+        "reverse": reverse,
         "filename": file.filename
     })
     try:
@@ -140,6 +148,7 @@ async def handle_new_role2(
                     "key": MatesX_key,  # 根据实际需求调整key参数
                     "matting": str(matting).lower(),
                     "keepsize": str(keepsize).lower(),
+                    "reverse": str(reverse).lower(),
                     "task_id": avatar_id
                 }
 

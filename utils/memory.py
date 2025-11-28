@@ -5,10 +5,7 @@ import struct
 from datetime import datetime
 from openai import OpenAI
 import requests
-from utils.dashscope import DASHSCOPE_API_KEY,DASHSCOPE_LLM_URL,HOST_URL
-
-# 使用相同的URL进行上传和下载
-memory_data_url = HOST_URL + "/api/assets/{avatar_id}/memory.bin"
+from utils.dashscope import DASHSCOPE_API_KEY,DASHSCOPE_LLM_URL,memory_data_url
 
 class MemoryManager:
     def __init__(self, avatar_id, memory_version):

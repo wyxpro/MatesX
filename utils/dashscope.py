@@ -3,8 +3,8 @@ DASHSCOPE_API_KEY = ""
 DASHSCOPE_TOKEN_URL = "https://dashscope.aliyuncs.com/api/v1/tokens"
 DASHSCOPE_LLM_URL = "https://dashscope.aliyuncs.com/compatible-mode/v1"
 
-# 通用服务地址
-HOST_URL = "http://localhost:8000"
+# 记忆文件地址
+memory_data_url = "http://localhost:8000/api/assets/{avatar_id}/memory.bin"
 
 # OSS 用户音频存储地址
 OSS_URL = "https://matesx.oss-cn-beijing.aliyuncs.com/audio/user"

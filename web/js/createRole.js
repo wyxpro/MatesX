@@ -24,6 +24,7 @@ const backBtn = document.querySelector('.back-btn');
 
 const removeBgCheckbox = document.getElementById('removeBgCheckbox');
 const keepSizeCheckbox = document.getElementById('keepSizeCheckbox');
+const reverseConcatCheckbox = document.getElementById('reverseConcatCheckbox');
 
 // 返回按钮处理
 async function handleBack() {
@@ -249,6 +250,7 @@ async function handleCreate() {
         formData.append('avatar_name', avatar_name);
         formData.append('matting', removeBgCheckbox.checked ? 'true' : 'false');  // 是否强制抠图
         formData.append('keepsize', keepSizeCheckbox.checked ? 'true' : 'false'); // 是否保留原始尺寸而是适应竖屏720P
+        formData.append('reverse', reverseConcatCheckbox.checked ? 'true' : 'false'); // 是否对视频正反拼接以无缝循环
         formData.append('file', currentFile); // currentFile应该是File对象
 
         const response = await fetch(url_prefix + '/auth/handle_new_role2', {

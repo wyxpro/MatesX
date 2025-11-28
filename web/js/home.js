@@ -99,8 +99,25 @@ function createRoleCard(role) {
     card.appendChild(deleteBtn);
 
     if (role.status !== 'pending') {
-        card.addEventListener('click', () => {
+        card.addEventListener('click', async () => {
             localStorage.setItem('selectedRoleID', role.avatar_id);
+
+            const response = await fetch('/auth/check_role_status', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    unionid: role.unionid,
+                    avatar_id: role.avatar_id  // 保持字段名不变
+                })
+            });
+            const result_role = await response.json();
+            rolesList = JSON.parse(localStorage.getItem('roles_list')) || [];
+            const existingIndex = rolesList.findIndex(r => r.avatar_id === role.avatar_id);
+            rolesList[existingIndex] = { ...rolesList[existingIndex], ...result_role };
+            localStorage.setItem('roles_list', JSON.stringify(rolesList));
+
             window.location.href = 'character.html?avatar_mode=private';
         });
     }

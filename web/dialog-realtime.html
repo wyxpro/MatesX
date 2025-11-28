@@ -176,23 +176,21 @@
     <script src="js/dialogRealtime.js"></script>
     <script>
         const inputContainer_ = document.getElementById('input-container');
-        const chatContainer_ = document.getElementById('chat-container');
         const topArea = document.querySelector('.top-area');
         let clickCount = 0;
 
         topArea.addEventListener('click', function() {
             clickCount++;
-    
+
             const parentTitlebar = getParentTitlebar();
-            const shouldHideAll = clickCount % 3 === 2;
-            const shouldRestoreAll = clickCount % 3 === 0;
-    
+            const shouldHideAll = clickCount % 2 === 1;
+            const shouldRestoreAll = clickCount % 2 === 0;
+
             if (shouldHideAll) {
-                hideElements([inputContainer_, chatContainer_, parentTitlebar]);
-            } else if (shouldRestoreAll) {
-                showElements([inputContainer_, chatContainer_, parentTitlebar]);
-            } else {
-                toggleElement(parentTitlebar);
+                hideElements([inputContainer_, parentTitlebar]);
+            } else
+            {
+                showElements([inputContainer_, parentTitlebar]);
             }
         });
 

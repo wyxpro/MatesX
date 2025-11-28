@@ -534,7 +534,7 @@ var createQtAppInstance = ( () => {
         var tempDouble;
         var tempI64;
         var ASM_CONSTS = {
-            2764692: () => {
+            2764724: () => {
                 function getAccurateFrameIndex(tempCtx, canvasWidth) {
                     const x = canvasWidth - 2;
                     const y = 0;
@@ -554,7 +554,6 @@ var createQtAppInstance = ( () => {
                         const rAvg = Math.round(rSum / (data.length / 4));
                         const gAvg = Math.round(gSum / (data.length / 4));
                         const bAvg = Math.round(bSum / (data.length / 4));
-                        // console.log("RGB value", rAvg, gAvg, bAvg, characterVideo.currentTime);
                         return Math.round((rAvg + gAvg + bAvg) / 3 / 40)
                     }
                     let alphaSum = 0;
@@ -590,7 +589,7 @@ var createQtAppInstance = ( () => {
                 return realFrame
             }
             ,
-            2766405: ($0, $1, $2, $3) => {
+            2766437: ($0, $1, $2, $3) => {
                 let rect_x = $0;
                 let rect_y = $1;
                 let rect_w = $2;
@@ -608,7 +607,7 @@ var createQtAppInstance = ( () => {
                 Module._inputImage(imageDataPtr, 180, 180)
             }
             ,
-            2766909: ($0, $1, $2, $3) => {
+            2766941: ($0, $1, $2, $3) => {
                 let rect_x = $0;
                 let rect_y = $1;
                 let rect_w = $2;

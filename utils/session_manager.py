@@ -41,7 +41,7 @@ class Session:
         """更新系统提示词"""
         self.system_prompt = system_prompt or ""
         self.memory_prompt = memory_prompt or []
-
+        print("update_system_prompt", system_prompt, memory_prompt)
         # 重新构建combined_prompt
         self.combined_prompt = "你将扮演角色和我对话。"
         if self.system_prompt:
@@ -109,8 +109,11 @@ def get_or_create_session(unionid, avatar_id, memory_prompt):
     except KeyError:
         # 从数据库获取角色信息
         role = get_role_by_avatar_id(avatar_id)
+        system_prompt = role.get("system_prompt") or ""
+        avatar_name = role.get("avatar_name", "无名")
+        system_prompt = "姓名：{}。".format(avatar_name) + system_prompt
         session = Session(
-            system_prompt=role.get("system_prompt", ""),
+            system_prompt=system_prompt,
             memory_prompt=memory_prompt,
             memory_version=role.get("memory_version", 0),
             chat_count=role.get("chat_count", 0)

@@ -5,14 +5,16 @@ let public_roles_list = JSON.parse(localStorage.getItem('public_roles_list')) ||
 
 let voiceDisturbEnabled = localStorage.getItem('voiceDisturbEnabled') === 'true';
 if (localStorage.getItem('voiceDisturbEnabled') === null) {
-    voiceDisturbEnabled = true; // 默认开启
+    voiceDisturbEnabled = false; // 默认关闭
 }
 
 let chatHistoryShowed = localStorage.getItem('chatHistoryShowed') === 'true';
 if (localStorage.getItem('chatHistoryShowed') === null) {
     chatHistoryShowed = true; // 默认开启
-    const chatContainer_ = document.getElementById('chat-container');
-    chatContainer_.classList.toggle('hidden');
+}
+
+if (!chatHistoryShowed) {
+    document.getElementById('chat-container').classList.add('hidden');
 }
 
 window.addEventListener('storage', (event) => {

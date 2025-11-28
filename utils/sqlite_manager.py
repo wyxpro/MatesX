@@ -62,16 +62,16 @@ def init_db():
         # 创建 users 表
         cursor.execute('''
         CREATE TABLE IF NOT EXISTS users (
-            unionid TEXT PRIMARY KEY,                          /* 用户的唯一标识unionid */
-            nickname TEXT,                                     /* 用户昵称 */
-            headimgurl TEXT,          /* 用户头像 URL */
-            created_time TIMESTAMP DEFAULT CURRENT_TIMESTAMP,  /* 创建时间，默认为当前时间 */
-            updated_time TIMESTAMP DEFAULT CURRENT_TIMESTAMP,   /* 更新时间，默认为当前时间 */
-            membership_level INTEGER DEFAULT 0,  /* 会员等级（例如：0=普通用户，1=会员），确保值非负 */
-            membership_expiry_time TIMESTAMP DEFAULT '2025-03-23 00:00:00',   
-            token_balance INT DEFAULT 500,           /* 会员 tokens 余额，默认为500 */
-            avatar_balance REAL DEFAULT 0.0,           /* 自定义形象余额 */
-            voice_balance REAL DEFAULT 0.0           /* 自定义语音余额 */
+            unionid TEXT PRIMARY KEY,                                        /* 用户的唯一标识unionid */
+            nickname TEXT,                                                   /* 用户昵称 */
+            headimgurl TEXT,                                                 /* 用户头像 URL */
+            created_time TIMESTAMP DEFAULT CURRENT_TIMESTAMP,                /* 创建时间，默认为当前时间 */
+            updated_time TIMESTAMP DEFAULT CURRENT_TIMESTAMP,                /* 更新时间，默认为当前时间 */
+            membership_level INTEGER DEFAULT 0,                              /* 会员等级（0=普通用户，1=会员），非负 */
+            membership_expiry_time TIMESTAMP DEFAULT '2025-03-23 00:00:00',
+            token_balance INT DEFAULT 500,                                   /* 会员 tokens 余额 */
+            avatar_balance REAL DEFAULT 0.0,                                 /* 自定义形象余额 */
+            voice_balance REAL DEFAULT 0.0                                   /* 自定义语音余额 */
         )''')
 
         conn.commit()
@@ -80,13 +80,11 @@ def init_db():
     else:
         print(f"数据库 {DB_FILE} 已存在。")
 
-
 # 获取数据库连接
 def get_db_connection():
     conn = sqlite3.connect(DB_FILE)
     conn.row_factory = sqlite3.Row  # 使查询结果以字典形式返回
     return conn
-
 
 def query_data(table: str, columns: Optional[list] = None,
                condition: Optional[str] = None, params: Optional[tuple] = None) -> list:
@@ -118,7 +116,6 @@ def query_data(table: str, columns: Optional[list] = None,
     finally:
         conn.close()
 
-
 def delete_data(table: str, condition: str, params: tuple) -> int:
     """
     删除表中数据
@@ -133,7 +130,6 @@ def delete_data(table: str, condition: str, params: tuple) -> int:
         sql = f"DELETE FROM {table} WHERE {condition}"
         cursor.execute(sql, params)
         conn.commit()
-        print("cursor.rowcount", cursor.rowcount)
         return cursor.rowcount
     except sqlite3.Error as e:
         print(f"删除数据错误: {e}")
@@ -142,7 +138,6 @@ def delete_data(table: str, condition: str, params: tuple) -> int:
     finally:
         conn.close()
 
-
 # 检查用户是否存在
 def check_new_user(unionid):
     results = query_data("users", condition="unionid = ?", params=(unionid,))
@@ -150,7 +145,6 @@ def check_new_user(unionid):
         return True
     else:
         return False
-
 
 def insert_or_update_table(table_name, **kwargs):
     if table_name == "users":
@@ -163,7 +157,7 @@ def insert_or_update_table(table_name, **kwargs):
         ALLOWED_FIELDS = {
             "avatar_id", "unionid", "status", "avatar_name", "avatar_url", "cosyvoice_id",
             "system_prompt", "memory_prompt_url", "memory_version", "video_url", "video_asset_url", "image_asset_url",
-            "errorMessage", "bg_id", "created_time", "updated_time", "version", "chat_count"
+            "errorMessage", "bg_id", "created_time", "updated_time", "version", "chat_count",
         }
         NECESSARY_KEYS = {"avatar_id"}
     elif table_name == "voices":
@@ -213,11 +207,9 @@ def insert_or_update_table(table_name, **kwargs):
     finally:
         conn.close()
 
-
 def remove_role_from_roles(unionid: str, avatar_id: str):
     result = delete_data("roles", condition="avatar_id = ? AND unionid = ?", params=(avatar_id, unionid,))
     return result > 0
-
 
 def get_user_by_unionid(unionid: str) -> Optional[Dict[str, Any]]:
     results = query_data("users", condition="unionid = ?", params=(unionid,))
@@ -225,7 +217,6 @@ def get_user_by_unionid(unionid: str) -> Optional[Dict[str, Any]]:
         return None
     else:
         return results[0]
-
 
 def get_voices_by_unionid(unionid: str) -> list[Dict[str, Any]]:
     results = query_data("voices", condition="unionid = ?", params=(unionid,))
@@ -243,7 +234,6 @@ def get_roles_by_unionid(unionid: str) -> list[Dict[str, Any]]:
     results = query_data("roles", condition="unionid = ?", params=(unionid,))
     return results
 
-
 def get_role_by_avatar_id(avatar_id: str, public: str = "private") -> Optional[Dict[str, Any]]:
     results = query_data("roles", condition="avatar_id = ?", params=(avatar_id,))
 
@@ -252,14 +242,12 @@ def get_role_by_avatar_id(avatar_id: str, public: str = "private") -> Optional[D
     else:
         return results[0]
 
-
 def get_voice_by_voice_id(voice_id: str) -> Optional[Dict[str, Any]]:
     results = query_data("voices", condition="voice_id = ?", params=(voice_id,))
     if len(results) == 0:
         return None
     else:
         return results[0]
-
 
 # 初始化插入数据函数
 def init_insert_data():

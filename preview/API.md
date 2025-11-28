@@ -67,6 +67,7 @@ except:
 - file: 视频/图片文件（必填，支持mp4/png/jpg格式，最大30MB）
 - matting: 是否抠图（布尔值，true/false）
 - keepsize: 是否保持分辨率（布尔值，true/false）
+- reverse: 是否正反拼接视频来保证无缝循环（布尔值，true/false）
 - task_id: 任务ID（选填，若无系统会自动生成唯一ID）
 
 响应成功示例:
@@ -85,14 +86,15 @@ python代码示例：
 ```bash
 import requests
 
-def upload_video(password, file_path, matting=False, keepsize=False):
+def upload_video(password, file_path, matting=True, keepsize=False, reverse=True):
     url = "https://www.matesx.cn/api/upload"
 
     files = {'file': open(file_path, 'rb')}
     data = {
         'key': password,
         'matting': str(matting).lower(),
-        'keepsize': str(keepsize).lower()
+        'keepsize': str(keepsize).lower(),
+        'reverse': str(reverse).lower()
     }
     if callback_url:
         data['callback_url'] = callback_url
