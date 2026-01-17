@@ -69,8 +69,12 @@ pip install -r requirements.txt
 DASHSCOPE_API_KEY = ""     # 请到阿里云百炼开通API-key
 DASHSCOPE_TOKEN_URL = "https://dashscope.aliyuncs.com/api/v1/tokens"
 DASHSCOPE_LLM_URL = "https://dashscope.aliyuncs.com/compatible-mode/v1"
-# 配置你的域名服务器（或仅在本地就用默认localhost）
-HOST_URL = "http://localhost:8000"
+
+# 默认的记忆文件配置地址
+memory_data_url = "http://localhost:8000/api/assets/{avatar_id}/memory.bin"
+# 默认的语音文件云存储地址（用于语音克隆）
+OSS_URL = "https://matesx.oss-cn-beijing.aliyuncs.com/audio/user"
+
 # 配置 MatesX形象平台秘钥
 MatesX_key = ""           # 从matesx.cn获取
 # 可选: 配置腾讯云 大模型音色

@@ -82,41 +82,42 @@ document.addEventListener('DOMContentLoaded', function() {
             if (!selectedRoleID) throw new Error('未找到角色ID');
             let selectedRole = rolesList.find(role => role.avatar_id === selectedRoleID);
 
-            // 加载角色记忆
-            console.log("加载角色记忆");
-            await window.memoryDataDB.init();
-            let memoryData = await window.memoryDataDB.getMemoryDataByAvatarID(selectedRoleID);
-            console.log("memoryData: ", memoryData);
-            memoryData = memoryData.length > 0 ? memoryData[0] : null;
-
-            try {
-                if (selectedRole.memory_version > 0 &&
-                    (!memoryData || memoryData.memoryVersion !== selectedRole.memory_version)) {
-
-                    const response = await fetch(selectedRole.memory_prompt_url);
-                    if (!response.ok) {
-                        throw new Error(`HTTP error! status: ${response.status}`);
-                    }
-
-                    const buffer = await response.arrayBuffer();
-                    memoryData = window.memoryDataDB.parseBinaryData(buffer);
-                    await window.memoryDataDB.saveMemoryData(memoryData);
-                }
-            } catch (error) {
-                console.error('Failed to load or process memory data:', error);
-            }
-            if (memoryData)
-            {
-                window.embeddingManager.initialize(memoryData.memories);
-                console.log("memoryData.memories.length: ", memoryData.memories.length)
-            }
-
             //设置形象和背景
             playCharacterVideo(selectedRole.avatar_id);
             const selectedBg = bgList.find(bg => bg.bg_id === selectedRole.bg_id);
             if (selectedBg)
             {
                 selectBackground(selectedBg);
+            }
+
+            var isiOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
+            if (!isiOS) {
+                // 加载角色记忆
+                console.log("加载角色记忆");
+                await window.memoryDataDB.init();
+                let memoryData = await window.memoryDataDB.getMemoryDataByAvatarID(selectedRoleID);
+                console.log("memoryData: ", memoryData);
+                memoryData = memoryData.length > 0 ? memoryData[0] : null;
+
+                try {
+                    if (selectedRole.memory_version > 0 &&
+                        (!memoryData || memoryData.memoryVersion !== selectedRole.memory_version)) {
+                        const response = await fetch(selectedRole.memory_prompt_url);
+                        if (!response.ok) {
+                            throw new Error(`HTTP error! status: ${response.status}`);
+                        }
+                        const buffer = await response.arrayBuffer();
+                        memoryData = window.memoryDataDB.parseBinaryData(buffer);
+                        await window.memoryDataDB.saveMemoryData(memoryData);
+                    }
+                } catch (error) {
+                    console.error('Failed to load or process memory data:', error);
+                }
+                if (memoryData)
+                {
+                    window.embeddingManager.initialize(memoryData.memories);
+                    console.log("memoryData.memories.length: ", memoryData.memories.length)
+                }
             }
         }
     });
@@ -200,33 +201,6 @@ async function playCharacterVideo(avatar_id) {
     const originalVideoURL = selectedRole.video_url;
     let finalVideoURL = originalVideoURL;
 
-    try {
-        // 检查缓存中是否有处理过的URL
-        if (!videoURLCache.has(originalVideoURL)) {
-            // 获取视频数据并创建同源URL
-            const response = await fetch(originalVideoURL, {
-                mode: 'cors',
-                credentials: 'omit'
-            });
-
-            if (!response.ok) throw new Error('视频获取失败');
-
-            // 将响应转为Blob
-            const blob = await response.blob();
-            // 创建同源对象URL
-            const blobURL = URL.createObjectURL(blob);
-
-            // 缓存结果
-            videoURLCache.set(originalVideoURL, blobURL);
-        }
-
-        // 使用缓存的同源URL
-        finalVideoURL = videoURLCache.get(originalVideoURL);
-    } catch (error) {
-        console.warn('视频中转失败，使用原始URL:', error);
-        // 失败时添加时间戳绕过缓存
-        finalVideoURL = originalVideoURL + '?ts=' + Date.now();
-    }
     // 设置视频源（使用同源URL或带时间戳的原始URL）
     characterVideo.src = finalVideoURL;
     characterVideo.loop = true;

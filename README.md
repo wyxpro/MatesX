@@ -69,8 +69,12 @@ Modify utils/dashscope.py:
 DASHSCOPE_API_KEY = ""     # Obtain API-key from Alibaba Cloud Bailian
 DASHSCOPE_TOKEN_URL = "https://dashscope.aliyuncs.com/api/v1/tokens"
 DASHSCOPE_LLM_URL = "https://dashscope.aliyuncs.com/compatible-mode/v1"
-# Configure your domain server (or use localhost for local only)
-HOST_URL = "http://localhost:8000"
+
+# default memory file location
+memory_data_url = "http://localhost:8000/api/assets/{avatar_id}/memory.bin"
+# default OSS location for voice-clone
+OSS_URL = "https://matesx.oss-cn-beijing.aliyuncs.com/audio/user"
+
 # Configure MatesX Avatar key
 MatesX_key = ""           # Obtain key from matesx.cn
 # Optional: config if using Tencent cloud TTS
