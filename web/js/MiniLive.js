@@ -11,7 +11,7 @@ characterVideo.addEventListener('loadedmetadata', () => {
 // 全局变量
 let currentRole = null;
 let currentBackground = null;
-
+let isiOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
 const selectorContainer = document.querySelector('.selector-container');
 // 初始化页面
 document.addEventListener('DOMContentLoaded', function() {
@@ -50,7 +50,6 @@ document.addEventListener('DOMContentLoaded', function() {
     // 添加下拉框交互
     setupSelectors();
 
-
     // 添加开始按钮事件
     document.getElementById('startMessage').addEventListener('click', async function() {
         if (selectorContainer.style.display === 'none') {
@@ -75,13 +74,6 @@ document.addEventListener('DOMContentLoaded', function() {
         console.log("selectedRole: ", selectedRole)
 
         if (selectedRole) {
-
-
-            let rolesList = JSON.parse(localStorage.getItem('roles_list')) || [];
-            const selectedRoleID = localStorage.getItem('selectedRoleID');
-            if (!selectedRoleID) throw new Error('未找到角色ID');
-            let selectedRole = rolesList.find(role => role.avatar_id === selectedRoleID);
-
             //设置形象和背景
             playCharacterVideo(selectedRole.avatar_id);
             const selectedBg = bgList.find(bg => bg.bg_id === selectedRole.bg_id);
@@ -90,7 +82,6 @@ document.addEventListener('DOMContentLoaded', function() {
                 selectBackground(selectedBg);
             }
 
-            var isiOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
             if (!isiOS) {
                 // 加载角色记忆
                 console.log("加载角色记忆");
@@ -200,6 +191,36 @@ async function playCharacterVideo(avatar_id) {
     // 获取原始视频URL
     const originalVideoURL = selectedRole.video_url;
     let finalVideoURL = originalVideoURL;
+
+    if (isiOS) {
+        try {
+             // 检查缓存中是否有处理过的URL
+             if (!videoURLCache.has(originalVideoURL)) {
+                 // 获取视频数据并创建同源URL
+                 const response = await fetch(originalVideoURL, {
+                     mode: 'cors',
+                     credentials: 'omit'
+                 });
+
+                 if (!response.ok) throw new Error('视频获取失败');
+
+                 // 将响应转为Blob
+                 const blob = await response.blob();
+                 // 创建同源对象URL
+                 const blobURL = URL.createObjectURL(blob);
+
+                 // 缓存结果
+                 videoURLCache.set(originalVideoURL, blobURL);
+             }
+
+             // 使用缓存的同源URL
+            finalVideoURL = videoURLCache.get(originalVideoURL);
+        } catch (error) {
+             console.warn('视频中转失败，使用原始URL:', error);
+             // 失败时添加时间戳绕过缓存
+             finalVideoURL = originalVideoURL + '?ts=' + Date.now();
+        }
+    }
 
     // 设置视频源（使用同源URL或带时间戳的原始URL）
     characterVideo.src = finalVideoURL;
