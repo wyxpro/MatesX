@@ -1,58 +1,26 @@
-let url_prefix = "";
-const unionid = localStorage.getItem('unionid') || "";
-let rolesList = JSON.parse(localStorage.getItem('roles_list')) || [];
+let urlPrefix = "";
+let serverUrl = urlPrefix + "/chat/chat_stream"
+let authUrl = urlPrefix + "/generate_temp_token"
+let isVoiceMode = true;                   // 默认使用语音模式
 
-let chatHistoryShowed = localStorage.getItem('chatHistoryShowed') === 'true';
-if (localStorage.getItem('chatHistoryShowed') === null) {
-    chatHistoryShowed = true; // 默认开启
-}
-
-if (!chatHistoryShowed) {
-    document.getElementById('chat-container').classList.add('hidden');
-}
-
-window.addEventListener('storage', (event) => {
-    if (event.key === 'chatHistoryShowed') {
-        chatHistoryShowed = event.newValue === 'true';
-        const chatContainer_ = document.getElementById('chat-container');
-        chatContainer_.classList.toggle('hidden');
-    }
-});
-
-// 同步页面数据
-window.addEventListener('storage', (event) => {
-    if (event.key === 'roles_list') {
-        rolesList = JSON.parse(localStorage.getItem('roles_list')) || [];
-        console.log('角色列表已更新:', rolesList);
-    }
-});
-
-let server_url = url_prefix + "/chat/chat_stream"
-let auth_url = url_prefix + "/generate_temp_token"
-let isVoiceMode = true;                 // 默认使用语音模式
-let asrWorker = null;
-let cosyvoice = null;
-
-// 录音阶段
-let asr_audio_recorder = new PCMAudioRecorder();
+// 录音+vad+asr阶段
+let asrAudioRecorder = new PCMAudioRecorder();
 let isRecording = false;                  // 标记当前录音是否向ws传输
-let asr_input_text = "";                  // 从ws接收到的ASR识别后的文本
-let last_voice_time = null;               // 上一次检测到人声的时间
-let last_3_voice_samples = [];
+let asrText = "";                         // 从ws接收到的ASR识别后的文本
 const VAD_SILENCE_DURATION = 800;         // 800ms不说话判定为讲话结束
-
 let isAsrReady = false;                   // 标记ASR是否准备就绪
-const pendingAudioData = [];              // 新增：缓存等待发送的语音数据
+let pendingAudioData = [];                // 新增：缓存等待发送的语音数据
+let asrWorker = null;
 
 // SSE 阶段（申请流式传输LLM+TTS的阶段）
-let sse_startpoint = true;                // SSE传输开始标志
-let sse_endpoint = false;                 // SSE传输结束标志
-let sse_controller = null;                // SSE网络中断控制器，可用于打断传输
-let sse_data_buffer = "";                 // SSE网络传输数据缓存区，用于存储不完整的 JSON 块
+let sseStartpoint = true;                 // SSE传输开始标志
+let sseController = null;                 // SSE网络中断控制器，可用于打断传输
+
+// TTS 阶段
+let cosyvoice = null;
 
 // 播放音频阶段
 let player = null;
-
 
 const toggleButton = document.getElementById('toggle-button');
 const inputArea = document.getElementById('input-area');
@@ -62,13 +30,40 @@ const textInput = document.getElementById('text-input');
 const voiceInputArea = document.getElementById('voice-input-area');
 const voiceInputText = voiceInputArea.querySelector('span');
 
-document.addEventListener('DOMContentLoaded', function() {
-  if (!window.isSecureContext) {
-    XSAlert('本项目使用了 WebCodecs API，该 API 仅在安全上下文（HTTPS 或 localhost）中可用。因此，在部署或测试时，请确保您的网页在 HTTPS 环境下运行，或者使用 localhost 进行本地测试。');
-  }
+// 初始化基础数据
+const unionid = localStorage.getItem('unionid') || "";
+let rolesList = JSON.parse(localStorage.getItem('roles_list')) || [];
+
+let chatHistoryShowed = localStorage.getItem('chatHistoryShowed') === 'true';
+if (localStorage.getItem('chatHistoryShowed') === null) {
+    chatHistoryShowed = true; // 默认开启
+}
+if (!chatHistoryShowed) {
+    chatContainer.classList.add('hidden');
+}
+
+// 同步页面数据
+window.addEventListener('storage', (event) => {
+    if (event.key === 'roles_list') {
+        rolesList = JSON.parse(localStorage.getItem('roles_list')) || [];
+        console.log('角色列表已更新:', rolesList);
+    }
+    if (event.key === 'chatHistoryShowed') {
+        chatHistoryShowed = event.newValue === 'true';
+        chatContainer.classList.toggle('hidden');
+    }
 });
 
-// 初始设置为语音模式
+document.addEventListener('DOMContentLoaded', function() {
+    if (!window.isSecureContext) {
+        alert('本项目使用了 WebCodecs API，该 API 仅在安全上下文（HTTPS 或 localhost）中可用。' +
+              '因此，在部署或测试时，请确保您的网页在 HTTPS 环境下运行，或者使用 localhost 进行本地测试。');
+    }
+    // 初始设置为语音模式
+    setVoiceMode();
+});
+
+// 语音模式
 function setVoiceMode() {
     isVoiceMode = true;
     toggleButton.innerHTML = '<i class="material-icons">keyboard</i>';
@@ -79,7 +74,7 @@ function setVoiceMode() {
     user_abort();
 }
 
-// 初始设置为文字模式
+// 文字模式
 function setTextMode() {
     isVoiceMode = false;
     toggleButton.innerHTML = '<i class="material-icons">mic</i>';
@@ -87,8 +82,8 @@ function setTextMode() {
     sendButton.style.display = 'block';
     voiceInputArea.style.display = 'none';
     user_abort();
-    if (asr_audio_recorder) {
-        asr_audio_recorder.stop();
+    if (asrAudioRecorder) {
+        asrAudioRecorder.stop();
     }
 }
 
@@ -123,7 +118,7 @@ async function getTempToken(model_name, voice_id) {
         return tempTokenCache.token;
     }
     try {
-        const response = await fetch(auth_url, {
+        const response = await fetch(authUrl, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
@@ -160,10 +155,10 @@ asrWorker.onmessage = function(event) {
     if (data.type === 'status') {
         if (data.message === "识别任务已完成")
         {
-            if (asr_input_text) {
+            if (asrText) {
                 user_abort();
-                addMessage(asr_input_text, true, true);
-                sendTextMessage(asr_input_text);
+                addMessage(asrText, true, true);
+                sendTextMessage(asrText);
             }
         }
         else if (data.message === "已连接到ASR服务器") {
@@ -180,24 +175,24 @@ asrWorker.onmessage = function(event) {
         }
     }
     else if (data.type === 'partial_result') {
-        asr_input_text = data.text;
+        asrText = data.text;
     }
     else if (data.type === 'final_result') {
-        asr_input_text = data.text;
+        asrText = data.text;
     }
     else if (data.type === 'error') {
         console.error('ASR Worker Error:', data.message);
     }
 };
 
-
-
 async function running_audio_recorder() {
-    if (!asr_audio_recorder || !asr_audio_recorder.audioContext) {
-        if (asr_audio_recorder.isConnecting) {
+    let last_3_voice_samples = [];
+    let last_voice_time = null;               // 上一次检测到人声的时间
+    if (!asrAudioRecorder || !asrAudioRecorder.audioContext) {
+        if (asrAudioRecorder.isConnecting) {
             return;
         }
-        await asr_audio_recorder.connect(async (pcmData) => {
+        await asrAudioRecorder.connect(async (pcmData) => {
             const pcmCopy = new Int16Array(pcmData);
             last_3_voice_samples.push(pcmCopy);
             if (last_3_voice_samples.length > 3) {
@@ -246,7 +241,7 @@ async function running_audio_recorder() {
                         last_voice_time = null;
                         console.log("Voice activity ended");
                         asrWorker.postMessage({ type: 'stop' });
-                        await asr_audio_recorder.stop();
+                        await asrAudioRecorder.stop();
                     } else {
                         asrWorker.postMessage({
                             type: 'audio',
@@ -262,20 +257,18 @@ async function running_audio_recorder() {
 async function start_new_round() {
     sendButton.innerHTML = '<i class="material-icons">send</i>'; 
     const token_balance = parseInt(localStorage.getItem('token_balance')) || 0;
-    if (token_balance < 10)
-    {
+    if (token_balance < 10) {
         XSAlert('对话能量不足');
         return;
     }
-    
+
     // 停止可能存在的旧轮次
     asrWorker.postMessage({ type: 'stop' });
 
     // 重置状态
     isRecording = false;
 
-    asr_input_text = "";
-    last_voice_time = null;
+    asrText = "";
     parent.Module._clearAudio();
 
     // TTS部分保持不变
@@ -304,7 +297,7 @@ let isSendProcessing = false;
 // 提取的共同处理函数
 async function handleUserMessage() {
     if (isSendProcessing) return false;
-    isProcessing = true;
+    isSendProcessing = true;
     sendButton.disabled = true;
     textInput.disabled = true;
 
@@ -371,13 +364,10 @@ function addMessage(message, isUser, isNew, replace=false) {
     chatContainer.scrollTop = chatContainer.scrollHeight;
 }
 
-// 初始设置为语音模式
-setVoiceMode();
-
 async function handleResponseStream(responseBody, signal) {
     const reader = responseBody.getReader();
     const decoder = new TextDecoder();
-
+    let sse_data_buffer = "";  // SSE网络传输数据缓存区，用于存储不完整的 JSON 块
     try {
         while (true) {
             if (signal.aborted) {
@@ -397,18 +387,17 @@ async function handleResponseStream(responseBody, signal) {
                 try {
                     const data = JSON.parse(chunks[i]);
                     // console.log("Received data:", data);
-                    console.log("Received text:", data.text, sse_startpoint, data.endpoint);
-                    // 返回直接是一个空字符并结束，就模拟消息“嗯，让我想一想”
-                    if (!data.text && sse_startpoint && data.endpoint)
+                    console.log("Received text:", data.text, sseStartpoint, data.endpoint);
+                    // 返回直接是一个空字符并结束，就模拟消息“嗯。”
+                    if (!data.text && sseStartpoint && data.endpoint)
                     {
                         data.text = "嗯。";
                         data.endpoint = false;
                     }
-                    addMessage(data.text, false, sse_startpoint);
+                    addMessage(data.text, false, sseStartpoint);
                     cosyvoice.sendText(data.text);
-                    sse_startpoint = false;
-                    sse_endpoint = data.endpoint;
-                    if (sse_endpoint)
+                    sseStartpoint = false;
+                    if (data.endpoint)
                     {
                         console.log('cosyvoice stopped');
                         await cosyvoice.stop();
@@ -416,9 +405,9 @@ async function handleResponseStream(responseBody, signal) {
                 } catch (error) {
                     console.error("Error parsing chunk:", error);
                 }
-                // 将最后一个不完整的块保留在缓存区中
-                sse_data_buffer = chunks[chunks.length - 1];
             }
+            // 将最后一个不完整的块保留在缓存区中
+            sse_data_buffer = chunks[chunks.length - 1];
         }
     } catch (error) {
         console.error('流处理异常:', error);
@@ -470,8 +459,7 @@ async function sendTextMessage(inputValue) {
         return;
     }
     const selectedRoleID = localStorage.getItem('selectedRoleID');
-    if (!sendTextMessage)
-    {
+    if (!selectedRoleID) {
         XSAlert('未找到角色');
         return;
     }
@@ -519,9 +507,9 @@ async function sendTextMessage(inputValue) {
     sendButton.disabled = false;
     if (inputValue) {
         try {
-            if (sse_controller) {
-                console.log("sse_controller.abort();");
-                sse_controller.abort();
+            if (sseController) {
+                console.log("sseController abort!");
+                sseController.abort();
             }
 
             if (!player) {
@@ -530,19 +518,18 @@ async function sendTextMessage(inputValue) {
             await player.connect();
 
             await tts_realtime_ws(voice_id, tts_model);
-            sse_controller = new AbortController();
-            sse_startpoint = true;
-            sse_endpoint = false;
+            sseController = new AbortController();
+            sseStartpoint = true;
             textInput.value = "";
-            const response = await fetch(server_url, {
+            const response = await fetch(serverUrl, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(requestBody),
-                signal: sse_controller.signal
+                signal: sseController.signal
             });
 
             if (!response.ok) throw new Error(`HTTP错误 ${response.status}`);
-            await handleResponseStream(response.body, sse_controller.signal);
+            await handleResponseStream(response.body, sseController.signal);
         } catch (error) {
             if (error.name === 'AbortError') {
                 console.log('请求中止');
@@ -564,14 +551,14 @@ async function user_abort() {
     asrWorker.postMessage({ type: 'stop' });
     // 停止录音
     if (isVoiceMode) {
-        if (!asr_audio_recorder || !asr_audio_recorder.audioContext) {
-            asr_audio_recorder.stop();
+        if (!asrAudioRecorder || !asrAudioRecorder.audioContext) {
+            asrAudioRecorder.stop();
         }
     }
     // 停止llm sse传输
-    if (sse_controller) {
-        console.log("sse_controller.abort();");
-        sse_controller.abort();
+    if (sseController) {
+        console.log("sseController.abort();");
+        sseController.abort();
     }
     // 停止tts
     if (cosyvoice && cosyvoice.socket) {

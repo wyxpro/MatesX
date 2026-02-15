@@ -6,7 +6,6 @@ import os
 import asyncio
 from contextlib import asynccontextmanager
 from fastapi.responses import StreamingResponse, JSONResponse,Response
-from utils.llm_streaming import gen_stream
 from utils.session_manager import cleanup_expired_sessions,user_locks,get_or_create_session
 import utils.sqlite_manager as sqlite_manager
 from routers import chat_router, auth_router, voice_router

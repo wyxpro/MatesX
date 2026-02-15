@@ -65,7 +65,7 @@
         }
 
         .message.user .message-content {
-            background-color: #FF2442; /* 品牌红色 */
+            background-color: #FF2442;
             color: #fff;
         }
 
@@ -74,11 +74,10 @@
             align-items: center;
             padding: 10px;
             background-color: #ffffff00;
-            /* border-top: 1px solid #ddd; */
         }
 
         .input-container.hidden {
-            display: none; /* 完全隐藏并不占空间 */
+            display: none; 
         }
 
         .input-area {
@@ -105,7 +104,7 @@
             background: none;
             border: none;
             font-size: 24px;
-            color: #FF2442; /* 品牌红色 */
+            color: #FF2442;
             cursor: pointer;
             margin: 0 5px;
             width: 40px;
@@ -121,7 +120,7 @@
         }
 
         .input-area button:hover {
-            color: #FF2442; /* 品牌红色 */
+            color: #FF2442;
         }
 
         .voice-input-area {
@@ -139,7 +138,7 @@
 
         .voice-input-area span {
             font-size: 16px;
-            color: #FF2442; /* 品牌红色 */
+            color: #FF2442;
         }
     </style>
 </head>
@@ -174,46 +173,5 @@
     <script src="js/audioRecorder.js"></script>
     <script src="js/embedding.js"></script>
     <script src="js/dialogRealtime.js"></script>
-    <script>
-        const inputContainer_ = document.getElementById('input-container');
-        const topArea = document.querySelector('.top-area');
-        let clickCount = 0;
-
-        topArea.addEventListener('click', function() {
-            clickCount++;
-
-            const parentTitlebar = getParentTitlebar();
-            const shouldHideAll = clickCount % 2 === 1;
-            const shouldRestoreAll = clickCount % 2 === 0;
-
-            if (shouldHideAll) {
-                hideElements([inputContainer_, parentTitlebar]);
-            } else
-            {
-                showElements([inputContainer_, parentTitlebar]);
-            }
-        });
-
-        function getParentTitlebar() {
-            try {
-                return window.parent.document.querySelector('.title-bar');
-            } catch (e) {
-                console.error('无法访问父页面元素:', e);
-                return null;
-            }
-        }
-
-        function hideElements(elements) {
-            elements.forEach(el => el && el.classList.add('hidden'));
-        }
-
-        function showElements(elements) {
-            elements.forEach(el => el && el.classList.remove('hidden'));
-        }
-
-        function toggleElement(element) {
-            element && element.classList.toggle('hidden');
-        }
-    </script>
 </body>
 </html>
