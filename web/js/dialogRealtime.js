@@ -1,12 +1,6 @@
 let url_prefix = "";
 const unionid = localStorage.getItem('unionid') || "";
 let rolesList = JSON.parse(localStorage.getItem('roles_list')) || [];
-let public_roles_list = JSON.parse(localStorage.getItem('public_roles_list')) || [];
-
-let voiceDisturbEnabled = localStorage.getItem('voiceDisturbEnabled') === 'true';
-if (localStorage.getItem('voiceDisturbEnabled') === null) {
-    voiceDisturbEnabled = false; // 默认关闭
-}
 
 let chatHistoryShowed = localStorage.getItem('chatHistoryShowed') === 'true';
 if (localStorage.getItem('chatHistoryShowed') === null) {
@@ -23,9 +17,6 @@ window.addEventListener('storage', (event) => {
         const chatContainer_ = document.getElementById('chat-container');
         chatContainer_.classList.toggle('hidden');
     }
-    else if (event.key === 'voiceDisturbEnabled') {
-        voiceDisturbEnabled = event.newValue === 'true';
-    }
 });
 
 // 同步页面数据
@@ -33,10 +24,6 @@ window.addEventListener('storage', (event) => {
     if (event.key === 'roles_list') {
         rolesList = JSON.parse(localStorage.getItem('roles_list')) || [];
         console.log('角色列表已更新:', rolesList);
-    }
-    if (event.key === 'public_roles_list') {
-        public_roles_list = JSON.parse(localStorage.getItem('public_roles_list')) || [];
-        console.log('公共角色列表已更新:', rolesList);
     }
 });
 
@@ -259,10 +246,7 @@ async function running_audio_recorder() {
                         last_voice_time = null;
                         console.log("Voice activity ended");
                         asrWorker.postMessage({ type: 'stop' });
-                        if (!voiceDisturbEnabled)
-                        {
-                            await asr_audio_recorder.stop();
-                        }
+                        await asr_audio_recorder.stop();
                     } else {
                         asrWorker.postMessage({
                             type: 'audio',
@@ -276,14 +260,14 @@ async function running_audio_recorder() {
 }
 
 async function start_new_round() {
+    sendButton.innerHTML = '<i class="material-icons">send</i>'; 
     const token_balance = parseInt(localStorage.getItem('token_balance')) || 0;
     if (token_balance < 10)
     {
         XSAlert('对话能量不足');
         return;
     }
-
-
+    
     // 停止可能存在的旧轮次
     asrWorker.postMessage({ type: 'stop' });
 
@@ -491,13 +475,12 @@ async function sendTextMessage(inputValue) {
         XSAlert('未找到角色');
         return;
     }
-    // const selectedRole = rolesList.find(role => role.avatar_id === selectedRoleID);
-    const selectedRole = [...rolesList, ...public_roles_list].find(role => role.avatar_id === selectedRoleID);
+
+    const selectedRole = rolesList.find(role => role.avatar_id === selectedRoleID);
     console.log("selectedRole voice_id: ", selectedRole.cosyvoice_id);
 
     let similarMemoryTextList = [];
-    if (window.parent.embeddingManager.memories)
-    {
+    if (window.parent.embeddingManager.memories) {
         const token = await getTempToken("", "");
         const queryEmbedding = await window.parent.embeddingManager.getEmbedding(inputValue, token);
         similarMemoryTextList = window.parent.embeddingManager.searchSimilarMemories(queryEmbedding, 5, 0.0);
@@ -520,8 +503,7 @@ async function sendTextMessage(inputValue) {
         XSAlert("角色使用了腾讯云语音，但您的服务器未配置腾讯云服务，暂时改为阿里云临时音色");
         voice_id = "longwan";
     }
-    else if (tencentTTS > 0 && (voice_id.slice(0, 4) === "long" || voice_id.slice(0, 4) === "loon"))
-    {
+    else if (tencentTTS > 0 && (voice_id.slice(0, 4) === "long" || voice_id.slice(0, 4) === "loon")) {
         XSAlert("角色使用了阿里云语音，但您的服务器设置了优先使用腾讯云服务，暂时改为腾讯云临时音色");
         voice_id = "501004";
     }
@@ -534,16 +516,15 @@ async function sendTextMessage(inputValue) {
     }
 
     sendButton.innerHTML = '<i class="material-icons">stop</i>';
+    sendButton.disabled = false;
     if (inputValue) {
         try {
-            if (sse_controller)
-            {
+            if (sse_controller) {
                 console.log("sse_controller.abort();");
                 sse_controller.abort();
             }
 
-            if (!player)
-            {
+            if (!player) {
                 player = new PCMAudioPlayer(16000);
             }
             await player.connect();
@@ -571,8 +552,7 @@ async function sendTextMessage(inputValue) {
             await start_new_round();
         }
     }
-    else
-    {
+    else {
         await start_new_round();
     }
 }
@@ -582,23 +562,23 @@ async function user_abort() {
     console.log("user_abort")
     // 停止ASR轮次
     asrWorker.postMessage({ type: 'stop' });
-
+    // 停止录音
     if (isVoiceMode) {
-        if (!voiceDisturbEnabled)
-        {
-            if (!asr_audio_recorder || !asr_audio_recorder.audioContext) {
-                asr_audio_recorder.stop();
-            }
+        if (!asr_audio_recorder || !asr_audio_recorder.audioContext) {
+            asr_audio_recorder.stop();
         }
     }
-
-    if (sse_controller)
-    {
+    // 停止llm sse传输
+    if (sse_controller) {
         console.log("sse_controller.abort();");
         sse_controller.abort();
     }
-    if (player)
-    {
+    // 停止tts
+    if (cosyvoice && cosyvoice.socket) {
+        await cosyvoice.close();
+    }
+    // 停止播放音频
+    if (player) {
         await player.stop();
         parent.Module._clearAudio();
     }

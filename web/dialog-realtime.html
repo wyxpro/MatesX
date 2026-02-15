@@ -93,53 +93,134 @@
         }
 
         .input-area input {
-            flex: 1;
-            border: none;
-            outline: none;
-            font-size: 16px;
-            padding: 5px;
-            background: none;
+            display: none;
         }
 
         .input-area button {
-            background: none;
+            display: none;
+        }
+
+        .bottom-bar {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 15px 20px;
+            background-color: #ffffff00;
+        }
+
+        .mute-button {
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
             border: none;
-            font-size: 24px;
-            color: #FF2442; /* 品牌红色 */
+            background-color: #f0f0f0;
             cursor: pointer;
-            margin: 0 5px;
-            width: 40px;
-            height: 40px;
-            position: relative;
-        }
-
-        .input-area button .material-icons {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-        }
-
-        .input-area button:hover {
-            color: #FF2442; /* 品牌红色 */
-        }
-
-        .voice-input-area {
             display: flex;
             align-items: center;
             justify-content: center;
-            background-color: #f0f0f0;
-            border-radius: 25px;
-            padding: 10px;
-            height: 50px;
-            box-sizing: border-box;
-            width: 100%;
-            cursor: pointer;
+            transition: all 0.3s ease;
         }
 
-        .voice-input-area span {
-            font-size: 16px;
-            color: #FF2442; /* 品牌红色 */
+        .mute-button:hover {
+            background-color: #e0e0e0;
+        }
+
+        .mute-button.muted {
+            background-color: #FF2442;
+            color: white;
+        }
+
+        .mute-button .material-icons {
+            font-size: 24px;
+            color: #666;
+        }
+
+        .mute-button.muted .material-icons {
+            color: white;
+        }
+
+        .status-area {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .status-text {
+            font-size: 14px;
+            color: #333;
+            font-weight: 500;
+        }
+
+        .status-text.muted-text {
+            color: #FF2442;
+        }
+
+        .status-text.listening-text {
+            color: #4CAF50;
+        }
+
+        .voice-waves {
+            display: flex;
+            align-items: center;
+            gap: 3px;
+            height: 24px;
+        }
+
+        .voice-wave {
+            width: 3px;
+            height: 8px;
+            background-color: #FF2442;
+            border-radius: 2px;
+            animation: wave 0.5s ease-in-out infinite;
+        }
+
+        .voice-wave:nth-child(1) { animation-delay: 0s; }
+        .voice-wave:nth-child(2) { animation-delay: 0.1s; }
+        .voice-wave:nth-child(3) { animation-delay: 0.2s; }
+        .voice-wave:nth-child(4) { animation-delay: 0.3s; }
+        .voice-wave:nth-child(5) { animation-delay: 0.4s; }
+
+        .voice-wave.active {
+            background-color: #4CAF50;
+        }
+
+        @keyframes wave {
+            0%, 100% { height: 8px; }
+            50% { height: 20px; }
+        }
+
+        .close-button {
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            border: none;
+            background-color: #f0f0f0;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+        }
+
+        .close-button:hover {
+            background-color: #FF2442;
+            color: white;
+        }
+
+        .close-button .material-icons {
+            font-size: 24px;
+            color: #666;
+        }
+
+        .close-button:hover .material-icons {
+            color: white;
+        }
+
+        .interrupt-hint {
+            font-size: 12px;
+            color: #999;
+            margin-top: 4px;
         }
     </style>
 </head>
@@ -152,20 +233,27 @@
         <!-- 聊天记录将显示在这里 -->
     </div>
 
-    <!-- 输入区域 -->
-    <div class="input-container" id="input-container">
-        <div class="input-area" id="input-area">
-            <button class="input-toggle" id="toggle-button">
-                <i class="material-icons">keyboard</i>
-            </button>
-            <div class="voice-input-area" id="voice-input-area">
-                <span>点击开始聊天</span>
+    <!-- 底部栏 -->
+    <div class="bottom-bar">
+        <button class="mute-button" id="mute-button" title="静音">
+            <i class="material-icons">volume_up</i>
+        </button>
+        
+        <div class="status-area">
+            <div class="status-text" id="status-text">点击开始聊天</div>
+            <div class="voice-waves" id="voice-waves">
+                <div class="voice-wave"></div>
+                <div class="voice-wave"></div>
+                <div class="voice-wave"></div>
+                <div class="voice-wave"></div>
+                <div class="voice-wave"></div>
             </div>
-            <input type="text" id="text-input" placeholder="发送消息" style="display: none;">
-            <button class="send-button" id="send-button" style="display: none;">
-                <i class="material-icons">send</i>
-            </button>
+            <div class="interrupt-hint" id="interrupt-hint">点击打断</div>
         </div>
+        
+        <button class="close-button" id="close-button" title="关闭对话">
+            <i class="material-icons">close</i>
+        </button>
     </div>
     <script src="js/xsComponents.js"></script>
     <script src="js/cosyvoiceApi.js"></script>
@@ -174,46 +262,5 @@
     <script src="js/audioRecorder.js"></script>
     <script src="js/embedding.js"></script>
     <script src="js/dialogRealtime.js"></script>
-    <script>
-        const inputContainer_ = document.getElementById('input-container');
-        const topArea = document.querySelector('.top-area');
-        let clickCount = 0;
-
-        topArea.addEventListener('click', function() {
-            clickCount++;
-
-            const parentTitlebar = getParentTitlebar();
-            const shouldHideAll = clickCount % 2 === 1;
-            const shouldRestoreAll = clickCount % 2 === 0;
-
-            if (shouldHideAll) {
-                hideElements([inputContainer_, parentTitlebar]);
-            } else
-            {
-                showElements([inputContainer_, parentTitlebar]);
-            }
-        });
-
-        function getParentTitlebar() {
-            try {
-                return window.parent.document.querySelector('.title-bar');
-            } catch (e) {
-                console.error('无法访问父页面元素:', e);
-                return null;
-            }
-        }
-
-        function hideElements(elements) {
-            elements.forEach(el => el && el.classList.add('hidden'));
-        }
-
-        function showElements(elements) {
-            elements.forEach(el => el && el.classList.remove('hidden'));
-        }
-
-        function toggleElement(element) {
-            element && element.classList.toggle('hidden');
-        }
-    </script>
 </body>
 </html>
