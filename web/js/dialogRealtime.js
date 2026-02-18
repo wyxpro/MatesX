@@ -160,6 +160,10 @@ asrWorker.onmessage = function(event) {
                 addMessage(asrText, true, true);
                 sendTextMessage(asrText);
             }
+            else {
+                user_abort();
+                start_new_round();
+            }
         }
         else if (data.message === "已连接到ASR服务器") {
             isAsrReady = true;
@@ -388,7 +392,7 @@ async function handleResponseStream(responseBody, signal) {
                     const data = JSON.parse(chunks[i]);
                     // console.log("Received data:", data);
                     console.log("Received text:", data.text, sseStartpoint, data.endpoint);
-                    // 返回直接是一个空字符并结束，就模拟消息“嗯。”
+                    // 返回直接是一个空字符并结束，就模拟消息"嗯。"
                     if (!data.text && sseStartpoint && data.endpoint)
                     {
                         data.text = "嗯。";
