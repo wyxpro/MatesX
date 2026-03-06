@@ -97,6 +97,21 @@ python main.py
 
 对于开发者，[联系我](preview/wechat.jpg)获取3个免费额度秘钥。请参阅 [API](preview/API.md) 的API付费调用方式，可欢迎使用[matesx.cn](https://www.matesx.cn)来管理你的形象。
 
+---
+
+## ⚡ 无服务器最简部署
+
+> **无需服务器！** 输入阿里百炼 API-key 即可直接开始对话
+
+| | |
+|---|---|
+| **🌐 在线体验** | [https://kleinlee.github.io/character.html](https://kleinlee.github.io/character.html) |
+| **📦 源码地址** | [https://github.com/kleinlee/kleinlee.github.io](https://github.com/kleinlee/kleinlee.github.io) |
+
+如果你想保持最小的代码实现，这是最简部署方式——纯静态部署，所有计算（VAD、唇形同步、表情驱动）都在浏览器端完成。只需填入阿里百炼 API-key，即可直接与数字人对话！
+
+---
+
 ### 编译
 支持windows、mac、android、mini-program
 

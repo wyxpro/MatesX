@@ -99,6 +99,21 @@ For individual enthusiasts, get free credits on [Matesx official web application
 For developers, receive 3 free credits by [contacting us](preview/wechat.jpg). please refer to the [API](preview/API.md) for API calling. 
 Use [matesx.cn](https://www.matesx.cn) to manage your avatars.
 
+---
+
+## ⚡ Serverless Minimal Deployment
+
+> **No server required!** Enter your Alibaba Bailian API-key to start chatting instantly.
+
+| | |
+|---|---|
+| **🌐 Live Demo** | [https://kleinlee.github.io/character.html](https://kleinlee.github.io/character.html) |
+| **📦 Source Code** | [https://github.com/kleinlee/kleinlee.github.io](https://github.com/kleinlee/kleinlee.github.io) |
+
+This is the simplest deployment option - pure static deployment with all computation (VAD, lip-sync, expression driving) done directly in the browser. Just fill in your Alibaba Bailian API-key and start talking to the digital human immediately!
+
+---
+
 ### Compilation
 support Windows, macOS, Android, Mini-Program
 
