@@ -1,6 +1,3 @@
-let urlPrefix = "";
-let serverUrl = urlPrefix + "/chat/chat_stream"
-let authUrl = urlPrefix + "/generate_temp_token"
 let isVoiceMode = true;                   // 默认使用语音模式
 
 // 录音+vad+asr阶段
@@ -29,6 +26,7 @@ const sendButton = document.getElementById('send-button');
 const textInput = document.getElementById('text-input');
 const voiceInputArea = document.getElementById('voice-input-area');
 const voiceInputText = voiceInputArea.querySelector('span');
+const interruptButton = document.getElementById('interrupt-button');
 
 // 初始化基础数据
 const unionid = localStorage.getItem('unionid') || "";
@@ -56,7 +54,7 @@ window.addEventListener('storage', (event) => {
 
 document.addEventListener('DOMContentLoaded', function() {
     if (!window.isSecureContext) {
-        alert('本项目使用了 WebCodecs API，该 API 仅在安全上下文（HTTPS 或 localhost）中可用。' +
+        XSAlert('本项目使用了 WebCodecs API，该 API 仅在安全上下文（HTTPS 或 localhost）中可用。' +
               '因此，在部署或测试时，请确保您的网页在 HTTPS 环境下运行，或者使用 localhost 进行本地测试。');
     }
     // 初始设置为语音模式
@@ -82,9 +80,6 @@ function setTextMode() {
     sendButton.style.display = 'block';
     voiceInputArea.style.display = 'none';
     user_abort();
-    if (asrAudioRecorder) {
-        asrAudioRecorder.stop();
-    }
 }
 
 // 切换输入模式
@@ -97,72 +92,23 @@ toggleButton.addEventListener('click', () => {
     }
 });
 
-// 存储临时token及其获取时间
-let tempTokenCache = {
-    model: null,
-    token: null,
-    timestamp: null
-};
-
-async function getTempToken(model_name, voice_id) {
-    const unionid = localStorage.getItem('unionid');
-    if (!unionid)
-    {
-        XSAlert('用户未登录');
-        return;
-    }
-    // 检查缓存中是否有有效的token（40秒内）
-    const now = Date.now();
-    if (tempTokenCache.token && tempTokenCache.timestamp &&
-        (now - tempTokenCache.timestamp) < 40000 && tempTokenCache.model == model_name) {
-        return tempTokenCache.token;
-    }
-    try {
-        const response = await fetch(authUrl, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({ unionid, model_name, voice_id }),
-        });
-        if (!response.ok) {
-            throw new Error(`HTTP error! status: ${response.status}`);
-        }
-        const data = await response.json();
-
-        // 更新缓存
-        tempTokenCache = {
-            model: model_name,
-            token: data.token,
-            timestamp: now
-        };
-
-        return data.token;
-    } catch (error) {
-        console.error('获取临时token失败:', error);
-        XSAlert('无法获取语音服务凭证，请稍后重试');
-        throw error;
-    }
-}
-
 // 创建Web Worker
 asrWorker = new Worker('js/workerAsr.js');
 
 // 处理来自Worker的消息
-asrWorker.onmessage = function(event) {
+asrWorker.onmessage = async function(event) {
     const data = event.data;
     console.log("asrWorker.onmessage", data, data.type)
     if (data.type === 'status') {
         if (data.message === "识别任务已完成")
         {
             if (asrText) {
-                user_abort();
                 addMessage(asrText, true, true);
                 sendTextMessage(asrText);
             }
             else {
-                user_abort();
-                start_new_round();
+                await user_abort();
+                await start_new_round();
             }
         }
         else if (data.message === "已连接到ASR服务器") {
@@ -224,8 +170,8 @@ async function running_audio_recorder() {
                         pendingAudioData.push(last_3_voice_samples[0]);
                         pendingAudioData.push(last_3_voice_samples[1]);
                     }
-
-                    asrWorker.postMessage({ type: 'start', unionid: unionid });
+                    const asrToken = await getTempToken("ali", "");
+                    asrWorker.postMessage({ type: 'start', apiKey: asrToken });
                 }
                 if (isAsrReady) {
                     asrWorker.postMessage(
@@ -300,27 +246,27 @@ let isSendProcessing = false;
 
 // 提取的共同处理函数
 async function handleUserMessage() {
+    // 1. 先获取当前按钮状态，判断用户意图
+    const icon = sendButton.querySelector('i.material-icons');
+    if (icon && icon.textContent.trim() === 'stop') {
+        user_abort();
+        return false; // 中断后直接返回，不需要继续执行后续发送逻辑
+    }
+
     if (isSendProcessing) return false;
     isSendProcessing = true;
     sendButton.disabled = true;
     textInput.disabled = true;
 
-    const icon = sendButton.querySelector('i.material-icons');
     try {
-    // 检查停止状态
-    if (icon && icon.textContent.trim() === 'stop') {
-        user_abort();
-        return false; // 表示未发送消息
-    }
-
-    const inputValue = textInput.value.trim();
-    if (inputValue) {
-        await start_new_round();
-        addMessage(inputValue, true, true);
-        await sendTextMessage(inputValue);
-        return true; // 表示已发送消息
-    }
-    return false; // 表示未发送消息
+        const inputValue = textInput.value.trim();
+        if (inputValue) {
+            await start_new_round();
+            addMessage(inputValue, true, true);
+            await sendTextMessage(inputValue);
+            return true;
+        }
+        return false;
     } finally {
         isSendProcessing = false;
         sendButton.disabled = false;
@@ -371,11 +317,11 @@ function addMessage(message, isUser, isNew, replace=false) {
 async function handleResponseStream(responseBody, signal) {
     const reader = responseBody.getReader();
     const decoder = new TextDecoder();
-    let sse_data_buffer = "";  // SSE网络传输数据缓存区，用于存储不完整的 JSON 块
+    let sseDataBuffer = "";  // SSE网络传输数据缓存区，用于存储不完整的 JSON 块
     try {
         while (true) {
             if (signal.aborted) {
-                reader.cancel(); // 主动取消流读取
+                reader.cancel();
                 break;
             }
             const { done, value } = await reader.read();
@@ -383,10 +329,10 @@ async function handleResponseStream(responseBody, signal) {
                 return;
             }
             const chunk = decoder.decode(value, { stream: true });
-            sse_data_buffer += chunk; // 将新数据追加到缓存区
+            sseDataBuffer += chunk; // 将新数据追加到缓存区
 
             // 根据换行符拆分缓存区中的数据
-            const chunks = sse_data_buffer.split("\n");
+            const chunks = sseDataBuffer.split("\n");
             for (let i = 0; i < chunks.length - 1; i++) {
                 try {
                     const data = JSON.parse(chunks[i]);
@@ -401,9 +347,8 @@ async function handleResponseStream(responseBody, signal) {
                     addMessage(data.text, false, sseStartpoint);
                     cosyvoice.sendText(data.text);
                     sseStartpoint = false;
-                    if (data.endpoint)
-                    {
-                        console.log('cosyvoice stopped');
+                    if (data.endpoint) {
+                        console.log('Stream completed');
                         await cosyvoice.stop();
                     }
                 } catch (error) {
@@ -411,7 +356,7 @@ async function handleResponseStream(responseBody, signal) {
                 }
             }
             // 将最后一个不完整的块保留在缓存区中
-            sse_data_buffer = chunks[chunks.length - 1];
+            sseDataBuffer = chunks[chunks.length - 1];
         }
     } catch (error) {
         console.error('流处理异常:', error);
@@ -432,7 +377,8 @@ async function tts_realtime_ws(voice_id, model_name) {
             } else {
                 cosyvoice_model = "cosyvoice-v2";
             }
-            cosyvoice = new Cosyvoice(`wss://dashscope.aliyuncs.com/api-ws/v1/inference/?api_key=${token}`, voice_id, cosyvoice_model);
+            const wssUrl = `wss://dashscope.aliyuncs.com/api-ws/v1/inference/?api_key=${token}`;
+            cosyvoice = new Cosyvoice(wssUrl, voice_id, cosyvoice_model);
         }
 
         await cosyvoice.connect(
@@ -457,17 +403,7 @@ async function tts_realtime_ws(voice_id, model_name) {
 async function sendTextMessage(inputValue) {
     console.log("sendTextMessage", inputValue)
     const unionid = localStorage.getItem('unionid');
-    if (!unionid)
-    {
-        XSAlert('用户未登录');
-        return;
-    }
     const selectedRoleID = localStorage.getItem('selectedRoleID');
-    if (!selectedRoleID) {
-        XSAlert('未找到角色');
-        return;
-    }
-
     const selectedRole = rolesList.find(role => role.avatar_id === selectedRoleID);
     console.log("selectedRole voice_id: ", selectedRole.cosyvoice_id);
 
@@ -487,26 +423,7 @@ async function sendTextMessage(inputValue) {
         avatar_id: selectedRoleID,
     };
 
-    let voice_id = selectedRole.cosyvoice_id;
-    console.log(selectedRole);
-    const tencentTTS = parseInt(localStorage.getItem('tencentTTS')) || 0;
-    if (tencentTTS === 0 && (voice_id.slice(0, 4) === "5010" || voice_id.slice(0, 4) === "6010"))
-    {
-        XSAlert("角色使用了腾讯云语音，但您的服务器未配置腾讯云服务，暂时改为阿里云临时音色");
-        voice_id = "longwan";
-    }
-    else if (tencentTTS > 0 && (voice_id.slice(0, 4) === "long" || voice_id.slice(0, 4) === "loon")) {
-        XSAlert("角色使用了阿里云语音，但您的服务器设置了优先使用腾讯云服务，暂时改为腾讯云临时音色");
-        voice_id = "501004";
-    }
-
-    let tts_model = "tencent";
-    if (voice_id.slice(0, 4) === "5010" || voice_id.slice(0, 4) === "6010") {
-        tts_model = "tencent";
-    } else {
-        tts_model = "ali";
-    }
-
+    const [tts_model, voice_id] = getVoiceIDByID(selectedRole.cosyvoice_id);
     sendButton.innerHTML = '<i class="material-icons">stop</i>';
     sendButton.disabled = false;
     if (inputValue) {
@@ -525,15 +442,7 @@ async function sendTextMessage(inputValue) {
             sseController = new AbortController();
             sseStartpoint = true;
             textInput.value = "";
-            const response = await fetch(serverUrl, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(requestBody),
-                signal: sseController.signal
-            });
-
-            if (!response.ok) throw new Error(`HTTP错误 ${response.status}`);
-            await handleResponseStream(response.body, sseController.signal);
+            await sendChatRequest(requestBody, sseController.signal);
         } catch (error) {
             if (error.name === 'AbortError') {
                 console.log('请求中止');
@@ -555,13 +464,13 @@ async function user_abort() {
     asrWorker.postMessage({ type: 'stop' });
     // 停止录音
     if (isVoiceMode) {
-        if (!asrAudioRecorder || !asrAudioRecorder.audioContext) {
+        if (asrAudioRecorder?.audioContext) {
             asrAudioRecorder.stop();
         }
     }
     // 停止llm sse传输
     if (sseController) {
-        console.log("sseController.abort();");
+        console.log("sseController abort");
         sseController.abort();
     }
     // 停止tts
@@ -575,3 +484,10 @@ async function user_abort() {
     }
     sendButton.innerHTML = '<i class="material-icons">send</i>'; // 发送图标
 }
+
+interruptButton.addEventListener('click', async function() {
+    if (window.parent && window.parent.startPlayVideo) {
+        window.parent.startPlayVideo();
+    }
+    this.style.display = 'none';
+});

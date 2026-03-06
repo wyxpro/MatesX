@@ -1,16 +1,13 @@
 // 角色数据
 let rolesList = [];
 let bgList = [];
-let avatar_mode = "private";
+let avatar_mode = "private";          // 当前页面是公开或私有
 characterVideo.addEventListener('loadedmetadata', () => {
                     console.log("loadedmetadata", characterVideo.videoWidth, characterVideo.videoHeight)
                     canvas_video.width = characterVideo.videoWidth;
                     canvas_video.height = characterVideo.videoHeight;
 });
 
-// 全局变量
-let currentRole = null;
-let currentBackground = null;
 let isiOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
 const selectorContainer = document.querySelector('.selector-container');
 // 初始化页面
@@ -22,13 +19,9 @@ document.addEventListener('DOMContentLoaded', function() {
     if (mode && mode.toLowerCase() === 'public') {
         avatar_mode = "public";
     }
-    if (avatar_mode === "public")
+    rolesList = getRoleList(avatar_mode);
+    if (avatar_mode !== "public")
     {
-        rolesList = JSON.parse(localStorage.getItem('public_roles_list')) || [];
-    }
-    else {
-        rolesList = JSON.parse(localStorage.getItem('roles_list')) || [];
-
         const settingsBtn = document.querySelector('.settings-btn');
         settingsBtn.onclick = function() {
             window.location.href = 'character-setting.html';
@@ -49,27 +42,15 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // 添加下拉框交互
     setupSelectors();
+});
 
-    // 添加开始按钮事件
-    document.getElementById('startMessage').addEventListener('click', async function() {
+async function startPlayVideo() {
         if (selectorContainer.style.display === 'none') {
             selectorContainer.style.display = 'flex';
         }
-        this.style.display = 'none';
-        document.getElementById('screen2').style.display = 'block';
 
         const selectedRoleID = localStorage.getItem('selectedRoleID');
-        if (!selectedRoleID) throw new Error('未找到角色ID');
-
-        if (avatar_mode === "public")
-        {
-            rolesList = JSON.parse(localStorage.getItem('public_roles_list')) || [];
-        }
-        else {
-            rolesList = JSON.parse(localStorage.getItem('roles_list')) || [];
-        }
-
-        const selectedRole = rolesList.find(role => role.avatar_id === selectedRoleID);
+        const selectedRole = getRoleByID(avatar_mode, selectedRoleID);
         if (!selectedRole) throw new Error('角色信息不存在，请重新选择');
         console.log("selectedRole: ", selectedRole)
 
@@ -111,9 +92,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 }
             }
         }
-    });
-});
-
+};
 async function loadSecret(secret) {
     try {
         let jsonString = secret;
@@ -135,38 +114,20 @@ async function loadSecret(secret) {
     }
 }
 async function fetchVideoUtilData(gzipUrl) {
-        // 从服务器加载 Gzip 压缩的 JSON 文件
-        const response = await fetch(gzipUrl);
-        const compressedData = await response.arrayBuffer();
-        const decompressedData = pako.inflate(new Uint8Array(compressedData), { to: 'string' });
-//        const combinedData = JSON.parse(decompressedData);
-        return decompressedData;
+    // 从服务器加载 Gzip 压缩的 JSON 文件
+    const response = await fetch(gzipUrl);
+    const compressedData = await response.arrayBuffer();
+    const decompressedData = pako.inflate(new Uint8Array(compressedData), { to: 'string' });
+    return decompressedData;
 }
-async function newVideoTask() {
+async function newVideoTask(selectedRole) {
     try {
-        const selectedRoleID = localStorage.getItem('selectedRoleID');
-        if (!selectedRoleID) throw new Error('未找到角色ID');
-        // 获取unionid（假设用户登录后已存储）
-        let unionid = localStorage.getItem('unionid');
-        if (!unionid) throw new Error('用户未登录，请重新登录');
-
-        if (avatar_mode === "public") {
-            rolesList = JSON.parse(localStorage.getItem('public_roles_list')) || [];
-        }
-        else {
-            rolesList = JSON.parse(localStorage.getItem('roles_list')) || [];
-        }
-
-        const selectedRole = rolesList.find(role => role.avatar_id === selectedRoleID);
-        if (!selectedRole) throw new Error('角色信息不存在，请重新选择');
-        console.log("selectedRole: ", selectedRole)
-
         const data_url = selectedRole.video_asset_url;
         let combinedData = await fetchVideoUtilData(data_url);
         await loadSecret(combinedData);
     } catch (error) {
         console.error('视频任务初始化失败:', error);
-        alert(`操作失败: ${error.message}`);
+        XSAlert(`操作失败: ${error.message}`);
     }
 }
 
@@ -176,17 +137,8 @@ const videoURLCache = new Map();
 // 播放角色视频
 async function playCharacterVideo(avatar_id) {
     localStorage.setItem('selectedRoleID', avatar_id);
-
-    if (avatar_mode === "public") {
-        rolesList = JSON.parse(localStorage.getItem('public_roles_list')) || [];
-    }
-    else {
-        rolesList = JSON.parse(localStorage.getItem('roles_list')) || [];
-    }
-    const selectedRole = rolesList.find(role => role.avatar_id === avatar_id);
-
-
-    await newVideoTask();
+    const selectedRole = getRoleByID(avatar_mode, avatar_id);
+    await newVideoTask(selectedRole);
     
     // 获取原始视频URL
     const originalVideoURL = selectedRole.video_url;
@@ -241,9 +193,6 @@ async function playCharacterVideo(avatar_id) {
 // 选择背景
 function selectBackground(bg) {
     console.log("bg: ", bg)
-    document.getElementById('startMessage').style.display = 'none';
-    currentBackground = bg;
-
     // 更新选中的背景显示
     document.getElementById('selected-bg-thumb').src = bg.thumbnail_url;
     const bgVideo = document.getElementById('background-video');
@@ -269,8 +218,6 @@ function selectBackground(bg) {
         bgVideo.style.display = 'none';
     }
 }
-
-
 
 // 初始化选择器
 function initSelector(type, items) {
@@ -347,13 +294,8 @@ function setupSelectors() {
 
 // 选择角色
 function selectRole(role) {
-    document.getElementById('startMessage').style.display = 'none';
-    currentRole = role;
-
     // 更新选中的角色显示
     document.getElementById('selected-character-thumb').src = role.avatar_url;
     document.getElementById('character-select').classList.remove('active');            // 播放角色视频
     playCharacterVideo(role.avatar_id);
 }
-
-

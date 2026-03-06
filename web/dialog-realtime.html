@@ -140,6 +140,39 @@
             font-size: 16px;
             color: #FF2442;
         }
+        #interrupt-button {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background-color: #FF2442;
+            border: none;
+            cursor: pointer;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            box-shadow: 0 4px 12px rgba(255, 36, 66, 0.4);
+            transition: all 0.3s ease;
+            z-index: 1000;
+        }
+
+        #interrupt-button:hover {
+            background-color: #e0203a;
+            transform: translate(-50%, -50%) scale(1.1);
+            box-shadow: 0 6px 16px rgba(255, 36, 66, 0.5);
+        }
+
+        #interrupt-button:active {
+            transform: translate(-50%, -50%) scale(0.95);
+        }
+
+        #interrupt-button .material-icons {
+            color: #fff;
+            font-size: 28px;
+        }
     </style>
 </head>
 <body>
@@ -150,6 +183,10 @@
     <div class="chat-container" id="chat-container">
         <!-- 聊天记录将显示在这里 -->
     </div>
+
+    <button id="interrupt-button" title="打断">
+        <i class="material-icons">play_arrow</i>
+    </button>
 
     <!-- 输入区域 -->
     <div class="input-container" id="input-container">
@@ -167,6 +204,7 @@
         </div>
     </div>
     <script src="js/xsComponents.js"></script>
+    <script src="js/localStorageManager.js"></script>
     <script src="js/cosyvoiceApi.js"></script>
     <script src="js/tencentTtsApi.js"></script>
     <script src="js/audioPlayer.js"></script>
