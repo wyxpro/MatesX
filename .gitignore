@@ -8,5 +8,5 @@ doc
 web/character2.html
 web/dialog-realtime2.html
 
-web/dialog-voice.html
-web/js/dialogVoice.js
+# web/dialog-voice.html
+# web/js/dialogVoice.js
