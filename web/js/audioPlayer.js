@@ -19,6 +19,17 @@ class PCMAudioPlayer {
 
     this.audioContext = new AudioContext({ sampleRate: this.sampleRate });
 
+    if (this.audioContext.state === 'suspended') {
+      console.log('AudioContext is suspended, attempting to resume...');
+      try {
+        await this.audioContext.resume();
+        console.log('AudioContext resumed successfully');
+      } catch (e) {
+        console.error('Failed to resume AudioContext:', e);
+        // 如果 resume 失败，后续播放将无声
+      }
+    }
+
     // 检查 AudioWorklet 支持（无需 SharedArrayBuffer）
     if (!this.audioContext.audioWorklet) {
       throw new Error('AudioWorklet not supported. Please use a modern browser and serve over HTTP.');
