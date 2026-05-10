@@ -3,131 +3,129 @@
 
 # MatesX
 
-> Memory · Expression · Motion · Multi-platform · Lightweight
+> 记忆 · 表情 · 动作 · 多端 · 轻量
 
 [English](README.md) | [中文版](README_zh.md)
 </div>
 
-## 🎯 Project Mission
-- **Enable individual users to customize their own AI companions**
-- **Support ultra-high concurrency digital human services targeting massive C-end users**
+## 🎯 项目主旨
+- **支持个人玩家自定义自己的AI伙伴**
+- **支持面向海量 C 端用户的超高并发数字人服务**
 
-### Three Core Objectives:
+### 三大核心目标：
 
-1. ✅ Large-scale C-end Digital Human Conversation Management
+1. ✅ **大规模高并发 C 端数字人对话管理**
 
-2. ✅ Memory, emotion, Expression & Motion Management
+2. ✅ **记忆、情感、表情与动作管理**
 
-3. ✅ Cross-platform Support for Desktop, APP, Mini Programs with Ultra-lightweight Architecture
-
----
-
-## 🚀 Core Features
-
-### 1. 🗣️ End-to-End Digital Human Conversation Engine
-> VAD (Voice Activity Detection) → ASR (Automatic Speech Recognition) → LLM (Large Language Model) → TTS (Text-to-Speech) → Digital Human Animation
-
-### 2. 🧠 mem0-Level Memory Functionality
-- Fusion of long-term and short-term memory, supporting personalized dialogue history storage and contextual understanding
-- Dynamic user profiling, persistent memory with cross-device synchronization
-
-### 3. 😊 Real-time Emotion Analysis
-- Multimodal emotion recognition based on voice tone, semantic content, and dialogue rhythm
-- Outputs emotion tags (happy/sad/angry/surprised, etc.) to drive facial expressions and vocal intonation
-
-### 4. 🎭 Free Expression & Free Motion
-- Driven by large-model algorithms, supports skeletal/BlendShape animation
-- Automatically matches facial expressions and body language in real-time based on dialogue content and emotional state
+3. ✅ **桌面端、APP、小程序多端共用，超轻量级架构**
 
 ---
 
-## 📱 Multi-platform Support
+## 🚀 核心功能
 
-| Platform | Status | Tech Stack | Preview | |
-|-----------------|--------|----------------|-------------------------------------------|-----------------------------------------------------------------------------------------|
-| Windows | ✅ | electron | <img src="preview/windows.jpg" width="120" /> | [exe link](https://github.com/kleinlee/MatesX/releases/download/v1.0/matesx-win32-x64.zip) |
-| macOS | ✅ | electron | ||
-| Android app | ✅ | webview | <img src="preview/android.jpg" width="120" /> | [apk link](https://github.com/kleinlee/MatesX/releases/download/v1.0/app-debug.apk) |
-| WeChat Mini Program | ✅ | webview | <img src="preview/mini-program.jpg" width="120" /> | 小程序:MatesX数字生命 |
-| Web | ✅ | WebGL rendering support | <img src="preview/web.jpg" width="120" /> | [web link](https://www.matesx.com)  |
-> 💡 All platforms share the same core engine, code reuse rate > 99%, extremely lightweight (core module < 5MB)
+### 1. 🗣️ 数字人全链路对话引擎
+> `VAD（语音活动检测） → ASR（语音识别） → LLM（大语言模型） → TTS（语音合成） → 数字人驱动`
+
+### 2. 🧠 mem0 级记忆功能
+- 长短期记忆融合，支持个性化对话历史存储与上下文理解
+- 用户画像动态构建，记忆持久化、跨设备同步
+
+### 3. 😊 实时情感解析
+- 基于语音语调、语义内容、对话节奏的多模态情感识别
+- 输出情感标签（开心/悲伤/愤怒/惊讶等）驱动表情与语调变化
+
+### 4. 🎭 自由表情 & 自由动作
+- 大模型算法建模，支持骨骼/BlendShape 驱动
+- 实时根据对话内容、情感状态自动匹配表情与肢体语言
 
 ---
 
-## 🛠️ Quick Start
+## 📱 多端支持
 
-```bash 
+| 平台          | 支持状态 | 技术路线       | 预览                                   |                                                                                            |
+|-------------|------|------------|----------------------------------------|--------------------------------------------------------------------------------------------|
+| Windows     | ✅    | electron   | <img src="preview/windows.jpg" width="120" />      | [exe link](https://github.com/kleinlee/MatesX/releases/download/v1.0/matesx-win32-x64.zip) |
+| macOS       | ✅    | electron   |                                        ||
+| Android app | ✅    | webview    | <img src="preview/android.jpg" width="120" />      | [apk link](https://github.com/kleinlee/MatesX/releases/download/v1.0/app-debug.apk)        |
+| 微信小程序       | ✅    | webview    | <img src="preview/mini-program.jpg" width="120" /> | 小程序:MatesX数字生命                                                                             |   
+| Web         | ✅    | WebGL 渲染支持 | <img src="preview/web.jpg" width="120" />        | [web link](https://www.matesx.com)                                                         |
+> 💡 所有平台共享同一套核心引擎，代码复用率 > 99%，极致轻量（核心模块 < 5MB）
+
+---
+
+## 🛠️ 快速开始
+
+```bash
 git clone https://github.com/kleinlee/MatesX.git
 cd MatesX
 pip install -r requirements.txt
 ```
-Deploy cloud-based conversation & speech models (Alibaba DashScope)
+部署对话语音模型云服务（alibaba dashscope）
 
-Modify utils/dashscope.py:
+修改utils/dashscope.py 中的：
 ```bash
-# Configure LLM-specific API
-DASHSCOPE_API_KEY = ""     # Obtain API-key from Alibaba Cloud Bailian
+# 配置大模型专属接口
+DASHSCOPE_API_KEY = ""     # 请到阿里云百炼开通API-key
 DASHSCOPE_TOKEN_URL = "https://dashscope.aliyuncs.com/api/v1/tokens"
 DASHSCOPE_LLM_URL = "https://dashscope.aliyuncs.com/compatible-mode/v1"
 
-# default memory file location
+# 默认的记忆文件配置地址
 memory_data_url = "http://localhost:8000/api/assets/{avatar_id}/memory.bin"
-# default OSS location for voice-clone
+# 默认的语音文件云存储地址（用于语音克隆）
 OSS_URL = "https://matesx.oss-cn-beijing.aliyuncs.com/audio/user"
 
-# Configure MatesX Avatar key
-MatesX_key = ""           # Obtain key from matesx.cn
-# Optional: config if using Tencent cloud TTS
-USE_TENCENT_TTS = True  # default: False (prefer Alibaba Cloud voice by default)
+# 配置 MatesX形象平台秘钥
+MatesX_key = ""           # 从matesx.cn获取
+# 可选: 配置腾讯云 大模型音色
+USE_TENCENT_TTS = True   # 默认为False（优先使用阿里云音色）
 class TencentTtsConfig:
     SECRET_ID = ""
     SECRET_KEY = ""
     APP_ID = 
 ```
-
-Start service:
+开启服务：
 ```bash
 python main.py
 ```
-Then open http://localhost:8000/web/home.html to enjoy!
+然后打开 http://localhost:8000/web/home.html 享用吧
 
-### Custom Avatars
-This project does not offer underlying algorithm implementations but focuses on lightweight yet comprehensive applications.
+## 定制形象
+此项目不提供复杂的底层算法实现而专注于轻量但完备的应用。
 
-For individual enthusiasts, get free credits on [Matesx official web application](https://www.matesx.com). 
+对于个人爱好者，我们会在[matesx网页程序](https://www.matesx.com)定期提供免费额度。
 
-For developers, receive 3 free credits by [contacting us](preview/wechat.jpg). please refer to the [API](preview/API.md) for API calling. 
-Use [matesx.cn](https://www.matesx.cn) to manage your avatars.
+对于开发者，[联系我](preview/wechat.jpg)获取3个免费额度秘钥。请参阅 [API](preview/API.md) 的API付费调用方式，可欢迎使用[matesx.cn](https://www.matesx.cn)来管理你的形象。
 
 ---
 
-## ⚡ Serverless Minimal Deployment
+## ⚡ 无服务器最简部署
 
-> **No server required!** Enter your Alibaba Bailian API-key to start chatting instantly.
+> **无需服务器！** 输入阿里百炼 API-key 即可直接开始对话
 
 | | |
 |---|---|
-| **🌐 Live Demo** | [https://kleinlee.github.io/character.html](https://kleinlee.github.io/character.html) |
-| **📦 Source Code** | [https://github.com/kleinlee/kleinlee.github.io](https://github.com/kleinlee/kleinlee.github.io) |
+| **🌐 在线体验** | [https://kleinlee.github.io/character.html](https://kleinlee.github.io/character.html) |
+| **📦 源码地址** | [https://github.com/kleinlee/kleinlee.github.io](https://github.com/kleinlee/kleinlee.github.io) |
 
-This is the simplest deployment option - pure static deployment with all computation (VAD, lip-sync, expression driving) done directly in the browser. Just fill in your Alibaba Bailian API-key and start talking to the digital human immediately!
+如果你想保持最小的代码实现，这是最简部署方式——纯静态部署，所有计算（VAD、唇形同步、表情驱动）都在浏览器端完成。只需填入阿里百炼 API-key，即可直接与数字人对话！
 
 ---
 
-### Compilation
-support Windows, macOS, Android, Mini-Program
+### 编译
+支持windows、mac、android、mini-program
 
-Refer to the [platform](platform/README.md) folder
+参考 [platform文件夹](platform/README.md) 
 
-### High Concurrency & Cloud Sync
-- Upgrade to cloud database
-- Host resources on OSS
+### 高并发及云端同步
+- 升级为云端数据库
+- 资源放置到OSS
 
 ## License
 Apache License 2.0
 
-## Contact
-| join WeChat group                                             | Join QQ group                                            |
-|---------------------------------------------------------------|-------------------------------------------------------------|
+## 联系
+|  微信交流群| QQ群聊                                                                        |
+|------------------|----------------------------------------------------------------------------------------|
 | <img src="preview/wechat.jpg" width="480" alt="MatesX 官方微信"/> | <img src="preview/qq.jpg" width="480" alt="MatesX 官方QQ"/>|
 
