@@ -10,6 +10,8 @@
 
     <link rel="stylesheet" href="css/home.css">
     <link rel="stylesheet" href="css/gallery.css">
+    <link rel="stylesheet" href="css/discovery.css">
+    <link rel="stylesheet" href="css/my.css">
 </head>
 <body>
     <!-- 顶部导航栏 -->
@@ -31,7 +33,94 @@
         <div class="grid-gallery">
         </div>
     </div>
+
+    <!-- 发现页 -->
+    <div id="discovery-page" class="page-container">
+        <div class="discovery_container" id="discoveryContainer">
+            <!-- Dynamically rendered discovery items -->
+        </div>
+    </div>
+
+    <!-- 我的页 -->
+    <div id="my-page" class="page-container">
+        <!-- Profile Card -->
+        <div class="profile-card">
+            <div class="profile-header">
+                <div class="headimg" style="display: flex; align-items: center; justify-content: center;">
+                    <span class="material-icons" style="font-size: 40px; color: white;">account_circle</span>
+                </div>
+                <div class="profile-info">
+                    <div class="nickname" id="my-nickname">explorer</div>
+                    <div class="vip-duration" id="my-vip">会员有效期至: 2099-12-31</div>
+                </div>
+            </div>
+            <div class="quota-items-horizontal">
+                <div class="quota-card">
+                    <div class="quota-label">
+                        <span class="material-icons" style="font-size:16px; color:#ff9f00;">toll</span>
+                        <span class="quota-title">Tokens</span>
+                    </div>
+                    <div class="quota-count" id="quota-tokens">0</div>
+                </div>
+                <div class="quota-card">
+                    <div class="quota-label">
+                        <span class="material-icons" style="font-size:16px; color:#7f3eff;">face</span>
+                        <span class="quota-title">形象</span>
+                    </div>
+                    <div class="quota-count" id="quota-avatars">0</div>
+                </div>
+                <div class="quota-card">
+                    <div class="quota-label">
+                        <span class="material-icons" style="font-size:16px; color:#00f2fe;">mic</span>
+                        <span class="quota-title">克隆音色</span>
+                    </div>
+                    <div class="quota-count" id="quota-voices">0</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Settings List -->
+        <ul class="settings-list">
+            <li class="setting-item" onclick="window.location.href='create-role.html'">
+                <span class="material-icons icon">add_circle_outline</span>
+                <span class="item-text">定制全新伴侣形象</span>
+                <span class="material-icons arrow">chevron_right</span>
+            </li>
+            <li class="setting-item" onclick="window.location.href='character-setting.html'">
+                <span class="material-icons icon">settings_voice</span>
+                <span class="item-text">声音克隆中心</span>
+                <span class="material-icons arrow">chevron_right</span>
+            </li>
+            <li class="setting-item" onclick="window.location.href='index.html'">
+                <span class="material-icons icon">info</span>
+                <span class="item-text">关于 MatesX 官网</span>
+                <span class="material-icons arrow">chevron_right</span>
+            </li>
+            <li class="setting-item" id="logout-btn">
+                <span class="material-icons icon" style="color: #ff385c;">exit_to_app</span>
+                <span class="item-text" style="color: #ff385c;">退出登录</span>
+                <span class="material-icons arrow" style="color: #ff385c;">chevron_right</span>
+            </li>
+        </ul>
+    </div>
+
+    <!-- 底部导航栏 -->
+    <div class="nav-bar">
+        <div class="nav-item active" data-target="gallery-page">
+            <span class="material-icons">explore</span>
+            <span>主页</span>
+        </div>
+        <div class="nav-item" data-target="discovery-page">
+            <span class="material-icons">explore</span>
+            <span>发现</span>
+        </div>
+        <div class="nav-item" data-target="my-page">
+            <span class="material-icons">person</span>
+            <span>我的</span>
+        </div>
+    </div>
+
     <script src="js/xsComponents.js"></script>
-    <script src="js/home.js"></script>
+    <script src="js/home.js?v=1.21"></script>
 </body>
 </html>

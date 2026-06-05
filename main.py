@@ -112,6 +112,11 @@ async def login(data: dict = Body(...)):
         "message": "登录成功",
         "userInfo": {
             "unionid": unionid,
+            "nickname": user["nickname"],
+            "membership_level": user["membership_level"],
+            "membership_expiry_time": user["membership_expiry_time"],
+            "avatar_balance": user["avatar_balance"],
+            "voice_balance": user["voice_balance"],
             "roles_list": roles_list,
             "voices_list": voices_list,
             "bg_list": bg_list,

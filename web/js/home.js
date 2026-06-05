@@ -147,39 +147,69 @@ function renderRoleCards() {
     gridGallery.appendChild(addCard);
 }
 
-document.addEventListener('DOMContentLoaded', async () => {
-    try {
-        const response = await fetch('/login', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({ unionid })
+document.addEventListener('DOMContentLoaded', () => {
+    // 1. 初始化底部导航栏交互 (同步执行，免受网络请求延迟阻塞)
+    initNavigation();
+
+    // 2. 初始化退出登录逻辑
+    const logoutBtn = document.getElementById('logout-btn');
+    if (logoutBtn) {
+        logoutBtn.addEventListener('click', () => {
+            localStorage.clear();
+            window.location.href = 'index.html';
         });
-
-        const result = await response.json();
-        if (!response.ok) throw new Error(result.message || '验证失败');
-
-        localStorage.setItem('unionid', result.userInfo.unionid);
-        localStorage.setItem('voices_list', JSON.stringify(result.userInfo.voices_list));
-        localStorage.setItem('roles_list', JSON.stringify(result.userInfo.roles_list));
-        localStorage.setItem('bg_list', JSON.stringify(result.userInfo.bg_list));
-        localStorage.setItem('tencentTTS', result.userInfo.tencentTTS);
-        localStorage.setItem('token_balance', result.userInfo.token_balance);
-        rolesList = JSON.parse(localStorage.getItem('roles_list')) || [];
-        
-        // 更新顶部余额显示
-        const balanceEl = document.getElementById('user-token-balance');
-        if (balanceEl) {
-            balanceEl.textContent = Number(result.userInfo.token_balance).toLocaleString();
-        }
-    } catch (error) {
-        console.error('登录错误:', error.message);
     }
 
-    // 初始化角色卡片
-    renderRoleCards();
+    // 3. 执行异步登录并获取最新数据
+    (async () => {
+        try {
+            const response = await fetch('/login', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ unionid })
+            });
 
+            const result = await response.json();
+            if (!response.ok) throw new Error(result.message || '验证失败');
+
+            localStorage.setItem('unionid', result.userInfo.unionid);
+            localStorage.setItem('nickname', result.userInfo.nickname || 'explorer');
+            localStorage.setItem('membership_level', result.userInfo.membership_level ?? 0);
+            localStorage.setItem('membership_expiry_time', result.userInfo.membership_expiry_time || '2025-03-23 00:00:00');
+            localStorage.setItem('avatar_balance', result.userInfo.avatar_balance ?? 0);
+            localStorage.setItem('voice_balance', result.userInfo.voice_balance ?? 0);
+            localStorage.setItem('voices_list', JSON.stringify(result.userInfo.voices_list));
+            localStorage.setItem('roles_list', JSON.stringify(result.userInfo.roles_list));
+            localStorage.setItem('bg_list', JSON.stringify(result.userInfo.bg_list));
+            localStorage.setItem('tencentTTS', result.userInfo.tencentTTS);
+            localStorage.setItem('token_balance', result.userInfo.token_balance);
+            rolesList = JSON.parse(localStorage.getItem('roles_list')) || [];
+            
+            // 更新顶部余额显示
+            const balanceEl = document.getElementById('user-token-balance');
+            if (balanceEl) {
+                balanceEl.textContent = Number(result.userInfo.token_balance).toLocaleString();
+            }
+
+            // 重新渲染角色卡片
+            renderRoleCards();
+
+            // 如果当前在"我的"页面，即时更新额度
+            const myPage = document.getElementById('my-page');
+            if (myPage && myPage.classList.contains('page-active')) {
+                updateMyPage();
+            }
+        } catch (error) {
+            console.error('登录错误:', error.message);
+            // 降级渲染本地缓存角色
+            rolesList = JSON.parse(localStorage.getItem('roles_list')) || [];
+            renderRoleCards();
+        }
+    })();
+
+    // 4. 卡片及列表项动效注册
     document.querySelectorAll('.gallery-item').forEach(card => {
         card.addEventListener('mouseenter', () => {
             card.style.transform = 'translateY(-8px)';
@@ -202,6 +232,148 @@ document.addEventListener('DOMContentLoaded', async () => {
         });
     });
 });
+
+function updateMyPage() {
+    const nickname = localStorage.getItem('nickname') || 'explorer';
+    const membershipLevel = parseInt(localStorage.getItem('membership_level') || '0');
+    const membershipExpiry = localStorage.getItem('membership_expiry_time') || '';
+    const tokenBalance = parseInt(localStorage.getItem('token_balance') || '0');
+    const avatarBalance = parseFloat(localStorage.getItem('avatar_balance') || '0');
+    const voiceBalance = parseFloat(localStorage.getItem('voice_balance') || '0');
+    
+    const nickEl = document.getElementById('my-nickname');
+    const vipEl = document.getElementById('my-vip');
+    const tokensEl = document.getElementById('quota-tokens');
+    const avatarsEl = document.getElementById('quota-avatars');
+    const voicesEl = document.getElementById('quota-voices');
+    
+    if (nickEl) nickEl.textContent = nickname;
+    if (vipEl) {
+        if (membershipLevel > 0) {
+            vipEl.textContent = `VIP 会员 (有效期至: ${membershipExpiry.split(' ')[0]})`;
+            vipEl.style.color = '#FF385C';
+        } else {
+            vipEl.textContent = '普通体验版';
+            vipEl.style.color = '#666';
+        }
+    }
+    if (tokensEl) tokensEl.textContent = tokenBalance.toLocaleString();
+    if (avatarsEl) avatarsEl.textContent = avatarBalance.toLocaleString();
+    if (voicesEl) voicesEl.textContent = voiceBalance.toLocaleString();
+}
+
+function renderDiscoveryCards() {
+    const discoveryContainer = document.getElementById('discoveryContainer');
+    if (!discoveryContainer) return;
+    discoveryContainer.innerHTML = '';
+    
+    const sampleItems = [
+        {
+            title: "艾拉 (Aila) - 二次元猫娘伴侣",
+            tag: "二次元",
+            description: "活泼粘人的猫娘学妹，喜欢撒娇，渴望陪伴。使用 CosyVoice 精细配音，拥有灵动可爱的面部反馈与超低延迟对话。",
+            image: "https://images.unsplash.com/photo-1578632767115-351597cf2477?auto=format&fit=crop&q=80&w=300",
+            avatar: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&q=80&w=100",
+            author: "@MatesX_otaku",
+            likes: 1208
+        },
+        {
+            title: "星原 (Xinyuan) - 朋克风科幻助手",
+            tag: "科幻",
+            description: "来自 2077 年的AI仿生助手，精通物理与赛博朋克史。具有超强的情感记忆舱，适合深夜探索时空的深度对谈。",
+            image: "https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?auto=format&fit=crop&q=80&w=300",
+            avatar: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&q=80&w=100",
+            author: "官方推荐",
+            likes: 3421
+        },
+        {
+            title: "楚秋 (Chuqiu) - 古风古韵文豪",
+            tag: "文学",
+            description: "一袭长衫，执扇而立。精通古典诗词与中国历史，能与你对诗共饮，为你声情并茂地朗读诗词文案。",
+            image: "https://images.unsplash.com/photo-1508739773434-c26b3d09e071?auto=format&fit=crop&q=80&w=300",
+            avatar: "https://images.unsplash.com/photo-1492562080023-ab3db95bfbce?auto=format&fit=crop&q=80&w=100",
+            author: "@墨染",
+            likes: 954
+        }
+    ];
+
+    sampleItems.forEach(item => {
+        const card = document.createElement('div');
+        card.className = 'discovery_card';
+        card.innerHTML = `
+            <div class="discovery_media-container">
+                <div class="discovery_tag">${item.tag}</div>
+                <img src="${item.image}" alt="${item.title}">
+            </div>
+            <div class="discovery_content-info">
+                <div class="discovery_description" style="font-weight: 700; margin-bottom: 6px; color: #1a1a1a;">${item.title}</div>
+                <div class="discovery_description">${item.description}</div>
+                <div class="discovery_user-info">
+                    <img class="discovery_avatar" src="${item.avatar}" alt="${item.author}">
+                    <span class="discovery_user-name">${item.author}</span>
+                    <div class="discovery_action-bar">
+                        <button class="discovery_like-btn">
+                            <span class="material-icons" style="font-size: 18px; margin-right: 4px;">favorite_border</span>
+                            <span class="like-count">${item.likes}</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        `;
+        
+        const likeBtn = card.querySelector('.discovery_like-btn');
+        const countSpan = card.querySelector('.like-count');
+        const iconSpan = card.querySelector('.material-icons');
+        let liked = false;
+        
+        likeBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            liked = !liked;
+            if (liked) {
+                likeBtn.classList.add('discovery_liked');
+                iconSpan.textContent = 'favorite';
+                iconSpan.style.color = '#ff2442';
+                countSpan.textContent = item.likes + 1;
+            } else {
+                likeBtn.classList.remove('discovery_liked');
+                iconSpan.textContent = 'favorite_border';
+                iconSpan.style.color = '#999';
+                countSpan.textContent = item.likes;
+            }
+        });
+
+        card.addEventListener('click', () => {
+            window.location.href = 'create-role.html';
+        });
+
+        discoveryContainer.appendChild(card);
+    });
+}
+
+function initNavigation() {
+    const navItems = document.querySelectorAll('.nav-bar .nav-item');
+    const pages = document.querySelectorAll('.page-container');
+
+    navItems.forEach(item => {
+        item.addEventListener('click', () => {
+            navItems.forEach(nav => nav.classList.remove('active'));
+            pages.forEach(p => p.classList.remove('page-active'));
+
+            item.classList.add('active');
+            const targetId = item.getAttribute('data-target');
+            const targetPage = document.getElementById(targetId);
+            if (targetPage) {
+                targetPage.classList.add('page-active');
+            }
+
+            if (targetId === 'discovery-page') {
+                renderDiscoveryCards();
+            } else if (targetId === 'my-page') {
+                updateMyPage();
+            }
+        });
+    });
+}
 
 // 监听 localStorage 的变化
 window.addEventListener('storage', (event) => {
