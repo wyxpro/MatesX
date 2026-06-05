@@ -1,5 +1,7 @@
+import os
+
 # DashScope (阿里云) 相关配置
-DASHSCOPE_API_KEY = ""
+DASHSCOPE_API_KEY = os.environ.get("DASHSCOPE_API_KEY", "")
 DASHSCOPE_TOKEN_URL = "https://dashscope.aliyuncs.com/api/v1/tokens"
 DASHSCOPE_LLM_URL = "https://dashscope.aliyuncs.com/compatible-mode/v1"
 
@@ -8,14 +10,38 @@ memory_data_url = "http://localhost:8000/api/assets/{avatar_id}/memory.bin"
 
 # OSS 用户音频存储地址
 OSS_URL = "https://matesx.oss-cn-beijing.aliyuncs.com/audio/user"
-MatesX_key = ""
+MatesX_key = os.environ.get("MatesX_key", "")
 
 # 腾讯 TTS 配置
 USE_TENCENT_TTS = False
 class TencentTtsConfig:
-    SECRET_ID = ""
-    SECRET_KEY = ""
-    APP_ID = None
+    SECRET_ID = os.environ.get("TENCENT_SECRET_ID", "")
+    SECRET_KEY = os.environ.get("TENCENT_SECRET_KEY", "")
+    APP_ID = os.environ.get("TENCENT_APP_ID", None)
+
+# Load configuration from .env file if it exists
+if os.path.exists(".env"):
+    try:
+        with open(".env", "r", encoding="utf-8") as f:
+            for line in f:
+                line = line.strip()
+                if line and not line.startswith("#"):
+                    parts = line.split("=", 1)
+                    if len(parts) == 2:
+                        key = parts[0].strip()
+                        val = parts[1].strip().strip('"').strip("'")
+                        if key == "DASHSCOPE_API_KEY" and not DASHSCOPE_API_KEY:
+                            DASHSCOPE_API_KEY = val
+                        elif key == "MatesX_key" and not MatesX_key:
+                            MatesX_key = val
+                        elif key == "TENCENT_SECRET_ID" and not TencentTtsConfig.SECRET_ID:
+                            TencentTtsConfig.SECRET_ID = val
+                        elif key == "TENCENT_SECRET_KEY" and not TencentTtsConfig.SECRET_KEY:
+                            TencentTtsConfig.SECRET_KEY = val
+                        elif key == "TENCENT_APP_ID" and TencentTtsConfig.APP_ID is None:
+                            TencentTtsConfig.APP_ID = val
+    except Exception as e:
+        print(f"[WARNING] Failed to load .env file: {e}")
 
 if not DASHSCOPE_API_KEY:
     print("错误: DASHSCOPE_API_KEY 未配置，请设置阿里百炼平台秘钥，否则无法开启对话")
@@ -25,7 +51,6 @@ if not MatesX_key:
 
 # 检查腾讯 TTS 配置（仅在启用时检查）
 if USE_TENCENT_TTS:
-    missing_tencent_fields = []
     if not TencentTtsConfig.SECRET_ID or not TencentTtsConfig.SECRET_KEY or not TencentTtsConfig.APP_ID:
         print(f"错误: 腾讯 TTS 已启用，但缺少必要配置字段")
 

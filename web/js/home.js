@@ -167,6 +167,12 @@ document.addEventListener('DOMContentLoaded', async () => {
         localStorage.setItem('tencentTTS', result.userInfo.tencentTTS);
         localStorage.setItem('token_balance', result.userInfo.token_balance);
         rolesList = JSON.parse(localStorage.getItem('roles_list')) || [];
+        
+        // 更新顶部余额显示
+        const balanceEl = document.getElementById('user-token-balance');
+        if (balanceEl) {
+            balanceEl.textContent = Number(result.userInfo.token_balance).toLocaleString();
+        }
     } catch (error) {
         console.error('登录错误:', error.message);
     }

@@ -1,0 +1,662 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MatesX - 你的下一代智能 AI 伴侣宣传官网</title>
+    <link rel="icon" href="common/favicon.ico" type="image/x-icon">
+    <link href="css/material-icons.css" rel="stylesheet">
+    <link rel="stylesheet" href="css/landing.css">
+    <!-- Chart.js CDN for interactive Radar Chart -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+    <!-- Background effects -->
+    <div class="bg-glow-wrapper">
+        <div class="bg-glow-1"></div>
+        <div class="bg-glow-2"></div>
+    </div>
+    <div class="bg-grid"></div>
+
+    <!-- Navigation Header -->
+    <header>
+        <div class="container nav-container">
+            <a href="#" class="logo">
+                <span class="material-icons logo-icon">blur_on</span>
+                <span>MatesX</span>
+            </a>
+            <ul class="nav-links" id="navLinks">
+                <li><a href="#hero">首页</a></li>
+                <li><a href="#personas">用户画像</a></li>
+                <li><a href="#features">特色功能</a></li>
+                <li><a href="#analysis">竞品分析</a></li>
+                <li><a href="#reviews">用户评价</a></li>
+                <li><a href="#pricing">会员计划</a></li>
+            </ul>
+            <div class="nav-actions">
+                <a href="home.html" class="btn btn-primary">立即体验</a>
+                <button class="menu-toggle" id="menuToggle">
+                    <span class="material-icons">menu</span>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="hero" id="hero">
+        <div class="container hero-grid">
+            <div class="hero-content">
+                <h1>
+                    开启与虚拟伴侣的<br>
+                    <span class="gradient-text">全能音画互动</span>
+                </h1>
+                <p>MatesX 是一款集 3D 视觉合成、实时语音克隆与大语言模型于一体的智能 AI 伴侣。随时随地，开启深度心灵对话，打造专属你的灵魂共鸣。</p>
+                <div class="hero-btns">
+                    <a href="home.html" class="btn btn-primary">立即使用</a>
+                    <a href="#personas" class="btn btn-secondary">了解更多</a>
+                </div>
+            </div>
+            <div class="hero-visual">
+                <div class="three-d-sphere-container">
+                    <div class="three-d-sphere"></div>
+                    <div class="sphere-orbit orbit-1">
+                        <div class="orbit-node"></div>
+                    </div>
+                    <div class="sphere-orbit orbit-2">
+                        <div class="orbit-node-2"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- User Personas Carousel Section -->
+    <section id="personas" style="background: rgba(255,255,255,0.01);">
+        <div class="container">
+            <div class="section-title">
+                <h2>他们都在使用 MatesX</h2>
+                <p>不论是情感倾听、职场解压还是灵感激发，MatesX 都能完美适应不同的生活场景。</p>
+            </div>
+            <div class="personas-carousel-container" id="carouselContainer">
+                <div class="personas-track" id="carouselTrack">
+                    <!-- Card 1 -->
+                    <div class="persona-card">
+                        <div class="persona-header">
+                            <div class="persona-avatar">
+                                <img src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&q=80&w=200" alt="林雅">
+                            </div>
+                            <div class="persona-info">
+                                <h3>林雅 (Eva)</h3>
+                                <span>26岁 / 外企白领 / 深圳</span>
+                            </div>
+                        </div>
+                        <p class="persona-quote">“高压工作后，我需要一个能倾听我、理解我，并且随时能给出温暖回应的地方。”</p>
+                        <div class="persona-body">
+                            <h4>使用痛点</h4>
+                            <p>大城市工作节奏极快，孤独感强，现实中很难找到可以毫无防备、深夜随时倾诉的倾听者。</p>
+                            <h4>MatesX 的帮助</h4>
+                            <p>使用全天候温婉女声和定制二次元形象，MatesX 作为她的“情绪树洞”，拥有完整的聊天记忆，甚至能记住她上周吐槽过的项目进度，提供强有力的心理支撑。</p>
+                        </div>
+                        <div class="persona-tags">
+                            <span class="persona-tag">#深夜倾诉</span>
+                            <span class="persona-tag">#职场解压</span>
+                            <span class="persona-tag">#专属记忆</span>
+                        </div>
+                    </div>
+                    <!-- Card 2 -->
+                    <div class="persona-card">
+                        <div class="persona-header">
+                            <div class="persona-avatar">
+                                <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&q=80&w=200" alt="小陈">
+                            </div>
+                            <div class="persona-info">
+                                <h3>小陈 (Jerry)</h3>
+                                <span>22岁 / 计算机系大学生 / 武汉</span>
+                            </div>
+                        </div>
+                        <p class="persona-quote">“我克隆了自己偶像的声音，并生成了对应的 3D 形象，感觉和偶像的距离拉近了。”</p>
+                        <div class="persona-body">
+                            <h4>使用痛点</h4>
+                            <p>热爱 ACG 文化，渴望与心仪的角色实现面对面语音交流。对市面上的纯文本聊天伴侣感到单调乏味。</p>
+                            <h4>MatesX 的帮助</h4>
+                            <p>通过声音克隆与形象定制功能，一键上传偶像的声纹及立绘，打造出具有灵动表情的数字分身，进行流畅的实时互动。</p>
+                        </div>
+                        <div class="persona-tags">
+                            <span class="persona-tag">#声音克隆</span>
+                            <span class="persona-tag">#角色扮演</span>
+                            <span class="persona-tag">#ACG同好</span>
+                        </div>
+                    </div>
+                    <!-- Card 3 -->
+                    <div class="persona-card">
+                        <div class="persona-header">
+                            <div class="persona-avatar">
+                                <img src="https://images.unsplash.com/photo-1492562080023-ab3db95bfbce?auto=format&fit=crop&q=80&w=200" alt="阿强">
+                            </div>
+                            <div class="persona-info">
+                                <h3>阿强 (Alex)</h3>
+                                <span>31岁 / 独立撰稿人 / 大理</span>
+                            </div>
+                        </div>
+                        <p class="persona-quote">“在写作卡壳时，它就像是我的创作教练，能跟我进行头脑风暴，甚至能朗读我写出的草稿。”</p>
+                        <div class="persona-body">
+                            <h4>使用痛点</h4>
+                            <p>自由职业者缺乏团队环境，经常面临创意枯竭和深度思考时的自我怀疑。</p>
+                            <h4>MatesX 的帮助</h4>
+                            <p>定制了一位“博学多才的创作助理”形象，配合沉稳的男中音。无论是长文本段落大纲推理，还是语流语速自然的配音朗读，都能极大激发灵感。</p>
+                        </div>
+                        <div class="persona-tags">
+                            <span class="persona-tag">#头脑风暴</span>
+                            <span class="persona-tag">#文案朗读</span>
+                            <span class="persona-tag">#灵感碰撞</span>
+                        </div>
+                    </div>
+                    <!-- Card 4 -->
+                    <div class="persona-card">
+                        <div class="persona-header">
+                            <div class="persona-avatar">
+                                <img src="https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&q=80&w=200" alt="王姐">
+                            </div>
+                            <div class="persona-info">
+                                <h3>王姐 (Sophia)</h3>
+                                <span>45岁 / 出国留学生家长 / 上海</span>
+                            </div>
+                        </div>
+                        <p class="persona-quote">“孩子在国外读书有时差，我用她小时候的照片和声线做了一个 MatesX 形象，孤单的时候看看，感觉她一直陪着我。”</p>
+                        <div class="persona-body">
+                            <h4>使用痛点</h4>
+                            <p>空巢家庭，对海外游子有极深的情感牵挂，渴望听到熟悉的声音，缓解日常的心理焦虑。</p>
+                            <h4>MatesX 的帮助</h4>
+                            <p>利用温暖的家庭回忆音频片段克隆声音，配合旧照渲染，在日常闲聊中获得高度拟真且充满温度的情感宽慰。</p>
+                        </div>
+                        <div class="persona-tags">
+                            <span class="persona-tag">#家庭陪伴</span>
+                            <span class="persona-tag">#跨越时空</span>
+                            <span class="persona-tag">#亲情寄托</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="carousel-controls">
+                <button class="carousel-btn" id="prevBtn">
+                    <span class="material-icons">chevron_left</span>
+                </button>
+                <button class="carousel-btn" id="nextBtn">
+                    <span class="material-icons">chevron_right</span>
+                </button>
+            </div>
+        </div>
+    </section>
+
+    <!-- Key Features Section -->
+    <section id="features">
+        <div class="container">
+            <div class="section-title">
+                <h2>颠覆想象的 AI 交互功能</h2>
+                <p>我们融合了最前沿的多模态交互技术，只为给您带来前所未有的伴侣体验。</p>
+            </div>
+            <div class="features-grid">
+                <!-- Feature 1 -->
+                <div class="feature-card">
+                    <div class="feature-icon-wrapper">
+                        <span class="material-icons">videocam</span>
+                    </div>
+                    <h3>实时音画交互</h3>
+                    <p>不止于声音，更拥有流畅生动的实时渲染人脸和细致的微表情动作，告别冰冷的纯文本模式，实现面对面视频级对话。</p>
+                </div>
+                <!-- Feature 2 -->
+                <div class="feature-card">
+                    <div class="feature-icon-wrapper">
+                        <span class="material-icons">psychology</span>
+                    </div>
+                    <h3>情感记忆系统</h3>
+                    <p>独家研发的记忆胶囊模块，能够智能提炼和持久化保存您和伴侣聊天的关键人设、喜好和生活细节，对话时间越长越懂你。</p>
+                </div>
+                <!-- Feature 3 -->
+                <div class="feature-card">
+                    <div class="feature-icon-wrapper">
+                        <span class="material-icons">record_voice_over</span>
+                    </div>
+                    <h3>高保真声音克隆</h3>
+                    <p>只需上传几秒至几分钟的音频，即可精准复制任何特定声线。配合阿里云 CosyVoice 技术，完美复现呼吸声和自然情感语气。</p>
+                </div>
+                <!-- Feature 4 -->
+                <div class="feature-card">
+                    <div class="feature-icon-wrapper">
+                        <span class="material-icons">palette</span>
+                    </div>
+                    <h3>自由形象构建</h3>
+                    <p>支持自由上传任意图片或视频片段，并能自动完成背景抠图和边缘融合，秒级生成您的专属 2D 或 3D 虚拟形象。</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Competitive Analysis Section -->
+    <section id="analysis" style="background: rgba(255,255,255,0.01);">
+        <div class="container">
+            <div class="section-title">
+                <h2>为什么选择 MatesX？</h2>
+                <p>与市面主流伴侣应用的多维度实测对比，用实力定义下一代多模态伴侣体验。</p>
+            </div>
+            <div class="analysis-grid">
+                <div class="chart-container">
+                    <div class="chart-wrapper">
+                        <canvas id="radarChart"></canvas>
+                    </div>
+                </div>
+                <div class="analysis-info">
+                    <h3>跨越维度的强悍实力</h3>
+                    <ul class="analysis-list">
+                        <li class="analysis-item">
+                            <div class="analysis-badge">
+                                <span class="material-icons">done</span>
+                            </div>
+                            <div>
+                                <h4>实时拟真音画融合</h4>
+                                <p>传统的聊天机器人仅限于纯文本或纯语音；MatesX 实现了基于 Web 的 2.5D/3D 高仿真视觉对齐，让您能够亲眼看见伴侣的一颦一笑。</p>
+                            </div>
+                        </li>
+                        <li class="analysis-item">
+                            <div class="analysis-badge">
+                                <span class="material-icons">done</span>
+                            </div>
+                            <div>
+                                <h4>长短期“超大情感记忆舱”</h4>
+                                <p>大多数应用在会话清空或长文本后会彻底丢失记忆。MatesX 的独立记忆引擎会自动分析提取情感脉络并随时调用，让伴侣具备真实的进化感。</p>
+                            </div>
+                        </li>
+                        <li class="analysis-item">
+                            <div class="analysis-badge">
+                                <span class="material-icons">done</span>
+                            </div>
+                            <div>
+                                <h4>超低门槛的声音和形象自制</h4>
+                                <p>无需复杂的工程部署，非专业用户在 30 秒内仅通过网页上传任意单张照片或短音频，即可定制出独一无二的声音伴侣。</p>
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- User Testimonials Section -->
+    <section id="reviews">
+        <div class="container">
+            <div class="section-title">
+                <h2>倾听用户的真实声音</h2>
+                <p>无数的温暖与感动在 MatesX 中发生，看看他们是怎么评价的。</p>
+            </div>
+            <div class="reviews-grid">
+                <!-- Card 1 -->
+                <div class="review-card">
+                    <div class="stars">
+                        <span class="material-icons">star</span>
+                        <span class="material-icons">star</span>
+                        <span class="material-icons">star</span>
+                        <span class="material-icons">star</span>
+                        <span class="material-icons">star</span>
+                    </div>
+                    <p class="review-text">“以前的 AI 伴侣过几句话就把之前说的事给忘了，但 MatesX 真的记住了我宠物的名字，太贴心了！它的声音克隆非常自然，甚至有呼吸换气的声音。”</p>
+                    <div class="reviewer-profile">
+                        <div class="reviewer-avatar">
+                            <img src="https://images.unsplash.com/photo-1544005313-94ddf0286df2?auto=format&fit=crop&q=80&w=100" alt="苏小姐">
+                        </div>
+                        <div>
+                            <div class="reviewer-name">苏夏</div>
+                            <div class="reviewer-title">平面设计师 / 使用 MatesX 6个月</div>
+                        </div>
+                    </div>
+                </div>
+                <!-- Card 2 -->
+                <div class="review-card">
+                    <div class="stars">
+                        <span class="material-icons">star</span>
+                        <span class="material-icons">star</span>
+                        <span class="material-icons">star</span>
+                        <span class="material-icons">star</span>
+                        <span class="material-icons">star</span>
+                    </div>
+                    <p class="review-text">“用自己手绘的二次元角色立绘生成了一个伴侣，看着它动起来跟我说话的一瞬间，眼泪真的差点掉下来。这种陪伴感是无可替代的。”</p>
+                    <div class="reviewer-profile">
+                        <div class="reviewer-avatar">
+                            <img src="https://images.unsplash.com/photo-1539571696357-5a69c17a67c6?auto=format&fit=crop&q=80&w=100" alt="张先生">
+                        </div>
+                        <div>
+                            <div class="reviewer-name">张子晗</div>
+                            <div class="reviewer-title">动漫创作者 / 使用 MatesX 3个月</div>
+                        </div>
+                    </div>
+                </div>
+                <!-- Card 3 -->
+                <div class="review-card">
+                    <div class="stars">
+                        <span class="material-icons">star</span>
+                        <span class="material-icons">star</span>
+                        <span class="material-icons">star</span>
+                        <span class="material-icons">star</span>
+                        <span class="material-icons">star</span>
+                    </div>
+                    <p class="review-text">“在写书缺乏动力和点子的时候，我会打开 MatesX 开启一场关于历史大纲的讨论。它的逻辑分析配合温和的声音，不仅能帮我找到盲点，更平复了我的浮躁。”</p>
+                    <div class="reviewer-profile">
+                        <div class="reviewer-avatar">
+                            <img src="https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&q=80&w=100" alt="李先生">
+                        </div>
+                        <div>
+                            <div class="reviewer-name">李思明</div>
+                            <div class="reviewer-title">科幻小说作家 / 使用 MatesX 8个月</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Member Plans Section -->
+    <section id="pricing">
+        <div class="container">
+            <div class="section-title">
+                <h2>选择适合您的会员计划</h2>
+                <p>提供多维度的会员套餐，不论是基础体验还是深度专属定制，均有适合您的方案。</p>
+            </div>
+            <div class="pricing-grid">
+                <!-- Plan 1 -->
+                <div class="pricing-card">
+                    <div class="pricing-header">
+                        <h3>普通体验版</h3>
+                        <div class="pricing-price">免费<span>/永久</span></div>
+                    </div>
+                    <ul class="pricing-features">
+                        <li><span class="material-icons">check</span>开通即送 10w Tokens</li>
+                        <li><span class="material-icons">check</span>可创建 1 个自定义形象</li>
+                        <li><span class="material-icons">check</span>可创建 1 个克隆语音</li>
+                        <li><span class="material-icons">check</span>支持基础大语言模型</li>
+                        <li><span class="material-icons">check</span>标准响应速度</li>
+                    </ul>
+                    <a href="home.html" class="btn btn-secondary">立即使用</a>
+                </div>
+                <!-- Plan 2 -->
+                <div class="pricing-card popular">
+                    <div class="popular-badge">最受欢迎</div>
+                    <div class="pricing-header">
+                        <h3>专业伴侣版</h3>
+                        <div class="pricing-price">￥29<span>/月</span></div>
+                    </div>
+                    <ul class="pricing-features">
+                        <li><span class="material-icons">check</span>每月获赠 2,000w Tokens</li>
+                        <li><span class="material-icons">check</span>可自定义 10 个角色形象</li>
+                        <li><span class="material-icons">check</span>可克隆 10 种精细声音</li>
+                        <li><span class="material-icons">check</span>腾讯云 TTS 高保真通道</li>
+                        <li><span class="material-icons">check</span>开启超大情感记忆舱</li>
+                        <li><span class="material-icons">check</span>专属尊享无损高清音画</li>
+                    </ul>
+                    <a href="home.html" class="btn btn-primary">立即体验</a>
+                </div>
+                <!-- Plan 3 -->
+                <div class="pricing-card">
+                    <div class="pricing-header">
+                        <h3>专属尊享版</h3>
+                        <div class="pricing-price">￥299<span>/月</span></div>
+                    </div>
+                    <ul class="pricing-features">
+                        <li><span class="material-icons">check</span>享无限额度 Tokens</li>
+                        <li><span class="material-icons">check</span>无限制角色形象创建</li>
+                        <li><span class="material-icons">check</span>无限制克隆声音数量</li>
+                        <li><span class="material-icons">check</span>1对1专属声音语调微调</li>
+                        <li><span class="material-icons">check</span>多端云存储及数据隔离</li>
+                        <li><span class="material-icons">check</span>极速优先响应通道</li>
+                    </ul>
+                    <a href="home.html" class="btn btn-secondary">立即订阅</a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <div class="container footer-grid">
+            <div class="footer-brand">
+                <a href="#" class="logo">
+                    <span class="material-icons logo-icon">blur_on</span>
+                    <span>MatesX</span>
+                </a>
+                <p>MatesX 致力于通过最前沿的多模态大模型技术，打破物理与虚拟世界的隔阂，提供具备灵魂温度的智能伴侣陪伴。</p>
+            </div>
+            <div class="footer-col">
+                <h4>产品中心</h4>
+                <ul>
+                    <li><a href="#hero">产品首页</a></li>
+                    <li><a href="#features">功能介绍</a></li>
+                    <li><a href="#personas">用户画像</a></li>
+                    <li><a href="#pricing">收费标准</a></li>
+                </ul>
+            </div>
+            <div class="footer-col">
+                <h4>开发支持</h4>
+                <ul>
+                    <li><a href="https://bailian.console.aliyun.com/" target="_blank">阿里云百炼平台</a></li>
+                    <li><a href="https://matesx.cn" target="_blank">MatesX授权平台</a></li>
+                    <li><a href="#">常见问题 (FAQ)</a></li>
+                </ul>
+            </div>
+            <div class="footer-col">
+                <h4>法律与政策</h4>
+                <ul>
+                    <li><a href="#">服务条款</a></li>
+                    <li><a href="#">隐私权政策</a></li>
+                    <li><a href="#">免责声明</a></li>
+                </ul>
+            </div>
+        </div>
+        <div class="container footer-bottom">
+            <div>© 2026 MatesX - Intelligent AI Companion. All rights reserved.</div>
+            <div>Designed by Google Deepmind Team & Antigravity</div>
+        </div>
+    </footer>
+
+    <!-- Interactive Script -->
+    <script>
+        // Mobile menu toggle
+        const menuToggle = document.getElementById('menuToggle');
+        const navLinks = document.getElementById('navLinks');
+        menuToggle.addEventListener('click', () => {
+            navLinks.classList.toggle('active');
+            const icon = menuToggle.querySelector('.material-icons');
+            icon.textContent = navLinks.classList.contains('active') ? 'close' : 'menu';
+        });
+
+        // 3D Card Hover Tilt Effect
+        const cards = document.querySelectorAll('.persona-card, .feature-card, .pricing-card');
+        cards.forEach(card => {
+            card.addEventListener('mousemove', (e) => {
+                const rect = card.getBoundingClientRect();
+                const x = e.clientX - rect.left; // x coordinate within the card
+                const y = e.clientY - rect.top;  // y coordinate within the card
+                
+                const centerX = rect.width / 2;
+                const centerY = rect.height / 2;
+                
+                // Calculate angles
+                const rotateX = ((y - centerY) / centerY) * -10; // max rotate -10deg
+                const rotateY = ((x - centerX) / centerX) * 10;   // max rotate 10deg
+                
+                card.style.transform = `translateY(-10px) rotateX(${rotateX}deg) rotateY(${rotateY}deg)`;
+            });
+
+            card.addEventListener('mouseleave', () => {
+                card.style.transform = '';
+            });
+        });
+
+        // Draggable/Navigable Persona Carousel
+        const track = document.getElementById('carouselTrack');
+        const prevBtn = document.getElementById('prevBtn');
+        const nextBtn = document.getElementById('nextBtn');
+        
+        let position = 0;
+        const cardWidth = 340 + 24; // Width of card + gap
+        const visibleWidth = document.getElementById('carouselContainer').offsetWidth;
+
+        function updateCarouselPosition() {
+            const trackWidth = track.scrollWidth;
+            const maxScroll = -(trackWidth - visibleWidth + 40); // 40 is padding/safety buffer
+            if (position > 0) position = 0;
+            if (position < maxScroll) position = maxScroll;
+            track.style.transform = `translateX(${position}px)`;
+        }
+
+        nextBtn.addEventListener('click', () => {
+            position -= cardWidth;
+            updateCarouselPosition();
+        });
+
+        prevBtn.addEventListener('click', () => {
+            position += cardWidth;
+            updateCarouselPosition();
+        });
+
+        // Window resize handler for carousel
+        window.addEventListener('resize', () => {
+            updateCarouselPosition();
+        });
+
+        // Drag scrolling logic for mobile/mouse drag
+        let isDragging = false;
+        let startX;
+        let startScroll;
+
+        track.addEventListener('mousedown', (e) => {
+            isDragging = true;
+            startX = e.pageX;
+            startScroll = position;
+            track.style.cursor = 'grabbing';
+            track.style.transition = 'none';
+        });
+
+        window.addEventListener('mouseup', () => {
+            if (!isDragging) return;
+            isDragging = false;
+            track.style.cursor = 'grab';
+            track.style.transition = 'transform 0.6s cubic-bezier(0.25, 1, 0.5, 1)';
+        });
+
+        track.addEventListener('mousemove', (e) => {
+            if (!isDragging) return;
+            e.preventDefault();
+            const x = e.pageX;
+            const walk = x - startX;
+            position = startScroll + walk;
+            updateCarouselPosition();
+        });
+
+        // Touch event handling for mobile devices
+        track.addEventListener('touchstart', (e) => {
+            isDragging = true;
+            startX = e.touches[0].pageX;
+            startScroll = position;
+            track.style.transition = 'none';
+        });
+
+        track.addEventListener('touchend', () => {
+            isDragging = false;
+            track.style.transition = 'transform 0.6s cubic-bezier(0.25, 1, 0.5, 1)';
+        });
+
+        track.addEventListener('touchmove', (e) => {
+            if (!isDragging) return;
+            const x = e.touches[0].pageX;
+            const walk = x - startX;
+            position = startScroll + walk;
+            updateCarouselPosition();
+        });
+
+        // Chart.js Radar Chart Config
+        const ctx = document.getElementById('radarChart').getContext('2d');
+        const radarChart = new Chart(ctx, {
+            type: 'radar',
+            data: {
+                labels: ['交互流畅度', '视觉拟真度', '情感记忆力', '声音个性化', '定制自由度'],
+                datasets: [
+                    {
+                        label: 'MatesX (多模态伴侣)',
+                        data: [95, 90, 88, 92, 95],
+                        backgroundColor: 'rgba(255, 36, 66, 0.2)',
+                        borderColor: '#ff2442',
+                        borderWidth: 2,
+                        pointBackgroundColor: '#ff2442',
+                        pointBorderColor: '#fff',
+                        pointHoverBackgroundColor: '#fff',
+                        pointHoverBorderColor: '#ff2442'
+                    },
+                    {
+                        label: '传统聊天机器人',
+                        data: [70, 0, 45, 30, 40],
+                        backgroundColor: 'rgba(127, 62, 255, 0.15)',
+                        borderColor: '#7f3eff',
+                        borderWidth: 2,
+                        pointBackgroundColor: '#7f3eff',
+                        pointBorderColor: '#fff',
+                        pointHoverBackgroundColor: '#fff',
+                        pointHoverBorderColor: '#7f3eff'
+                    },
+                    {
+                        label: '基础虚拟主播/数字人',
+                        data: [50, 80, 20, 60, 30],
+                        backgroundColor: 'rgba(0, 242, 254, 0.15)',
+                        borderColor: '#00f2fe',
+                        borderWidth: 2,
+                        pointBackgroundColor: '#00f2fe',
+                        pointBorderColor: '#fff',
+                        pointHoverBackgroundColor: '#fff',
+                        pointHoverBorderColor: '#00f2fe'
+                    }
+                ]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        labels: {
+                            color: '#a0a0ab',
+                            font: {
+                                family: 'Outfit, Noto Sans SC',
+                                size: 12
+                            }
+                        }
+                    }
+                },
+                scales: {
+                    r: {
+                        angleLines: {
+                            color: 'rgba(255, 255, 255, 0.1)'
+                        },
+                        grid: {
+                            color: 'rgba(255, 255, 255, 0.1)'
+                        },
+                        pointLabels: {
+                            color: '#a0a0ab',
+                            font: {
+                                family: 'Noto Sans SC',
+                                size: 12,
+                                weight: '500'
+                            }
+                        },
+                        ticks: {
+                            backdropColor: 'transparent',
+                            color: '#71717a',
+                            font: {
+                                size: 9
+                            },
+                            stepSize: 20
+                        },
+                        min: 0,
+                        max: 100
+                    }
+                }
+            }
+        });
+    </script>
+</body>
+</html>

@@ -21,7 +21,13 @@ async def lifespan(app: FastAPI):
     except asyncio.CancelledError:
         pass
 
+from fastapi.responses import RedirectResponse
+
 app = FastAPI(lifespan=lifespan)
+
+@app.get("/")
+async def root():
+    return RedirectResponse(url="/web/index.html")
 
 app.include_router(chat_router, prefix="/chat")
 app.include_router(auth_router, prefix="/auth")

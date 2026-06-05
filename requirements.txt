@@ -5,5 +5,5 @@ fastapi
 httpx
 openai
 uvicorn
-cachetools
-requests
+python-multipart
+dashscope

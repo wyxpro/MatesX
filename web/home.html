@@ -12,6 +12,20 @@
     <link rel="stylesheet" href="css/gallery.css">
 </head>
 <body>
+    <!-- 顶部导航栏 -->
+    <div class="app-header">
+        <div class="logo-area" onclick="window.location.href='index.html'" title="点击前往官网宣传页">
+            <span class="material-icons logo-icon">blur_on</span>
+            <span class="logo-name">MatesX</span>
+        </div>
+        <div class="header-right">
+            <div class="token-balance-badge" title="当前 Token 余额">
+                <span class="material-icons balance-icon">toll</span>
+                <span id="user-token-balance">0</span>
+            </div>
+        </div>
+    </div>
+
     <!-- 形象展示页 -->
     <div id="gallery-page" class="page-container page-active">
         <div class="grid-gallery">
